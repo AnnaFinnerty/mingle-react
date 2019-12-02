@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import firebase from '../Firebase';
 import { FirebaseContext } from '../Firebase';
 import '../../App.css';
-import { Card, Image } from 'semantic-ui-react'
+import { Card, Grid } from 'semantic-ui-react'
 
 const HomePage = () => (
   <div>
@@ -47,18 +47,24 @@ class Home extends Component {
     const songs = this.state.songs.map((song)=>{
       const linkFrag = song.url.split('=')[1];
       return(
-        <Card key={song.id}>
-          <Card.Content header={song.title} />
-          <Card.Content description={song.artist} />
-          <Card.Content extra>
-          <iframe className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen></iframe>
-          </Card.Content>
+        <Card fluid key={song.id}>
+         <Grid columns={2} divided>
+          <Grid.Row>
+            <Grid.Column>
+            <iframe className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen></iframe>
+            </Grid.Column>
+            <Grid.Column>
+            <Card.Content header={song.title} />
+            </Grid.Column>
+          </Grid.Row>
+        </Grid> 
         </Card>
+        
       )
     })
     return (
       <div>
-        Playlist 
+        <h2>Playlist </h2>
         {songs}
       </div>
     );

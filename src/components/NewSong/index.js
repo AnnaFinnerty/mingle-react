@@ -6,7 +6,7 @@ import { Feed, Label } from 'semantic-ui-react'
 
 const NewSongPage = () => (
   <div>
-    <h1>Add New Song</h1>
+    <h2>Add New Song</h2>
     <FirebaseContext.Consumer>
       {firebase => <NewSongForm firebase={firebase} />}
     </FirebaseContext.Consumer>

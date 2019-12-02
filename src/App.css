@@ -21,6 +21,12 @@
   color: #09d3ac;
 }
 
+.header-links{
+  width: 100vw;
+  display: flex;
+  justify-content: space-around;
+}
+
 .border-hover{
   border: 3px solid transparent;
 }

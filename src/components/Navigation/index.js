@@ -2,25 +2,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 const Navigation = () => (
-  <div>
-    <ul>
-      <li>
+  <div className="header-links">
+    <span className="header-link"></span>
         <Link to={ROUTES.SIGN_IN}>Sign In</Link>
-      </li>
-      <li>
+    <span className="header-link"></span>  
         <Link to={ROUTES.LANDING}>Landing</Link>
-      </li>
-      <li>
+    <span className="header-link"></span>
         <Link to={ROUTES.HOME}>Home</Link>
-      </li>
-      <li>
+    <span className="header-link"></span>
         <Link to={ROUTES.ACCOUNT}>Account</Link>
-      </li>
-      <li>
+    <span className="header-link"></span>
         <Link to={ROUTES.NEWSONG}>Add Song</Link>
-      </li>
-      
-    </ul>
   </div>
 );
 export default Navigation;
