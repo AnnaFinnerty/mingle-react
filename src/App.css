@@ -42,11 +42,14 @@ h1{
 }
 
 .border-hover{
+  margin: 0 20vw;
   border: 3px solid transparent;
+  background: rgb(248, 247, 247);
 }
 
 .border-hover:hover{
   border: 3px solid turquoise;
+  background: rgb(227, 252, 249);
 }
 
 .disable-click{
