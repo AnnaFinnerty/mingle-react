@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
-import { Feed, Label } from 'semantic-ui-react'
+import { Feed, Input, Button } from 'semantic-ui-react'
 
 const NewSongPage = () => (
   <div>
@@ -147,48 +147,47 @@ class NewSongForm extends Component {
       playlistId === '';
     return (
      <div style={{textAlign:'center'}}>
-       
-       <Label>Search Youtube:</Label> 
        <form onSubmit={this.onSearchSubmit}>
-            <input name='apiSearch' type="text" value={this.state.apiSearch} onChange={this.onSearchChange}></input>
+            <Input name='apiSearch' type="text" value={this.state.apiSearch} onChange={this.onSearchChange}></Input>
        </form>
+       <Button onClick={this.onSearchSubmit}>Search Youtube</Button> 
        <Feed className="column-centered">
             {searchResults}
        </Feed>
        <br></br>
        Or enter manually
       <form onSubmit={this.onSubmit}>
-          <input
+          <Input
           name="title/artist"
           value={title}
           onChange={this.onChange}
           type="text"
           placeholder="Song Title"
         />
-        <input
+        <Input
           name="url"
           value={url}
           onChange={this.onChange}
           type="text"
           placeholder="Song URL"
         />
-        <input
+        <Input
           name="userId"
           value={userId}
           onChange={this.onChange}
           type="text"
           placeholder="userId (temp)"
         />
-        <input
+        <Input
           name="playlistId"
           value={playlistId}
           onChange={this.onChange}
           type="text"
           placeholder="playlistId"
         />
-        <button disabled={isInvalid} type="submit">
+        <Button disabled={isInvalid} type="submit">
           Submit Song
-        </button>
+        </Button>
         {error && <p>{error.message}</p>}
       </form>
       </div>
