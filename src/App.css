@@ -20,3 +20,15 @@
 .App-link {
   color: #09d3ac;
 }
+
+.border-hover{
+  border: 3px solid transparent;
+}
+
+.border-hover:hover{
+  border: 3px solid turquoise;
+}
+
+.disable-click{
+  pointer-events: none;
+}
