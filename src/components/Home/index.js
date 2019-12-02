@@ -32,7 +32,6 @@ class Home extends Component {
         const item = i.data()
         newState.push({
           title: item.title,
-          artist: item.artist,
           url: item.url,
           userId: item.userId,
           playlistId: item.playlistId,
