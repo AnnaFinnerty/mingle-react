@@ -1,3 +1,8 @@
+h1{
+  width: 100%;
+  text-align: center;
+}
+
 .App {
   text-align: center;
 }
@@ -24,7 +29,16 @@
 .header-links{
   width: 100vw;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-around;;
+}
+
+.header-link{
+  color: orangered;
+}
+
+.header-link:hover{
+  color: orange;
+  text-decoration: underline;
 }
 
 .border-hover{
