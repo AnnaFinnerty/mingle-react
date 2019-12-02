@@ -7,6 +7,10 @@ Build app to allows a group of users (invited by one playlist creator) to collec
 
 Users can optionally remain anonymous until voting has completed.
 
+## Model Relationship
+
+![ERD](/erd.png)
+
 ## Milestones
 
 * Working React app hosted on Heroku
