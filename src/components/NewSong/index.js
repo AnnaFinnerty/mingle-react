@@ -15,7 +15,6 @@ const NewSongPage = () => (
 
 const INITIAL_STATE = {
     title: '',
-    artist: '',
     url: '',
     playlistId: '',
     userId: '',
@@ -62,11 +61,10 @@ class NewSongForm extends Component {
 
   onSubmit = event => {
     event.preventDefault();
-    const { title, artist, url, playlistId, userId } = this.state;
+    const { title, url, playlistId, userId } = this.state;
     //submit form information to firebase DB
     this.props.firebase.db.collection("songs").add({
         title: title,
-        artist: artist,
         url: url,
         playlistId: playlistId,
         userId: userId
@@ -95,7 +93,6 @@ class NewSongForm extends Component {
         if(item){
             this.props.firebase.db.collection("songs").add({
                 title: item.snippet.title,
-                artist: 'artist',
                 url: 'https://www.youtube.com/watch?v='+videoId,
                 playlistId: 1,
                 userId: 1
@@ -107,34 +104,6 @@ class NewSongForm extends Component {
                 console.error("Error adding document: ", error);
             });
         }
-        
-      try{
-        //retrieve full video information
-        // const searchResponse = await fetch("https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+videoId+"&key=AIzaSyDKZC4z0p_HotveLN_NpwTwZzHb_Vcn10c" , {
-        //     method: 'GET',
-        //     headers: {
-        //       'Content-Type': 'application/json'
-        //     },
-        //     credentials: 'include'
-        //   });
-        // const parsedResponse = await searchResponse.json();
-        // console.log('getVideoDetails res:' ,parsedResponse);
-        // this.props.firebase.db.collection("songs").add({
-        //     title: parsedResponse.title,
-        //     artist: 'artist',
-        //     url: 'https://www.youtube.com/watch?v='+videoId,
-        //     playlistId: 1,
-        //     userId: 1
-        // })
-        // .then(function(docRef) {
-        //     console.log("Document written with ID: ", docRef.id);
-        // })
-        // .catch(function(error) {
-        //     console.error("Error adding document: ", error);
-        // });
-    } catch(e){
-        console.log("error loading songs")
-    }
   }
   onChange = event => {
     this.setState({ [event.target.name]: event.target.value });
@@ -166,7 +135,6 @@ class NewSongForm extends Component {
 
     const {
         title,
-        artist,
         url,
         playlistId,
         userId,
@@ -174,7 +142,6 @@ class NewSongForm extends Component {
       } = this.state;
       const isInvalid =
       title === '' ||
-      artist === '' ||
       url === ''   ||
       userId === '' ||
       playlistId === '';
@@ -192,18 +159,11 @@ class NewSongForm extends Component {
        Or enter manually
       <form onSubmit={this.onSubmit}>
           <input
-          name="title"
+          name="title/artist"
           value={title}
           onChange={this.onChange}
           type="text"
           placeholder="Song Title"
-        />
-        <input
-          name="artist"
-          value={artist}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Artist"
         />
         <input
           name="url"
