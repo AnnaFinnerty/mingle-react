@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
-import { Feed, Input, Button } from 'semantic-ui-react'
+import { Feed, Input, Button, Label } from 'semantic-ui-react'
 
 const NewSongPage = () => (
   <div>
@@ -21,6 +21,7 @@ const INITIAL_STATE = {
     apiSearch: '',
     searchResults: [],
     error: null,
+    manualEnter: false,
   };
 
 class NewSongForm extends Component {
@@ -118,6 +119,9 @@ class NewSongForm extends Component {
       //AIzaSyBb5vWas9spdMgJcBiK13_YnaUrCYVwOLQ
     this.loadSearchResults();
   }
+  toggleEnterMode = () => {
+      this.setState({manualEnter: !this.state.manualEnter})
+  }
   render() {
     const searchResults = !this.state.searchResults.length ? "" : 
         this.state.searchResults.map((result) => {
@@ -147,49 +151,58 @@ class NewSongForm extends Component {
       playlistId === '';
     return (
      <div style={{textAlign:'center'}}>
-       <form onSubmit={this.onSearchSubmit}>
-            <Input name='apiSearch' type="text" value={this.state.apiSearch} onChange={this.onSearchChange}></Input>
-       </form>
-       <Button onClick={this.onSearchSubmit}>Search Youtube</Button> 
-       <Feed className="column-centered">
-            {searchResults}
-       </Feed>
-       <br></br>
-       Or enter manually
-      <form onSubmit={this.onSubmit}>
-          <Input
-          name="title/artist"
-          value={title}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Song Title"
-        />
-        <Input
-          name="url"
-          value={url}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Song URL"
-        />
-        <Input
-          name="userId"
-          value={userId}
-          onChange={this.onChange}
-          type="text"
-          placeholder="userId (temp)"
-        />
-        <Input
-          name="playlistId"
-          value={playlistId}
-          onChange={this.onChange}
-          type="text"
-          placeholder="playlistId"
-        />
-        <Button disabled={isInvalid} type="submit">
-          Submit Song
-        </Button>
-        {error && <p>{error.message}</p>}
-      </form>
+         {
+             !this.state.manualEnter ? 
+            <div>
+                <form onSubmit={this.onSearchSubmit}>
+                        <Input name='apiSearch' type="text" value={this.state.apiSearch} onChange={this.onSearchChange}></Input>
+                </form>
+                <Button onClick={this.onSearchSubmit}>Search Youtube</Button>
+                <Button onClick={this.toggleEnterMode}>Enter Manually</Button> 
+                <Feed className="column-centered">
+                        {searchResults}
+                </Feed>
+            </div>
+       :
+       <div>
+        <Label>enter manually</Label> 
+        <form onSubmit={this.onSubmit}>
+            <Input
+            name="title/artist"
+            value={title}
+            onChange={this.onChange}
+            type="text"
+            placeholder="Song Title"
+            />
+            <Input
+            name="url"
+            value={url}
+            onChange={this.onChange}
+            type="text"
+            placeholder="Song URL"
+            />
+            <Input
+            name="userId"
+            value={userId}
+            onChange={this.onChange}
+            type="text"
+            placeholder="userId (temp)"
+            />
+            <Input
+            name="playlistId"
+            value={playlistId}
+            onChange={this.onChange}
+            type="text"
+            placeholder="playlistId"
+            />
+            <Button disabled={isInvalid} type="submit">
+            Submit Song
+            </Button>
+            <Button onClick={this.toggleEnterMode}>Search Youtube</Button>
+            {error && <p>{error.message}</p>}
+        </form>
+      </div>
+        }
       </div>
     );
   }
