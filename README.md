@@ -9,7 +9,7 @@ Users can optionally remain anonymous until voting has completed.
 
 ## Model Relationship
 
-![ERD](./public/erd.png)
+![ERD](./erd.png)
 
 ## Milestones
 
