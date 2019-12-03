@@ -30,13 +30,14 @@ class Home extends Component {
       let newState = [];
       snapshot.forEach((i) => {
         const item = i.data()
+        const id = i.id;
         console.log(item);
         newState.push({
           title: item.title,
           url: item.url,
           userId: item.userId,
           playlistId: item.playlistId,
-          id: item.key
+          id: id,
         });
       });
       this.setState({
@@ -46,14 +47,15 @@ class Home extends Component {
   }
   deleteSong(e,songId){
     console.log('deleting song: ' + songId);
-    // const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
-    // deleteRef.delete()
-    // .then(()=>{
-    //   console.log(songId + " deleted successfully")
-    // })
-    // .catch((err) => {
-    //   console.log("error deleting song")
-    // })
+    const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
+    deleteRef.delete()
+    .then(()=>{
+      console.log(songId + " deleted successfully")
+    })
+    .catch((err) => {
+      console.log("error deleting song")
+    })
+    this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
   }
   render(){
     console.log('songs', this.state.songs)
