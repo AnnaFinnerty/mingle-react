@@ -12,6 +12,7 @@ import HomePage from '../Home';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
 import NewSongPage from '../NewSong';
+import ActivePlaylist from '../ActivePlaylist';
 import * as ROUTES from '../../constants/routes';
 const App = () => (
   <Router>
@@ -26,6 +27,7 @@ const App = () => (
       <Route path={ROUTES.ACCOUNT} component={AccountPage} />
       <Route path={ROUTES.ADMIN} component={AdminPage} />
       <Route path={ROUTES.NEWSONG} component={NewSongPage} />
+      <Route path={ROUTES.PLAYLIST} component={ActivePlaylist} />
     </div>
   </Router>
 );
