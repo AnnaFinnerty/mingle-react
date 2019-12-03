@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import firebase from '../Firebase';
 import { FirebaseContext } from '../Firebase';
 import '../../App.css';
-import { Card, Grid, Button } from 'semantic-ui-react'
+import { Card, Grid, Button, Label } from 'semantic-ui-react'
 
 const HomePage = () => (
   <div>
@@ -59,7 +59,10 @@ class Home extends Component {
   }
   render(){
     console.log('songs', this.state.songs)
-    const songs = this.state.songs.map((song)=>{
+    const songs = !this.state.songs.length ? 
+      <Label>Invite users to start!</Label>
+      :
+      this.state.songs.map((song)=>{
       const linkFrag = song.url.split('=')[1];
       console.log(song);
       return(
