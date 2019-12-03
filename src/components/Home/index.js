@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import firebase from '../Firebase';
 import { FirebaseContext } from '../Firebase';
 import '../../App.css';
-import { Card, Grid } from 'semantic-ui-react'
+import { Card, Grid, Button } from 'semantic-ui-react'
 
 const HomePage = () => (
   <div>
@@ -30,11 +30,13 @@ class Home extends Component {
       let newState = [];
       snapshot.forEach((i) => {
         const item = i.data()
+        console.log(item);
         newState.push({
           title: item.title,
           url: item.url,
           userId: item.userId,
           playlistId: item.playlistId,
+          id: item.key
         });
       });
       this.setState({
@@ -42,10 +44,22 @@ class Home extends Component {
       });
     });
   }
+  deleteSong(e,songId){
+    console.log('deleting song: ' + songId);
+    // const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
+    // deleteRef.delete()
+    // .then(()=>{
+    //   console.log(songId + " deleted successfully")
+    // })
+    // .catch((err) => {
+    //   console.log("error deleting song")
+    // })
+  }
   render(){
     console.log('songs', this.state.songs)
     const songs = this.state.songs.map((song)=>{
       const linkFrag = song.url.split('=')[1];
+      console.log(song);
       return(
         <Card fluid key={song.id}>
          <Grid columns={2} divided>
@@ -55,6 +69,7 @@ class Home extends Component {
             </Grid.Column>
             <Grid.Column>
             <Card.Content header={song.title} />
+            <Button onClick={(e)=>this.deleteSong(e,song.id)}>X</Button>
             </Grid.Column>
           </Grid.Row>
         </Grid> 

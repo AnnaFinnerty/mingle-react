@@ -104,9 +104,38 @@ class NewSongForm extends Component {
             .catch(function(error) {
                 console.error("Error adding document: ", error);
             });
+            // const newSong={
+            //     title: item.snippet.title,
+            //     url: 'https://www.youtube.com/watch?v='+videoId,
+            //     playlistId: 1,
+            //     userId : 1
+            // }
+            //this.addSong();
         }
   }
+  addSong = (songToAdd) => {
+    console.log('adding song');
+    console.log(this.props.firebase)
+    const key = this.props.firebase.database.ref('songs').push().key;
+    console.log(key);
+    songToAdd['id'] = key;
+    const newSong={
+        id: key,
+        title: songToAdd.title,
+        url: songToAdd.url,
+        playlistId: songToAdd.playlistId,
+        userId : songToAdd.userId
+    }
+    this.props.firebase.db.collection("songs").push(newSong)
+            .then(function(docRef) {
+                console.log("Document written with ID: ", docRef.id);
+            })
+            .catch(function(error) {
+                console.error("Error adding document: ", error);
+            });
+  }
   onChange = event => {
+    console.log("changing text");
     this.setState({ [event.target.name]: event.target.value });
   };
   onSearchChange = event => {
@@ -157,15 +186,15 @@ class NewSongForm extends Component {
                 <form onSubmit={this.onSearchSubmit}>
                         <Input name='apiSearch' type="text" value={this.state.apiSearch} onChange={this.onSearchChange}></Input>
                 </form>
-                <Button onClick={this.onSearchSubmit}>Search Youtube</Button>
+                <Button color="orange" onClick={this.onSearchSubmit}>Search Youtube</Button>
+                <br></br>
                 <Button onClick={this.toggleEnterMode}>Enter Manually</Button> 
                 <Feed className="column-centered">
                         {searchResults}
                 </Feed>
             </div>
        :
-       <div>
-        <Label>enter manually</Label> 
+       <div> 
         <form onSubmit={this.onSubmit}>
             <Input
             name="title/artist"
@@ -195,9 +224,10 @@ class NewSongForm extends Component {
             type="text"
             placeholder="playlistId"
             />
-            <Button disabled={isInvalid} type="submit">
+            <Button color="orange" disabled={isInvalid} type="submit">
             Submit Song
             </Button>
+            <br></br>
             <Button onClick={this.toggleEnterMode}>Search Youtube</Button>
             {error && <p>{error.message}</p>}
         </form>

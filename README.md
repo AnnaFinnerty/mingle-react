@@ -9,11 +9,11 @@ Users can optionally remain anonymous until voting has completed.
 
 ## Wireframes
 
-![Wireframe](./wireframe.png)
+![Wireframe](./public/wireframe.png)
 
 ## Model Relationship
 
-![ERD](./erd.png)
+![ERD](./public/erd.png)
 
 ## Milestones
 
