@@ -27,7 +27,7 @@ class SignInTempFormBase extends Component {
     const { username, secretname } = this.state;
     
     //TODO how to get playlistId into props???
-    this.props.firebase.db.collection("users").add({
+    this.props.firebase.db.collection("temp_users").add({
       username: username,
       secretname: secretname,
       playlistId: this.props.playlistId
