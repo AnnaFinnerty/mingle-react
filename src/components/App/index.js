@@ -4,7 +4,6 @@ import {
   Route,
 } from 'react-router-dom';
 import Navigation from '../Navigation';
-import LandingPage from '../Landing';
 import SignUpPage from '../SignUp';
 import SignInPage from '../SignIn';
 import SignInTempPage from '../SignInTemp';
@@ -16,6 +15,7 @@ import NewSongPage from '../NewSong';
 import Playlist from '../Playlist';
 import ActivePlaylist from '../ActivePlaylist';
 import * as ROUTES from '../../constants/routes';
+import { withFirebase } from '../Firebase';
 
 class App extends Component{
   constructor(props) {
@@ -24,9 +24,17 @@ class App extends Component{
       authUser: null,
     };
   }
-  componentDidMount(){
-    console.log('app mounts');
-    console.log(this.props)
+  componentDidMount() {
+    this.listener = this.props.firebase.auth.onAuthStateChanged(
+      authUser => {
+        authUser
+          ? this.setState({ authUser })
+          : this.setState({ authUser: null });
+      },
+    );
+  }
+  componentWillUnmount() {
+    this.listener();
   }
   render(){
     console.log('app state')
@@ -52,4 +60,4 @@ class App extends Component{
     )
   }
 };
-export default App;
+export default withFirebase(App);
