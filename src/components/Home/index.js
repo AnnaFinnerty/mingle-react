@@ -3,6 +3,9 @@ import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 import { withRouter } from 'react-router-dom';
 
+import Playlist from '../Playlist';
+import ActivePlaylist from '../ActivePlaylist';
+
 import '../../App.css';
 import { Modal, Grid, Button, Header } from 'semantic-ui-react'
 
@@ -19,10 +22,11 @@ class HomeBase extends Component {
   constructor() {
     super();
     this.state = {
-      activePlaylist: '',
+      activePlaylist: '5hVQsD4OxSa8KgtJGXVb',
       playlists: [],
       newPlaylistTitle:'',
       newPlaylistMood:'default',
+      creatorMode: false,
     }
     this.moods = ['party','chill','dance','default']
   }
@@ -80,10 +84,12 @@ class HomeBase extends Component {
       <React.Fragment>
         <Grid columns={1} fluid centered style={{textAlign:"centered"}}>
            {
-                this.state.activePlaylist ? 
-                <Button onClick={this.showUserPlaylist}>Full Playlist</Button>
-                :
+                !this.state.activePlaylist ?
                 <Button onClick={this.addPlaylist}>create playlist to start</Button>
+                :
+                <React.Fragment>
+                  <ActivePlaylist activatePlaylist={this.activatePlaylist}/>
+                </React.Fragment>    
             }
         </Grid>
       </React.Fragment>
