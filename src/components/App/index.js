@@ -30,7 +30,7 @@ class App extends Component{
         <div>
           <Navigation authUser={this.state.authUser}/>
           <hr />
-          <Route exact path={ROUTES.LANDING} component={LandingPage} />
+          <Route exact path={ROUTES.LANDING} component={SignInPage} />
           <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
           <Route path={ROUTES.SIGN_IN} component={SignInPage} />
           <Route path={ROUTES.SIGN_IN_TEMP} component={SignInTempPage} />
