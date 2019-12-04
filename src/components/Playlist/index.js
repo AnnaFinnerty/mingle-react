@@ -4,13 +4,13 @@ import * as ROUTES from '../../constants/routes';
 import { withRouter } from 'react-router-dom';
 
 import '../../App.css';
-import { Modal, Form, Grid, Button, Label, Input, Feed, Header } from 'semantic-ui-react'
+import { Container, Form, Button, Label, Input } from 'semantic-ui-react'
 
 
 const PlaylistPage = () => (
   <div>
     <FirebaseContext.Consumer>
-      {firebase => <PlaylistBase firebase={firebase} />}
+      {firebase => <Playlist firebase={firebase} />}
     </FirebaseContext.Consumer>
   </div>
 );
@@ -31,6 +31,7 @@ class PlaylistBase extends Component {
     console.log('title',this.state.newPlaylistTitle);
     console.log('mood',this.state.newPlaylistMood);
     const date = new Date();
+    const history = this.props.history;
     this.props.firebase.db.collection("playlists").add({
       title: this.state.newPlaylistTitle,
       mood: this.state.newPlaylistMood,
@@ -39,11 +40,11 @@ class PlaylistBase extends Component {
       })
       .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id);
-          this.props.history.push(ROUTES.HOME)
+          history.push(ROUTES.HOME)
       })
       .catch(function(error) {
           console.error("Error adding document: ", error);
-          this.props.history.push(ROUTES.HOME)
+          history.push(ROUTES.HOME)
       });
   }
   deletePlaylist(e,playlistId){
@@ -63,14 +64,10 @@ class PlaylistBase extends Component {
       [e.target.name] : e.target.value
     })
   }
-  addPlaylist = () => {
-    console.log('adding playlist');
-    console.log(this.props);
-    
-  }
   render(){
     return (
-        <Form>
+        <Container fluid centered="true" style={{width:"100%"}}>
+            <Form style={{width:"50%"}}>
             <Label>New Playlist</Label>
             <Input value={this.state.newPlaylistTitle} 
                 name="newPlaylistTitle" 
@@ -82,7 +79,9 @@ class PlaylistBase extends Component {
                 onChange={this.handleChange}
             />
             <Button onClick={this.createPlaylist}>start</Button>
-      </Form>
+            </Form>
+        </Container>
+        
     );
   }
 }

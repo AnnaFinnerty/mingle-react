@@ -4,7 +4,7 @@ import * as ROUTES from '../../constants/routes';
 import { withRouter } from 'react-router-dom';
 
 import '../../App.css';
-import { Modal, Form, Grid, Button, Label, Input, Feed, Header } from 'semantic-ui-react'
+import { Modal, Grid, Button, Header } from 'semantic-ui-react'
 
 
 const HomePage = () => (
