@@ -16,12 +16,19 @@ import NewSongPage from '../NewSong';
 import Playlist from '../Playlist';
 import ActivePlaylist from '../ActivePlaylist';
 import * as ROUTES from '../../constants/routes';
+
 class App extends Component{
+  constructor(props) {
+    super(props);
+    this.state = {
+      authUser: null,
+    };
+  }
   render(){
     return(
       <Router>
         <div>
-          <Navigation />
+          <Navigation authUser={this.state.authUser}/>
           <hr />
           <Route exact path={ROUTES.LANDING} component={LandingPage} />
           <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
