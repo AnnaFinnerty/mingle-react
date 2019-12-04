@@ -24,7 +24,12 @@ class App extends Component{
       authUser: null,
     };
   }
+  componentDidMount(){
+    console.log('app mounts');
+    console.log(this.props)
+  }
   render(){
+    console.log('app state')
     return(
       <Router>
         <div>
