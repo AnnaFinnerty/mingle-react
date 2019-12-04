@@ -10,6 +10,7 @@ const Navigation = () => (
       <Link className="header-link" to={ROUTES.NEWSONG}>Add Song</Link>
       <Link className="header-link" to={ROUTES.ACCOUNT}>Account</Link>
       <Link className="header-link" to={ROUTES.SIGN_IN}>Sign In</Link>
+      <Link className="header-link" to={ROUTES.SIGN_IN_TEMP}>Sign In Temp</Link>
   
     </nav>
   </header>
