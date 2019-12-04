@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { SignUpLink } from '../SignUp';
 import { FirebaseContext, withFirebase } from '../Firebase';
-import { UserContext } from './context';
 import * as ROUTES from '../../constants/routes';
 
 const SignInPage = () => (
   <div>
     <h2>Sign In</h2>
+
     <FirebaseContext.Consumer>
       {firebase => <SignInForm firebase={firebase} />}
     </FirebaseContext.Consumer>
