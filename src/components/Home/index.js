@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import { FirebaseContext } from '../Firebase';
+import * as ROUTES from '../../constants/routes';
+import { withRouter } from 'react-router-dom';
 
 import '../../App.css';
 import { Modal, Form, Grid, Button, Label, Input, Feed, Header } from 'semantic-ui-react'
@@ -13,11 +15,11 @@ const HomePage = () => (
   </div>
 );
 
-class Home extends Component {
+class HomeBase extends Component {
   constructor() {
     super();
     this.state = {
-      activePlaylist: '',
+      activePlaylist: 'test',
       playlists: [],
       newPlaylistTitle:'',
       newPlaylistMood:'default',
@@ -84,6 +86,11 @@ class Home extends Component {
       [e.target.name] : e.target.value
     })
   }
+  addPlaylist = () => {
+    console.log('adding playlist');
+    console.log(this.props);
+    this.props.history.push(ROUTES.NEWSONG)
+  }
   render(){
     const playlists = !this.state.playlists.length ?
     <Label>no playlists</Label> :
@@ -103,7 +110,7 @@ class Home extends Component {
           <Grid.Row fluid centered>
             {
                 this.state.activePlaylist ? 
-                <Button>Full Playlist</Button>
+                <Button onClick={this.addPlaylist}>Full Playlist</Button>
                 :
                 <Button onClick={this.createPlaylist}>create playlist to start</Button>
             }
@@ -151,5 +158,6 @@ class Home extends Component {
   }
 }
 
+const Home = withRouter(HomeBase)
 export default HomePage;
 export {Home};
