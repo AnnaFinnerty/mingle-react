@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
-import { Feed, Label } from 'semantic-ui-react'
+import { Feed, Input, Button, Label } from 'semantic-ui-react'
 
 const NewSongPage = () => (
   <div>
@@ -21,6 +21,7 @@ const INITIAL_STATE = {
     apiSearch: '',
     searchResults: [],
     error: null,
+    manualEnter: false,
   };
 
 class NewSongForm extends Component {
@@ -103,9 +104,38 @@ class NewSongForm extends Component {
             .catch(function(error) {
                 console.error("Error adding document: ", error);
             });
+            // const newSong={
+            //     title: item.snippet.title,
+            //     url: 'https://www.youtube.com/watch?v='+videoId,
+            //     playlistId: 1,
+            //     userId : 1
+            // }
+            //this.addSong();
         }
   }
+  addSong = (songToAdd) => {
+    console.log('adding song');
+    console.log(this.props.firebase)
+    const key = this.props.firebase.database.ref('songs').push().key;
+    console.log(key);
+    songToAdd['id'] = key;
+    const newSong={
+        id: key,
+        title: songToAdd.title,
+        url: songToAdd.url,
+        playlistId: songToAdd.playlistId,
+        userId : songToAdd.userId
+    }
+    this.props.firebase.db.collection("songs").push(newSong)
+            .then(function(docRef) {
+                console.log("Document written with ID: ", docRef.id);
+            })
+            .catch(function(error) {
+                console.error("Error adding document: ", error);
+            });
+  }
   onChange = event => {
+    console.log("changing text");
     this.setState({ [event.target.name]: event.target.value });
   };
   onSearchChange = event => {
@@ -117,6 +147,9 @@ class NewSongForm extends Component {
       //youtube api key:
       //AIzaSyBb5vWas9spdMgJcBiK13_YnaUrCYVwOLQ
     this.loadSearchResults();
+  }
+  toggleEnterMode = () => {
+      this.setState({manualEnter: !this.state.manualEnter})
   }
   render() {
     const searchResults = !this.state.searchResults.length ? "" : 
@@ -147,50 +180,59 @@ class NewSongForm extends Component {
       playlistId === '';
     return (
      <div style={{textAlign:'center'}}>
-       
-       <Label>Search Youtube:</Label> 
-       <form onSubmit={this.onSearchSubmit}>
-            <input name='apiSearch' type="text" value={this.state.apiSearch} onChange={this.onSearchChange}></input>
-       </form>
-       <Feed className="column-centered">
-            {searchResults}
-       </Feed>
-       <br></br>
-       Or enter manually
-      <form onSubmit={this.onSubmit}>
-          <input
-          name="title/artist"
-          value={title}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Song Title"
-        />
-        <input
-          name="url"
-          value={url}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Song URL"
-        />
-        <input
-          name="userId"
-          value={userId}
-          onChange={this.onChange}
-          type="text"
-          placeholder="userId (temp)"
-        />
-        <input
-          name="playlistId"
-          value={playlistId}
-          onChange={this.onChange}
-          type="text"
-          placeholder="playlistId"
-        />
-        <button disabled={isInvalid} type="submit">
-          Submit Song
-        </button>
-        {error && <p>{error.message}</p>}
-      </form>
+         {
+             !this.state.manualEnter ? 
+            <div>
+                <form onSubmit={this.onSearchSubmit}>
+                        <Input name='apiSearch' type="text" value={this.state.apiSearch} onChange={this.onSearchChange}></Input>
+                </form>
+                <Button color="orange" onClick={this.onSearchSubmit}>Search Youtube</Button>
+                <br></br>
+                <Button onClick={this.toggleEnterMode}>Enter Manually</Button> 
+                <Feed className="column-centered">
+                        {searchResults}
+                </Feed>
+            </div>
+       :
+       <div> 
+        <form onSubmit={this.onSubmit}>
+            <Input
+            name="title/artist"
+            value={title}
+            onChange={this.onChange}
+            type="text"
+            placeholder="Song Title"
+            />
+            <Input
+            name="url"
+            value={url}
+            onChange={this.onChange}
+            type="text"
+            placeholder="Song URL"
+            />
+            <Input
+            name="userId"
+            value={userId}
+            onChange={this.onChange}
+            type="text"
+            placeholder="userId (temp)"
+            />
+            <Input
+            name="playlistId"
+            value={playlistId}
+            onChange={this.onChange}
+            type="text"
+            placeholder="playlistId"
+            />
+            <Button color="orange" disabled={isInvalid} type="submit">
+            Submit Song
+            </Button>
+            <br></br>
+            <Button onClick={this.toggleEnterMode}>Search Youtube</Button>
+            {error && <p>{error.message}</p>}
+        </form>
+      </div>
+        }
       </div>
     );
   }
