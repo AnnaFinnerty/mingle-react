@@ -13,6 +13,7 @@ import HomePage from '../Home';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
 import NewSongPage from '../NewSong';
+import Playlist from '../Playlist';
 import ActivePlaylist from '../ActivePlaylist';
 import * as ROUTES from '../../constants/routes';
 
@@ -38,7 +39,8 @@ class App extends Component{
           <Route path={ROUTES.ACCOUNT} component={AccountPage} />
           <Route path={ROUTES.ADMIN} component={AdminPage} />
           <Route path={ROUTES.NEWSONG} component={NewSongPage} />
-          <Route path={ROUTES.PLAYLIST} component={ActivePlaylist} />
+          <Route path={ROUTES.PLAYLIST} component={Playlist} />
+          <Route path={ROUTES.ACTIVEPLAYLIST} component={ActivePlaylist} />
           {/* <Route exact path="/login" render={(props) => <Login {...props} logOut={this.logOut} logIn={this.logIn}/>}/> */}
         </div>
       </Router>
