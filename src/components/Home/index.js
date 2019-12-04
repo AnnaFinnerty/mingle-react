@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import firebase from '../Firebase';
 import { FirebaseContext } from '../Firebase';
+
 import '../../App.css';
-import { Form, Grid, Button, Label, Input } from 'semantic-ui-react'
-import { tsMethodSignature } from '@babel/types';
+import { Modal, Form, Grid, Button, Label, Input, Feed, Header } from 'semantic-ui-react'
+
 
 const HomePage = () => (
   <div>
@@ -17,6 +17,7 @@ class Home extends Component {
   constructor() {
     super();
     this.state = {
+      activePlaylist: '',
       playlists: [],
       newPlaylistTitle:'',
       newPlaylistMood:'default',
@@ -89,13 +90,24 @@ class Home extends Component {
     this.state.playlists.map((playlist)=>{
       console.log(playlist);
       return(
-        <div>playlist</div>
+        <Feed.Event style={{backgroundColor:"lightgray", padding:"2% 5%", margin:"0 5%", width:"90%"}}>
+          <Feed.Label>
+            {playlist.title}
+          </Feed.Label>
+        </Feed.Event>
       )
     })
     return (
       <React.Fragment>
-        <h2>Home</h2>
         <Grid columns={2} divided>
+          <Grid.Row fluid centered>
+            {
+                this.state.activePlaylist ? 
+                <Button>Full Playlist</Button>
+                :
+                <Button onClick={this.createPlaylist}>create playlist to start</Button>
+            }
+          </Grid.Row>
           <Grid.Row>
             <Grid.Column>
               <h3>Playlists</h3>
@@ -112,13 +124,28 @@ class Home extends Component {
                 />
                 <Button onClick={this.createPlaylist}>+</Button>
               </Form>
-              {playlists}
+              <Feed>
+                {playlists}
+              </Feed>
             </Grid.Column>
             <Grid.Column>
               <h3>Invites Sent</h3>
             </Grid.Column>
           </Grid.Row>
         </Grid>
+        <Modal >
+          <Modal.Header>Select a Photo</Modal.Header>
+          <Modal.Content image>
+            <Modal.Description>
+              <Header>Default Profile Image</Header>
+              <p>
+                We've found the following gravatar image associated with your e-mail
+                address.
+              </p>
+              <p>Is it okay to use this photo?</p>
+            </Modal.Description>
+          </Modal.Content>
+        </Modal>
       </React.Fragment>
     );
   }
