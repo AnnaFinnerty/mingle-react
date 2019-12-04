@@ -3,6 +3,19 @@ h1{
   text-align: center;
 }
 
+form{
+  display: flex;
+  flex-direction: column;
+}
+
+input{
+  max-width: 30vw;
+}
+
+button{
+  max-width: 20vw;
+}
+
 .App {
   text-align: center;
 }
