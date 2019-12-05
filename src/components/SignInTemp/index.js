@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, useParams } from 'react-router-dom';
 import { FirebaseContext, withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
+import { Label } from 'semantic-ui-react';
 
 const SignInTempPage = () => (
   <div>
@@ -25,12 +26,14 @@ class SignInTempFormBase extends Component {
   onSubmit = event => {
     event.preventDefault();
     const { username, secretname } = this.state;
-    
     //TODO how to get playlistId into props???
     this.props.firebase.db.collection("temp_users").add({
       username: username,
       secretname: secretname,
-      playlistId: this.props.playlistId
+      playlistId: this.props.match.params.playlistId,
+      upvotes: 0,
+      downvotes: 0,
+      songId: '',
       })
       .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id);
@@ -43,6 +46,7 @@ class SignInTempFormBase extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
   render() {
+    console.log("signInTempProps",this.props);
     const {
         username,
         secretname,
@@ -53,20 +57,22 @@ class SignInTempFormBase extends Component {
       secretname === '';
     return (
       <form onSubmit={this.onSubmit}>
+          <Label>a secret name to hide your identity</Label>
+          <input
+            name="secretname"
+            value={secretname}
+            onChange={this.onChange}
+            type="text"
+            placeholder="secret name"
+          />
+          <Label>a name people will recognize later</Label>
           <input
           name="username"
           value={username}
           onChange={this.onChange}
           type="text"
           placeholder="username"
-        />
-        <input
-          name="secretname"
-          value={secretname}
-          onChange={this.onChange}
-          type="text"
-          placeholder="email"
-        />
+         />
         <button disabled={isInvalid} type="submit">
           Sign Up
         </button>

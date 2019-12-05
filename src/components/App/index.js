@@ -46,13 +46,14 @@ class App extends Component{
           <Route exact path={ROUTES.LANDING} component={SignInPage} />
           <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
           <Route path={ROUTES.SIGN_IN} component={SignInPage} />
-          <Route path={ROUTES.SIGN_IN_TEMP} component={SignInTempPage} />
+          
           <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
           <Route path={ROUTES.HOME} component={HomePage} />
           <Route path={ROUTES.ACCOUNT} component={AccountPage} />
           <Route path={ROUTES.ADMIN} component={AdminPage} />
           <Route path={ROUTES.NEWSONG} component={NewSongPage} />
-          <Route path={ROUTES.PLAYLIST} component={Playlist} />
+          {/* <Route path={ROUTES.PLAYLIST} component={Playlist} /> */}
+          <Route exact path="/login/:playlistId?" children={SignInTempPage}/>
           <Route path={ROUTES.ACTIVEPLAYLIST} component={ActivePlaylist} />
           {/* <Route exact path="/login" render={(props) => <Login {...props} logOut={this.logOut} logIn={this.logIn}/>}/> */}
         </div>
