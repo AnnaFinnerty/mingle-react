@@ -42,11 +42,12 @@ button{
 .header-links{
   width: 100vw;
   display: flex;
-  justify-content: space-around;;
+  justify-content: space-around;
 }
 
 .header-link{
   color: orangered;
+  border: none;
 }
 
 .header-link:hover{

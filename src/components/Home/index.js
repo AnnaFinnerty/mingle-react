@@ -3,8 +3,13 @@ import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 import { withRouter } from 'react-router-dom';
 
+import CreatorView from '../CreatorView';
+import UserView from '../UserView';
+
+
 import '../../App.css';
 import { Modal, Grid, Button, Header } from 'semantic-ui-react'
+import { Playlist } from '../Playlist';
 
 
 const HomePage = () => (
@@ -19,12 +24,10 @@ class HomeBase extends Component {
   constructor() {
     super();
     this.state = {
-      activePlaylist: '',
+      activePlaylist: '5hVQsD4OxSa8KgtJGXVb',
       playlists: [],
-      newPlaylistTitle:'',
-      newPlaylistMood:'default',
+      creatorMode: false,
     }
-    this.moods = ['party','chill','dance','default']
   }
   componentDidMount(){
     this.getPlaylists();
@@ -58,9 +61,9 @@ class HomeBase extends Component {
     console.log('adding playlist');
     this.props.history.push(ROUTES.PLAYLIST)
   }
-  showUserPlaylist = () => {
-    console.log('show user playlist');
-    this.props.history.push(ROUTES.ACTIVEPLAYLIST)
+  toggleViewMode = () => {
+    console.log('toggling view mode');
+    this.setState({creatorMode: !this.state.creatorMode})
   }
   render(){
     //!TODO wait until saving playlists works, this was just to test route
@@ -76,14 +79,20 @@ class HomeBase extends Component {
     //     </Feed.Event>
     //   )
     // })
+    const view = this.state.creatorMode ? <CreatorView toggleViewMode={this.toggleViewMode}/> : <UserView toggleViewMode={this.toggleViewMode}/>;
     return (
       <React.Fragment>
         <Grid columns={1} fluid centered style={{textAlign:"centered"}}>
            {
-                this.state.activePlaylist ? 
-                <Button onClick={this.showUserPlaylist}>Full Playlist</Button>
+                !this.state.activePlaylist ?
+                <React.Fragment>
+                  <Button onClick={this.addPlaylist}>create playlist to start</Button>
+                  <Playlist activatePlaylist={this.activatePlaylist}/>
+                </React.Fragment>
                 :
-                <Button onClick={this.addPlaylist}>create playlist to start</Button>
+                <React.Fragment>
+                  {view}
+                </React.Fragment>    
             }
         </Grid>
       </React.Fragment>
