@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {
   BrowserRouter as Router,
+  Switch,
   Route,
 } from 'react-router-dom';
 import Navigation from '../Navigation';
@@ -37,12 +38,12 @@ class App extends Component{
     this.listener();
   }
   render(){
-    console.log('app state')
     return(
       <Router>
-        <div>
-          <Navigation authUser={this.state.authUser}/>
-          <hr />
+        <Navigation authUser={this.state.authUser}/>
+        <hr />
+        <Switch>
+          
           <Route exact path={ROUTES.LANDING} component={SignInPage} />
           <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
           <Route path={ROUTES.SIGN_IN} component={SignInPage} />
@@ -55,8 +56,7 @@ class App extends Component{
           <Route path={ROUTES.PLAYLIST} component={Playlist} />
           <Route exact path={ROUTES.SIGN_IN_TEMP} children={SignInTempPage}/>
           <Route path={ROUTES.ACTIVEPLAYLIST} component={ActivePlaylist} />
-          {/* <Route exact path="/login" render={(props) => <Login {...props} logOut={this.logOut} logIn={this.logIn}/>}/> */}
-        </div>
+        </Switch>
       </Router>
     )
   }

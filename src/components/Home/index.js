@@ -20,11 +20,14 @@ const HomePage = () => (
   </div>
 );
 
+//POTENTIAL GAME SETTINGS
+//sudden death
+
 class HomeBase extends Component {
   constructor(props) {
     super();
     this.state = {
-      activePlaylist: '5hVQsD4OxSa8KgtJGXVb',
+      activePlaylistId: '',
       playlists: [],
       creatorMode: false,
     }
@@ -41,40 +44,20 @@ class HomeBase extends Component {
   }
   getPlaylist(playlistId) {
     console.log('getting playlist');
-    let dbRef = this.props.firebase.db.collection('playlists');
-    // let query = dbRef.where('id', '==', playlistId).get()
-    //   .then(snapshot => {
-    //     if (snapshot.empty) {
-    //       console.log('No matching documents.');
-    //       return;
-    //     }  
-
-    //     snapshot.forEach(doc => {
-    //       console.log(doc.id, '=>', doc.data());
-    //     });
-    //   })
-    //   .catch(err => {
-    //     console.log('Error getting documents', err);
-    //   });
-    // itemsRef.get().then((snapshot) => {
-    //   //let items = snapshot.val();
-    //   console.log('snapshot',snapshot)
-      // let newItem = '';
-      // snapshot.forEach((i) => {
-      //   const item = i.data()
-      //   const id = i.id;
-      //   newItem = {
-      //     date: item.date,
-      //     userId: item.userId,
-      //     title: item.title,
-      //     mood: item.mood,
-      //     id: id,
-      //   };
-      // });
-      // this.setState({
-      //   activePlaylist: newItem[0]
-      // });
-    // });
+    console.log(this.props);
+    const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+    console.log(itemRef)
+    let query = itemRef.get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          console.log('No matching documents.');
+          return;
+        }  
+        console.log('get snapshot', snapshot.data())
+      })
+      .catch(err => {
+        console.log('Error getting documents', err);
+      });
   }
   getPlaylists() {
     const itemsRef = this.props.firebase.db.collection('playlists');
@@ -98,8 +81,9 @@ class HomeBase extends Component {
       });
     });
   }
-  activatePlaylist = (playlistName) => {
-    this.setState({activePlaylist: playlistName})
+  activatePlaylist = (playlistId) => {
+    console.log('activating playlist');
+    this.getPlaylist(playlistId);
   }
   addPlaylist = () => {
     console.log('adding playlist');
@@ -131,7 +115,7 @@ class HomeBase extends Component {
                 !this.state.activePlaylist ?
                 <React.Fragment>
                   
-                  <Playlist activatePlaylist={this.activatePlaylist}/>
+                  <Playlist activatePlaylist={this.activatePlaylist} firebase={this.props.firebase}/>
                 </React.Fragment>
                 :
                 <React.Fragment>

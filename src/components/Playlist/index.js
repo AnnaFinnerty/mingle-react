@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
-import { withRouter } from 'react-router-dom';
+import { withRouter, useParams } from 'react-router-dom';
 
 import '../../App.css';
 import { Container, Form, Button, Label, Input } from 'semantic-ui-react'
@@ -16,7 +16,7 @@ const PlaylistPage = () => (
 );
 
 class PlaylistBase extends Component {
-  constructor() {
+  constructor(props) {
     super();
     //!TODO update prop names
     this.state = {
@@ -28,10 +28,10 @@ class PlaylistBase extends Component {
   }
   createPlaylist = () => {
     console.log("creating playlist");
-    console.log('title',this.state.newPlaylistTitle);
-    console.log('mood',this.state.newPlaylistMood);
+    console.log(this.props);
     const date = new Date();
     const history = this.props.history;
+    const activateCallback = this.props.activatePlaylist;
     const title = this.state.newPlaylistTitle;
     this.props.firebase.db.collection("playlists").add({
       title:{
@@ -43,6 +43,7 @@ class PlaylistBase extends Component {
       })
       .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id);
+          activateCallback(docRef.id);
           history.push(ROUTES.HOME)
       })
       .catch(function(error) {
@@ -60,7 +61,6 @@ class PlaylistBase extends Component {
     .catch((err) => {
       console.log("error deleting playlist")
     })
-    this.setState({songs: this.state.playlistId.filter((playlist) => (playlist.id != playlistId))})
   }
   handleChange = (e) => {
     this.setState({

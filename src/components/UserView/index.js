@@ -7,17 +7,12 @@ import { Grid, Button, Label, Input } from 'semantic-ui-react';
 const UserView = (props) => (
    
         <React.Fragment>
-            <Grid columns={2} divided>
-                <Grid.Column>
-                    <Button onClick={props.toggleViewMode}>Creator View</Button>
-                    <Label>Invite</Label>
-                    <Input></Input>
-                    <Label>Contributors</Label>
-                </Grid.Column>
-                <Grid.Column>
-                    <ActivePlaylist/>
-                </Grid.Column>
-            </Grid>
+        <Grid columns={1} divided>
+            <Grid.Column>
+                <Button onClick={props.toggleViewMode}>Go to Creator View</Button>
+                <ActivePlaylist/>
+            </Grid.Column>
+        </Grid>
         </React.Fragment>
     
 )
