@@ -2,7 +2,7 @@ import React from 'react';
 
 import ActivePlaylist from '../ActivePlaylist';
 
-import { Grid, Button } from 'semantic-ui-react';
+import { Grid, Button, Label, Input } from 'semantic-ui-react';
 
 const UserView = (props) => (
    
@@ -10,10 +10,12 @@ const UserView = (props) => (
             <Grid columns={2} divided>
                 <Grid.Column>
                     <Button onClick={props.toggleViewMode}>Creator View</Button>
-                    <ActivePlaylist/>
+                    <Label>Invite</Label>
+                    <Input></Input>
+                    <Label>Contributors</Label>
                 </Grid.Column>
                 <Grid.Column>
-                    
+                    <ActivePlaylist/>
                 </Grid.Column>
             </Grid>
         </React.Fragment>

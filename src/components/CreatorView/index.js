@@ -10,6 +10,7 @@ const CreatorView = (props) => (
         <Grid columns={1} divided>
             <Grid.Column>
                 <Button onClick={props.toggleViewMode}>Go to User View</Button>
+                <Button onClick={props.addPlaylist}>start a new playlist</Button>
                 <ActivePlaylist/>
             </Grid.Column>
         </Grid>

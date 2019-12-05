@@ -6,7 +6,7 @@ import { Label } from 'semantic-ui-react';
 
 const SignInTempPage = () => (
   <div>
-    <h1>SignInTemp</h1>
+    <h1>Temporary Account</h1>
     <FirebaseContext.Consumer>
       {firebase => <SignInTempForm firebase={firebase} />}
     </FirebaseContext.Consumer>
@@ -21,7 +21,9 @@ const INITIAL_STATE = {
 class SignInTempFormBase extends Component {
   constructor(props) {
     super(props);
-    this.state = { ...INITIAL_STATE };
+    this.state = { ...INITIAL_STATE, randomName: '' };
+    this.randomNamesPart1 = ['Aqua', 'Evil', 'Super', 'Magenta']
+    this.randomNamesPart2 = ['Badger', 'Fox', 'Giraffe', 'Aardvark']
   }
   onSubmit = event => {
     event.preventDefault();
@@ -45,6 +47,14 @@ class SignInTempFormBase extends Component {
   onChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
+  randomNameGen = () => {
+    function randomFromArray(arr){
+      return arr[Math.floor(Math.random()*arr.length)]
+    }
+    const name1 = randomFromArray(this.randomNamesPart1);
+    const name2 = randomFromArray(this.randomNamesPart2);
+    return name1 + name2
+  }
   render() {
     console.log("signInTempProps",this.props);
     const {
@@ -74,9 +84,10 @@ class SignInTempFormBase extends Component {
           placeholder="username"
          />
         <button disabled={isInvalid} type="submit">
-          Sign Up
+          let's go!
         </button>
         {error && <p>{error.message}</p>}
+        <Label color="black" style={{textAlign:"center",color:"white"}}>Hey, just so you know, <br></br> you're logging in as a guest user,  <br></br>so we won't be keeping track of your progress. <br></br>To save your score, view past playlists, <br></br> and start your own games, <br></br> sign up for a real account, stranger </Label>
       </form>
     );
   }

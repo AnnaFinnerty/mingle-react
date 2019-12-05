@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
-import { withRouter } from 'react-router-dom';
+import { withRouter, useParams } from 'react-router-dom';
 
 import CreatorView from '../CreatorView';
 import UserView from '../UserView';
@@ -21,7 +21,7 @@ const HomePage = () => (
 );
 
 class HomeBase extends Component {
-  constructor() {
+  constructor(props) {
     super();
     this.state = {
       activePlaylist: '5hVQsD4OxSa8KgtJGXVb',
@@ -31,6 +31,50 @@ class HomeBase extends Component {
   }
   componentDidMount(){
     this.getPlaylists();
+    const playlistId = this.props.match.params.playlistId;
+    if(playlistId){
+      console.log("found playlistId:  " +  playlistId);
+      this.getPlaylist(playlistId);
+    } else {
+      console.log('no playlist to load');
+    }
+  }
+  getPlaylist(playlistId) {
+    console.log('getting playlist');
+    let dbRef = this.props.firebase.db.collection('playlists');
+    // let query = dbRef.where('id', '==', playlistId).get()
+    //   .then(snapshot => {
+    //     if (snapshot.empty) {
+    //       console.log('No matching documents.');
+    //       return;
+    //     }  
+
+    //     snapshot.forEach(doc => {
+    //       console.log(doc.id, '=>', doc.data());
+    //     });
+    //   })
+    //   .catch(err => {
+    //     console.log('Error getting documents', err);
+    //   });
+    // itemsRef.get().then((snapshot) => {
+    //   //let items = snapshot.val();
+    //   console.log('snapshot',snapshot)
+      // let newItem = '';
+      // snapshot.forEach((i) => {
+      //   const item = i.data()
+      //   const id = i.id;
+      //   newItem = {
+      //     date: item.date,
+      //     userId: item.userId,
+      //     title: item.title,
+      //     mood: item.mood,
+      //     id: id,
+      //   };
+      // });
+      // this.setState({
+      //   activePlaylist: newItem[0]
+      // });
+    // });
   }
   getPlaylists() {
     const itemsRef = this.props.firebase.db.collection('playlists');
@@ -79,14 +123,14 @@ class HomeBase extends Component {
     //     </Feed.Event>
     //   )
     // })
-    const view = this.state.creatorMode ? <CreatorView toggleViewMode={this.toggleViewMode}/> : <UserView toggleViewMode={this.toggleViewMode}/>;
+    const view = this.state.creatorMode ? <CreatorView toggleViewMode={this.toggleViewMode} addPlaylist={this.addPlaylist}/> : <UserView toggleViewMode={this.toggleViewMode}/>;
     return (
       <React.Fragment>
         <Grid columns={1} fluid centered style={{textAlign:"centered"}}>
            {
                 !this.state.activePlaylist ?
                 <React.Fragment>
-                  <Button onClick={this.addPlaylist}>create playlist to start</Button>
+                  
                   <Playlist activatePlaylist={this.activatePlaylist}/>
                 </React.Fragment>
                 :

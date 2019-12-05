@@ -32,11 +32,14 @@ class PlaylistBase extends Component {
     console.log('mood',this.state.newPlaylistMood);
     const date = new Date();
     const history = this.props.history;
+    const title = this.state.newPlaylistTitle;
     this.props.firebase.db.collection("playlists").add({
-      title: this.state.newPlaylistTitle,
-      mood: this.state.newPlaylistMood,
-      userId: 1,
-      date: date
+      title:{
+          title: title,
+          mood: this.state.newPlaylistMood,
+          userId: 1,
+          date: date
+        }
       })
       .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id);
