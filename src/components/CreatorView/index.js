@@ -10,29 +10,24 @@ class CreatorView extends Component{
         this.state = {
             invites: 0,
             players: 0,
-            inviteCode: ''
+            inviteCode: '',
+            inviteCodeInput: document.getElementById("invite-code")
         }
     }
     genInviteCode = () => {
         console.log('generating invite code');
-        const code = "http://localhost:3000/login/" + this.props.playlistId;
+        const code = "https://song-battle.herokuapp.com/" + this.props.playlistId;
         this.setState({
             inviteCode: code
         })
     }
     copyInviteCode = () => {
-        var copyText = document.getElementById("invite-code");
+        //select text field
+        this.state.inviteCodeInput.select();
+        this.state.inviteCodeInput.setSelectionRange(0, 99999); //for mobile devices
 
-        /* Select the text field */
-        copyText.select();
-        copyText.setSelectionRange(0, 99999); /*For mobile devices*/
-
-        /* Copy the text inside the text field */
+        //copy text inside text field
         document.execCommand("copy");
-
-        // /* Alert the copied text */
-        // alert("Copied the text: " + copyText.value);
-
     }
     render(){
         return(
