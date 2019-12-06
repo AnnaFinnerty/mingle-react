@@ -21,15 +21,21 @@ const HomePage = () => (
 );
 
 //POTENTIAL GAME SETTINGS
+//give eliminated users a change to replay: Second chance
 //sudden death
+//end song immediately on vote completion or play through
+//speed through? Or should this be default?
 
 class HomeBase extends Component {
   constructor(props) {
     super();
     this.state = {
+      activePlaylist: '',
       activePlaylistId: '',
       playlists: [],
-      creatorMode: false,
+      creatorMode: true,
+      secondChance: true,
+      playThrough: false,
     }
   }
   componentDidMount(){
@@ -44,9 +50,7 @@ class HomeBase extends Component {
   }
   getPlaylist(playlistId) {
     console.log('getting playlist');
-    console.log(this.props);
     const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    console.log(itemRef)
     let query = itemRef.get()
       .then(snapshot => {
         if (snapshot.empty) {
@@ -54,6 +58,10 @@ class HomeBase extends Component {
           return;
         }  
         console.log('get snapshot', snapshot.data())
+        this.setState({
+          activePlaylist: snapshot.data(),
+          activePlaylistId: playlistId
+        })
       })
       .catch(err => {
         console.log('Error getting documents', err);
@@ -62,7 +70,6 @@ class HomeBase extends Component {
   getPlaylists() {
     const itemsRef = this.props.firebase.db.collection('playlists');
     itemsRef.get().then((snapshot) => {
-      //let items = snapshot.val();
       console.log('snapshot',snapshot)
       let newItems = [];
       snapshot.forEach((i) => {
@@ -107,7 +114,10 @@ class HomeBase extends Component {
     //     </Feed.Event>
     //   )
     // })
-    const view = this.state.creatorMode ? <CreatorView toggleViewMode={this.toggleViewMode} addPlaylist={this.addPlaylist}/> : <UserView toggleViewMode={this.toggleViewMode}/>;
+    const view = this.state.creatorMode ? 
+                <CreatorView playlistId={this.state.activePlaylistId} toggleViewMode={this.toggleViewMode} addPlaylist={this.addPlaylist}/> 
+                : 
+                <UserView toggleViewMode={this.toggleViewMode}/>;
     return (
       <React.Fragment>
         <Grid columns={1} fluid centered style={{textAlign:"centered"}}>

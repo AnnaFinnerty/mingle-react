@@ -69,3 +69,8 @@ button{
 .disable-click{
   pointer-events: none;
 }
+
+.share-link{
+  min-height: 3vh;
+  border: 1px solid black;
+}

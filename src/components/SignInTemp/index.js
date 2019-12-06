@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import { Link, withRouter, useParams } from 'react-router-dom';
 import { FirebaseContext, withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
-import { Label } from 'semantic-ui-react';
+
+import { Label, Button } from 'semantic-ui-react';
+import { SignUpLink } from '../SignUp';
 
 const SignInTempPage = () => (
   <div>
-    <h1>Temporary Account</h1>
+    <h1>Pick Names</h1>
     <FirebaseContext.Consumer>
       {firebase => <SignInTempForm firebase={firebase} />}
     </FirebaseContext.Consumer>
@@ -21,9 +23,9 @@ const INITIAL_STATE = {
 class SignInTempFormBase extends Component {
   constructor(props) {
     super(props);
-    this.state = { ...INITIAL_STATE, randomName: '' };
-    this.randomNamesPart1 = ['Aqua', 'Evil', 'Super', 'Magenta']
-    this.randomNamesPart2 = ['Badger', 'Fox', 'Giraffe', 'Aardvark']
+    this.state = { ...INITIAL_STATE };
+    this.randomNamesPart1 = ['Aqua', 'Evil', 'Super', 'Magenta', 'Cool', 'Happy']
+    this.randomNamesPart2 = ['Badger', 'Fox', 'Giraffe', 'Aardvark', 'Corgi', 'Bunny']
   }
   onSubmit = event => {
     event.preventDefault();
@@ -37,8 +39,9 @@ class SignInTempFormBase extends Component {
       downvotes: 0,
       songId: '',
       })
-      .then(function(docRef) {
+      .then((docRef) => {
           console.log("Document written with ID: ", docRef.id);
+          //this.props.history.push('/playlist/'+this.props.match.params.playlistId);
       })
       .catch(function(error) {
           console.error("Error adding document: ", error);
@@ -53,7 +56,9 @@ class SignInTempFormBase extends Component {
     }
     const name1 = randomFromArray(this.randomNamesPart1);
     const name2 = randomFromArray(this.randomNamesPart2);
-    return name1 + name2
+    this.setState({
+      secretname:name1+name2
+    })
   }
   render() {
     console.log("signInTempProps",this.props);
@@ -66,8 +71,9 @@ class SignInTempFormBase extends Component {
       username === '' ||
       secretname === '';
     return (
-      <form onSubmit={this.onSubmit}>
+      <form>
           <Label>a secret name to hide your identity</Label>
+          <Button onClick={this.randomNameGen}>just give me a random name</Button>
           <input
             name="secretname"
             value={secretname}
@@ -77,26 +83,29 @@ class SignInTempFormBase extends Component {
           />
           <Label>a name people will recognize later</Label>
           <input
-          name="username"
-          value={username}
-          onChange={this.onChange}
-          type="text"
-          placeholder="username"
-         />
-        <button disabled={isInvalid} type="submit">
-          let's go!
-        </button>
+            name="username"
+            value={username}
+            onChange={this.onChange}
+            type="text"
+            placeholder="username"
+          />
+          <button disabled={isInvalid} type="submit">
+            let's go!
+          </button>
         {error && <p>{error.message}</p>}
-        <Label color="black" style={{textAlign:"center",color:"white"}}>Hey, just so you know, <br></br> you're logging in as a guest user,  <br></br>so we won't be keeping track of your progress. <br></br>To save your score, view past playlists, <br></br> and start your own games, <br></br> sign up for a real account, stranger </Label>
+        <Label color="black" style={{textAlign:"center",color:"white"}}>
+          Hey, just so you know, <br></br> 
+          you're logging in as a guest user, <br></br>
+          so we won't be keeping track of your progress. <br></br>
+          To start your own game <br></br> 
+          sign up for a real account, stranger <br></br>
+          <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
+          </Label>
       </form>
     );
   }
 }
-const SignUpLink = () => (
-  <p>
-    Want to control the game? <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
-  </p>
-);
+
 
 const SignInTempForm = withRouter(SignInTempFormBase);
 export default SignInTempPage;
