@@ -6,17 +6,20 @@ import { withRouter, useParams } from 'react-router-dom';
 import CreatorView from '../CreatorView';
 import UserView from '../UserView';
 
+// import AuthUserContext from '../Session';
 
 import '../../App.css';
-import { Modal, Grid, Button, Header } from 'semantic-ui-react'
+import { Grid, Button, Header } from 'semantic-ui-react'
 import { Playlist } from '../Playlist';
 
 
 const HomePage = () => (
   <div>
-    <FirebaseContext.Consumer>
-      {firebase => <Home firebase={firebase} />}
-    </FirebaseContext.Consumer>
+    {/* <AuthUserContext.Consumer> */}
+      <FirebaseContext.Consumer>
+        {firebase => <Home firebase={firebase} />}
+      </FirebaseContext.Consumer>
+    {/* </AuthUserContext.Consumer> */}
   </div>
 );
 
@@ -37,6 +40,7 @@ class HomeBase extends Component {
       creatorMode: true,
       secondChance: true,
       playThrough: false,
+      suddenDeath: false,
     }
   }
   componentDidMount(){
@@ -125,7 +129,7 @@ class HomeBase extends Component {
     this.setState({creatorMode: !this.state.creatorMode})
   }
   render(){
-    console.log('home props', this.props)
+    console.log('home props', this.props.authUser)
     //!TODO wait until saving playlists works, this was just to test route
     // const playlists = !this.state.playlists.length ?
     // <Label>no playlists</Label> :

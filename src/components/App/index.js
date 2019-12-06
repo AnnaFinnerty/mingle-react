@@ -17,7 +17,7 @@ import Playlist from '../Playlist';
 import ActivePlaylist from '../ActivePlaylist';
 import * as ROUTES from '../../constants/routes';
 import { withFirebase } from '../Firebase';
-import { AuthUserContext } from '../Session';
+// import { AuthUserContext } from '../Session';
 
 class App extends Component{
   constructor(props) {
@@ -40,7 +40,7 @@ class App extends Component{
   }
   render(){
     return(
-      <AuthUserContext.Provider value={this.state.authUser}>
+      // <AuthUserContext.Provider value={this.state.authUser}>
         <Router>
           <Navigation authUser={this.state.authUser}/>
           <hr />
@@ -61,7 +61,7 @@ class App extends Component{
             <Route path={ROUTES.ACTIVEPLAYLIST} component={ActivePlaylist} />
           </Switch>
         </Router>
-      </AuthUserContext.Provider>
+      // </AuthUserContext.Provider>
     )
   }
 };
