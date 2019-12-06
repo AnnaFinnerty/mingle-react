@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { SignUpLink } from '../SignUp';
-import { FirebaseContext, withFirebase } from '../Firebase';
+import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
 const SignInPage = () => (
@@ -27,7 +27,6 @@ class SignInFormBase extends Component {
   onSubmit = event => {
     event.preventDefault();
     const { email, password } = this.state;
-    console.log('suimit',email,password);
     this.props.firebase
       .doSignInWithEmailAndPassword(email, password)
       .then(() => {

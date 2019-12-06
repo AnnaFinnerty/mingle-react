@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
-import { withRouter } from 'react-router-dom';
+import { withRouter, useParams } from 'react-router-dom';
 
 import CreatorView from '../CreatorView';
 import UserView from '../UserView';
@@ -20,22 +20,57 @@ const HomePage = () => (
   </div>
 );
 
+//POTENTIAL GAME SETTINGS
+//give eliminated users a change to replay: Second chance
+//sudden death
+//end song immediately on vote completion or play through
+//speed through? Or should this be default?
+
 class HomeBase extends Component {
-  constructor() {
+  constructor(props) {
     super();
     this.state = {
-      activePlaylist: '5hVQsD4OxSa8KgtJGXVb',
+      players: [],
+      activePlaylist: '',
+      activePlaylistId: '',
       playlists: [],
-      creatorMode: false,
+      creatorMode: true,
+      secondChance: true,
+      playThrough: false,
     }
   }
   componentDidMount(){
     this.getPlaylists();
+    const playlistId = this.props.match.params.playlistId;
+    if(playlistId){
+      console.log("found playlistId:  " +  playlistId);
+      this.getPlaylist(playlistId);
+    } else {
+      console.log('no playlist to load');
+    }
+  }
+  getPlaylist(playlistId) {
+    console.log('getting playlist');
+    const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+    let query = itemRef.get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          console.log('No matching documents.');
+          return;
+        }  
+        console.log('get snapshot', snapshot.data())
+        this.setState({
+          activePlaylist: snapshot.data(),
+          activePlaylistId: playlistId
+        })
+      })
+      .catch(err => {
+        console.log('Error getting documents', err);
+      });
   }
   getPlaylists() {
     const itemsRef = this.props.firebase.db.collection('playlists');
-    itemsRef.get().then((snapshot) => {
-      //let items = snapshot.val();
+    itemsRef.where('capital', '==', true).get().then((snapshot) => {
       console.log('snapshot',snapshot)
       let newItems = [];
       snapshot.forEach((i) => {
@@ -54,8 +89,32 @@ class HomeBase extends Component {
       });
     });
   }
-  activatePlaylist = (playlistName) => {
-    this.setState({activePlaylist: playlistName})
+  getUsers() {
+    const itemsRef = this.props.firebase.db.collection('temp_users');
+    itemsRef.get().then((snapshot) => {
+      console.log('snapshot',snapshot)
+      let newUsers = [];
+      snapshot.forEach((i) => {
+        const item = i.data()
+        const id = i.id;
+        newUsers.push({
+          username: item.username,
+          secretname: item.secretname,
+          songId: item.songId,
+          downvotes: item.downvotes,
+          upvotes: item.upvotes,
+          id: id,
+        });
+      });
+      console.log('users',newUsers);
+      this.setState({
+        players: newUsers
+      });
+    });
+  }
+  activatePlaylist = (playlistId) => {
+    console.log('activating playlist');
+    this.getPlaylist(playlistId);
   }
   addPlaylist = () => {
     console.log('adding playlist');
@@ -66,6 +125,7 @@ class HomeBase extends Component {
     this.setState({creatorMode: !this.state.creatorMode})
   }
   render(){
+    console.log('home props', this.props)
     //!TODO wait until saving playlists works, this was just to test route
     // const playlists = !this.state.playlists.length ?
     // <Label>no playlists</Label> :
@@ -79,15 +139,18 @@ class HomeBase extends Component {
     //     </Feed.Event>
     //   )
     // })
-    const view = this.state.creatorMode ? <CreatorView toggleViewMode={this.toggleViewMode}/> : <UserView toggleViewMode={this.toggleViewMode}/>;
+    const view = this.state.creatorMode ? 
+                <CreatorView playlistId={this.state.activePlaylistId} toggleViewMode={this.toggleViewMode} addPlaylist={this.addPlaylist}/> 
+                : 
+                <UserView toggleViewMode={this.toggleViewMode}/>;
     return (
       <React.Fragment>
         <Grid columns={1} fluid centered style={{textAlign:"centered"}}>
            {
                 !this.state.activePlaylist ?
                 <React.Fragment>
-                  <Button onClick={this.addPlaylist}>create playlist to start</Button>
-                  <Playlist activatePlaylist={this.activatePlaylist}/>
+                  
+                  <Playlist activatePlaylist={this.activatePlaylist} firebase={this.props.firebase}/>
                 </React.Fragment>
                 :
                 <React.Fragment>
