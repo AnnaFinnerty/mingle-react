@@ -35,6 +35,7 @@ class PlaylistBase extends Component {
     const title = this.state.newPlaylistTitle;
     this.props.firebase.db.collection("playlists").add({
       title:{
+          active: true,
           title: title,
           mood: this.state.newPlaylistMood,
           userId: 1,
@@ -70,7 +71,7 @@ class PlaylistBase extends Component {
   render(){
     return (
         <Container fluid centered="true" style={{width:"100%"}}>
-            <Form style={{width:"50%"}}>
+            <Form >
             <Label>New Playlist</Label>
             <Input value={this.state.newPlaylistTitle} 
                 name="newPlaylistTitle" 

@@ -17,7 +17,8 @@ const SignInTempPage = () => (
 
 const INITIAL_STATE = {
     username: '',
-    secretname: ''
+    secretname: '',
+    showManualPlaylistEntry: false,
   };
 
 class SignInTempFormBase extends Component {
@@ -26,6 +27,15 @@ class SignInTempFormBase extends Component {
     this.state = { ...INITIAL_STATE };
     this.randomNamesPart1 = ['Aqua', 'Evil', 'Super', 'Magenta', 'Cool', 'Happy']
     this.randomNamesPart2 = ['Badger', 'Fox', 'Giraffe', 'Aardvark', 'Corgi', 'Bunny']
+  }
+  componentDidMount = () => {
+    const playlistId = this.props.match.params.playlistId;
+    if(!playlistId){
+      console.log("found playlistId:  " +  playlistId);
+      this.setState({
+        showManualPlaylistEntry: true,
+      })
+    } 
   }
   onSubmit = event => {
     event.preventDefault();

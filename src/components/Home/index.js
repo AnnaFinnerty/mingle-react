@@ -30,6 +30,7 @@ class HomeBase extends Component {
   constructor(props) {
     super();
     this.state = {
+      players: [],
       activePlaylist: '',
       activePlaylistId: '',
       playlists: [],
@@ -69,7 +70,7 @@ class HomeBase extends Component {
   }
   getPlaylists() {
     const itemsRef = this.props.firebase.db.collection('playlists');
-    itemsRef.get().then((snapshot) => {
+    itemsRef.where('capital', '==', true).get().then((snapshot) => {
       console.log('snapshot',snapshot)
       let newItems = [];
       snapshot.forEach((i) => {
@@ -88,6 +89,29 @@ class HomeBase extends Component {
       });
     });
   }
+  getUsers() {
+    const itemsRef = this.props.firebase.db.collection('temp_users');
+    itemsRef.get().then((snapshot) => {
+      console.log('snapshot',snapshot)
+      let newUsers = [];
+      snapshot.forEach((i) => {
+        const item = i.data()
+        const id = i.id;
+        newUsers.push({
+          username: item.username,
+          secretname: item.secretname,
+          songId: item.songId,
+          downvotes: item.downvotes,
+          upvotes: item.upvotes,
+          id: id,
+        });
+      });
+      console.log('users',newUsers);
+      this.setState({
+        players: newUsers
+      });
+    });
+  }
   activatePlaylist = (playlistId) => {
     console.log('activating playlist');
     this.getPlaylist(playlistId);
@@ -101,6 +125,7 @@ class HomeBase extends Component {
     this.setState({creatorMode: !this.state.creatorMode})
   }
   render(){
+    console.log('home props', this.props)
     //!TODO wait until saving playlists works, this was just to test route
     // const playlists = !this.state.playlists.length ?
     // <Label>no playlists</Label> :
