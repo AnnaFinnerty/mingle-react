@@ -47,8 +47,7 @@ class App extends Component{
           <Navigation authUser={this.state.authUser}/>
           <hr />
           <Switch> 
-            <Route exact path={ROUTES.TEST} component={ParamTest}/>
-            <Route exact path={ROUTES.LANDING} component={SignInPage} />
+            {/* <Route exact path={ROUTES.LANDING} component={SignInPage} /> */}
             <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
             {/* <Route path={ROUTES.SIGN_IN} component={SignInPage} /> */}
             <Route exact path={ROUTES.SIGN_IN} render={
@@ -59,9 +58,9 @@ class App extends Component{
             <Route exact path={ROUTES.HOME} render={
               (props) => <HomePage {...props} authUser={this.state.authUser} someProp={'test'}/>
             }/>
-            <Route path={ROUTES.ACCOUNT} component={AccountPage} />
-            <Route path={ROUTES.ADMIN} component={AdminPage} />
-            <Route path={ROUTES.NEWSONG} component={NewSongPage} />
+            {/* <Route path={ROUTES.ACCOUNT} component={AccountPage} />
+            <Route path={ROUTES.ADMIN} component={AdminPage} /> */}
+            {/* <Route path={ROUTES.NEWSONG} component={NewSongPage} /> */}
             <Route path={ROUTES.PLAYLIST} component={Playlist} />
             <Route exact path={ROUTES.SIGN_IN_TEMP} children={SignInTempPage}/>
             <Route exact path={ROUTES.ACTIVEPLAYLIST} children={ActivePlaylist}/>
