@@ -10,7 +10,8 @@ class CreatorView extends Component{
         this.state = {
             invites: 0,
             players: 0,
-            inviteCode: ''
+            inviteCode: '',
+            inviteCodeInput: document.getElementById("invite-code")
         }
     }
     genInviteCode = () => {
@@ -21,20 +22,16 @@ class CreatorView extends Component{
         })
     }
     copyInviteCode = () => {
-        var copyText = document.getElementById("invite-code");
+        const input = document.getElementById("invite-code");
+        //select text field
+        input.select();
+        input.setSelectionRange(0, 99999); //for mobile devices
 
-        /* Select the text field */
-        copyText.select();
-        copyText.setSelectionRange(0, 99999); /*For mobile devices*/
-
-        /* Copy the text inside the text field */
+        //copy text inside text field
         document.execCommand("copy");
-
-        // /* Alert the copied text */
-        // alert("Copied the text: " + copyText.value);
-
     }
     render(){
+        console.log('creatorView props', this.props)
         return(
    
             <React.Fragment>
@@ -59,7 +56,7 @@ class CreatorView extends Component{
                         <Label>Contributors</Label>
                     </Grid.Column>
                     <Grid.Column>
-                        <ActivePlaylist/>
+                        <ActivePlaylist authUser={this.props.userId} history={this.props.history} match={this.props.match} location={this.props.location} />
                     </Grid.Column>
                 </Grid>
             </React.Fragment>

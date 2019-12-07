@@ -15,6 +15,7 @@ import AdminPage from '../Admin';
 import NewSongPage from '../NewSong';
 import Playlist from '../Playlist';
 import ActivePlaylist from '../ActivePlaylist';
+import ParamTest from '../ParamTest';
 import * as ROUTES from '../../constants/routes';
 import { withFirebase } from '../Firebase';
 // import { AuthUserContext } from '../Session';
@@ -30,7 +31,7 @@ class App extends Component{
     this.listener = this.props.firebase.auth.onAuthStateChanged(
       authUser => {
         authUser
-          ? this.setState({ authUser })
+          ? this.setState({ authUser: authUser.uid })
           : this.setState({ authUser: null });
       },
     );
@@ -39,27 +40,37 @@ class App extends Component{
     this.listener();
   }
   render(){
+    console.log('app mounted. auth user:' + this.state.authUser)
     return(
       // <AuthUserContext.Provider value={this.state.authUser}>
         <Router>
           <Navigation authUser={this.state.authUser}/>
           <hr />
           <Switch> 
-            <Route exact path={ROUTES.LANDING} component={SignInPage} />
+            {/* <Route exact path={ROUTES.LANDING} component={SignInPage} /> */}
             <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
-            <Route path={ROUTES.SIGN_IN} component={SignInPage} />
-            
+            {/* <Route path={ROUTES.SIGN_IN} component={SignInPage} /> */}
+            <Route exact path={ROUTES.SIGN_IN} render={
+              (props) => <SignInPage {...props} authUser={this.state.authUser} someProp={'test'}/>
+            }/>
             <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
             {/* <Route exact path={ROUTES.HOME} component={HomePage}/> */}
-            {/* <Route exact path="/login" render={(props) => <Login {...props} logOut={this.logOut} logIn={this.logIn}/>}/> */}
-            <Route exact path={ROUTES.HOME} render={(props) => <HomePage {...props} authUser={this.state.authUser}/>}/>
-            <Route path={ROUTES.ACCOUNT} component={AccountPage} />
-            <Route path={ROUTES.ADMIN} component={AdminPage} />
-            <Route path={ROUTES.NEWSONG} component={NewSongPage} />
+            <Route exact path={ROUTES.HOME} render={
+              (props) => <HomePage {...props} authUser={this.state.authUser} someProp={'test'}/>
+            }/>
+            {/* <Route path={ROUTES.ACCOUNT} component={AccountPage} />
+            <Route path={ROUTES.ADMIN} component={AdminPage} /> */}
+            {/* <Route path={ROUTES.NEWSONG} component={NewSongPage} /> */}
             <Route path={ROUTES.PLAYLIST} component={Playlist} />
             <Route exact path={ROUTES.SIGN_IN_TEMP} children={SignInTempPage}/>
-            <Route path={ROUTES.ACTIVEPLAYLIST} component={ActivePlaylist} />
+            <Route exact path={ROUTES.ACTIVEPLAYLIST} children={ActivePlaylist}/>
+            
+            {/*Does not work! 
+              <Route exact path={ROUTES.ACTIVEPLAYLIST} render={
+              (props) => <ActivePlaylist {...props} />
+            }/> */}
           </Switch>
+
         </Router>
       // </AuthUserContext.Provider>
     )
