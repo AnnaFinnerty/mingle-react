@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 import { withRouter, useParams } from 'react-router-dom';
+
+import { FirebaseContext } from '../Firebase';
 
 import CreatorView from '../CreatorView';
 import UserView from '../UserView';
@@ -9,7 +10,7 @@ import UserView from '../UserView';
 // import AuthUserContext from '../Session';
 
 import '../../App.css';
-import { Grid, Button, Header } from 'semantic-ui-react'
+import { Grid, Label, Feed, Button, Header } from 'semantic-ui-react'
 import { Playlist } from '../Playlist';
 
 
@@ -33,7 +34,7 @@ const HomePage = (props) => {
 class HomeBase extends Component {
   constructor(props) {
     super(props);
-    console.log('Constructor Props are:', props)
+    // console.log('Constructor Props are:', props)
     this.state = {
       players: [],
       activePlaylist: '',
@@ -46,12 +47,13 @@ class HomeBase extends Component {
     }
   }
   componentDidMount(){
+    console.log('home did mount');
     this.getUsers();
     //this.getPlaylists();
     // instead of checking for a playlist prop we should be authenticating
     // logged in user, then checking to see if they have an active playlist
-    // const playlistId = this.props.match.params.playlistId;
-    const playlistId = this.state.activePlaylistId;
+    const playlistId = this.props.match.params.playlistId;
+    // const playlistId = this.state.activePlaylistId;
     if(playlistId){
       console.log("found playlistId:  " +  playlistId);
       this.getPlaylist(playlistId);
@@ -137,19 +139,18 @@ class HomeBase extends Component {
   }
   render(){
     console.log('home props', this.props)
-    //!TODO wait until saving playlists works, this was just to test route
-    // const playlists = !this.state.playlists.length ?
-    // <Label>no playlists</Label> :
-    // this.state.playlists.map((playlist)=>{
-    //   console.log(playlist);
-    //   return(
-    //     <Feed.Event style={{backgroundColor:"lightgray", padding:"2% 5%", margin:"0 5%", width:"90%"}}>
-    //       <Feed.Label>
-    //         {playlist.title}
-    //       </Feed.Label>
-    //     </Feed.Event>
-    //   )
-    // })
+    const playlists = !this.state.playlists.length ?
+    <Label>no playlists</Label> :
+    this.state.playlists.map((playlist)=>{
+      console.log(playlist);
+      return(
+        <Feed.Event style={{backgroundColor:"lightgray", padding:"2% 5%", margin:"0 5%", width:"90%"}}>
+          <Feed.Label>
+            {playlist.title}
+          </Feed.Label>
+        </Feed.Event>
+      )
+    })
     const view = this.state.creatorMode ? 
                 <CreatorView playlistId={this.state.activePlaylistId} toggleViewMode={this.toggleViewMode} addPlaylist={this.addPlaylist}/> 
                 : 
@@ -158,7 +159,7 @@ class HomeBase extends Component {
       <React.Fragment>
         <Grid columns={1} fluid={'true'} centered style={{textAlign:"centered"}}>
            {
-                !this.state.activePlaylist ?
+                !this.state.activePlaylistId ?
                 <React.Fragment>
                   
                   <Playlist activatePlaylist={this.activatePlaylist} firebase={this.props.firebase}/>

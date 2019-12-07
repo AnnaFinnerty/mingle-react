@@ -2,7 +2,8 @@ body{
   background: rgb(58, 57, 57);
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
   margin: 0;
   padding: 0;
 }
@@ -24,6 +25,36 @@ input{
 
 button{
   max-width: 20vw;
+}
+
+.song-button{
+  border: none;
+  background: transparent;
+  font-size: 5vh;
+}
+
+.upvote-button{
+  color: green;
+}
+
+.upvote-button:hover{
+  color: rgb(4, 221, 4);
+}
+
+.downvote-button{
+  color: red;
+}
+
+.downvote-button:hover{
+  color: rgb(248, 74, 74);
+}
+
+.delete-button{
+  color: black;
+}
+
+.delete-button:hover{
+  color: rgb(110, 7, 7);
 }
 
 .App {

@@ -29,6 +29,7 @@ class SignInTempFormBase extends Component {
     this.randomNamesPart2 = ['Badger', 'Fox', 'Giraffe', 'Aardvark', 'Corgi', 'Bunny']
   }
   componentDidMount = () => {
+    console.log('signInTemp did mount', this.props)
     const playlistId = this.props.match.params.playlistId;
     if(!playlistId){
       console.log("found playlistId:  " +  playlistId);
@@ -50,9 +51,9 @@ class SignInTempFormBase extends Component {
       downvotes: 0,
       songId: '',
       })
-      .then((docRef) => {
-          console.log("Document written with ID: ", docRef.id);
-          this.props.history.push('/activeplaylist/'+this.props.match.params.playlistId);
+      .then((userRef) => {
+          console.log("Document written with ID: ", userRef.id);
+          this.props.history.push('/activeplaylist/'+userRef.id);
       })
       .catch(function(error) {
           console.error("Error adding document: ", error);
@@ -118,7 +119,6 @@ class SignInTempFormBase extends Component {
     );
   }
 }
-
 
 const SignInTempForm = withRouter(SignInTempFormBase);
 export default SignInTempPage;

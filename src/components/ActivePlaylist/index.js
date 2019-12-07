@@ -1,31 +1,61 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import { withRouter, useParams } from 'react-router-dom';
+import * as ROUTES from '../../constants/routes';
+
 import firebase from '../Firebase';
 import { FirebaseContext } from '../Firebase';
-import '../../App.css';
-import { Card, Grid, Button, Label, Icon } from 'semantic-ui-react'
 
-const ActivePlaylistPage = () => (
-  <div>
+import '../../App.css';
+import { Card, Grid, Button, Label, Icon } from 'semantic-ui-react';
+
+
+const ActivePlaylistPage = (props) => {
+  console.log('active playlist wrapper props', props)
+  return(
+    <div>
     <FirebaseContext.Consumer>
-      {firebase => <ActivePlaylist firebase={firebase} />}
+      {(firebase) => <ActivePlaylistBase {...props} firebase={firebase} />}
     </FirebaseContext.Consumer>
   </div>
-);
+  )
+};
 
-class ActivePlaylist extends Component {
-  constructor() {
-    super();
+class ActivePlaylistBase extends Component {
+  constructor(props) {
+    super(props);
     this.unsubscribe = null;
     this.state = {
       isLoading: true,
-      songs: []
+      songs: [],
+      currentSong: 0,
+      username: '',
+      secretname: ''
     };
   }
   componentDidMount(){
+    console.log('activeplaylist did mount', this.props);
     this.getSongs();
+    console.log(this.state.user);
+    const userRef = this.props.firebase.db.doc(`/temp_users/${this.props.match.params.userId}`);
+    let query = userRef.get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          console.log('No matching user');
+          return;
+        }  
+        console.log('user snapshot', snapshot.data())
+        const data = snapshot.data();
+        this.setState({
+          username: data.username,
+          secretname: data.secretname
+        })
+      })
+      .catch(err => {
+        console.log('Error getting documents', err);
+      });
+    
   }
   getSongs() {
-    console.log(this.props.firebase);
     const itemsRef = this.props.firebase.db.collection('songs');
     itemsRef.get().then((snapshot) => {
       //let items = snapshot.val();
@@ -34,7 +64,6 @@ class ActivePlaylist extends Component {
       snapshot.forEach((i) => {
         const item = i.data()
         const id = i.id;
-        console.log(item);
         newState.push({
           title: item.title,
           url: item.url,
@@ -84,8 +113,12 @@ class ActivePlaylist extends Component {
     })
     this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
   }
+  playPlaylist(){
+    console.log("playing playlist");
+    
+  }
   render(){
-    console.log('songs', this.state.songs)
+    // console.log('songs', this.state.songs)
     const songs = !this.state.songs.length ? 
       <Label>No songs added</Label>
       :
@@ -100,9 +133,9 @@ class ActivePlaylist extends Component {
             </Grid.Column>
             <Grid.Column>
             <Card.Content header={song.title} />
-              <Button onClick={(e)=>this.upvoteSong(e,song.id)} style={{color:"green"}}><Icon name="thumbs up"/></Button>
-              <Button onClick={(e)=>this.downvoteSong(e,song.id)} style={{color:"red"}}><Icon name="thumbs down"/></Button>
-              <Button onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></Button>
+              <button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/></button>
+              <button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/></button>
+              <button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></button>
             </Grid.Column>
           </Grid.Row>
         </Grid> 
@@ -111,13 +144,19 @@ class ActivePlaylist extends Component {
       )
     })
     return (
-      <div>
-        <h2>Playlist </h2>
+      <Grid columns={1}>
+          <Grid.Row columns={2}>
+            <Grid.Column>
+              <h2>{this.state.username}</h2>
+            </Grid.Column>
+            <Grid.Column><h2>{this.state.username}/{this.state.secretname}</h2></Grid.Column>
+        </Grid.Row>
         {songs}
-      </div>
+      </Grid>
     );
   }
 }
 
+const ActivePlaylist = withRouter(ActivePlaylistBase)
 export default ActivePlaylistPage;
 export {ActivePlaylist};
