@@ -50,7 +50,8 @@ class ActivePlaylistBase extends Component {
         const data = snapshot.data();
         this.setState({
           username: data.username,
-          secretname: data.secretname
+          secretname: data.secretname,
+          playlistId: data.playlistId
         })
         self.getPlaylist(data.playlistId);
       })

@@ -6,11 +6,10 @@ import * as ROUTES from '../../constants/routes';
 import { Label, Button } from 'semantic-ui-react';
 import { SignUpLink } from '../SignUp';
 
-const AddTempUserWrapper = () => (
+const AddTempUserWrapper = (props) => (
   <div>
-    <h1>Pick Names</h1>
     <FirebaseContext.Consumer>
-      {firebase => <AddTempUserFormBase firebase={firebase} />}
+      {firebase => <AddTempUserFormBase firebase={firebase} playlistId={props.playlistId} authUser={props.authUser} history={props.history}/>}
     </FirebaseContext.Consumer>
   </div>
 );
@@ -18,6 +17,7 @@ const AddTempUserWrapper = () => (
 const INITIAL_STATE = {
     username: '',
     secretname: '',
+    playlistId: '',
     showManualPlaylistEntry: false,
   };
 
@@ -34,22 +34,27 @@ class AddTempUserFormBase extends Component {
     // const playlistId = this.props.match.params.playlistId;
     const playlistId = this.props.playlistId;
     if(!playlistId){
+      console.log("no playlist found, show manual entry:  " +  playlistId);
       this.setState({
         showManualPlaylistEntry: true,
       })
     } else {
         console.log("found playlistId:  " +  playlistId);
+        this.setState({
+            playlistId: playlistId
+          })
     }
   }
   onSubmit = event => {
-    console.log('submitting temp user')
+    console.log('submitting temp user');
+    console.log(this.props);
     event.preventDefault();
-    const { username, secretname } = this.state;
+    const { username, secretname , playlistId} = this.state;
     //TODO how to get playlistId into props???
     this.props.firebase.db.collection("temp_users").add({
       username: username,
       secretname: secretname,
-      playlistId: this.props.match.params.playlistId,
+      playlistId: playlistId,
       upvotes: 0,
       downvotes: 0,
       songId: '',
@@ -77,7 +82,7 @@ class AddTempUserFormBase extends Component {
     })
   }
   render() {
-    console.log("signInTempProps",this.props);
+    console.log("addTempUserProps",this.props);
     const {
         username,
         secretname,
@@ -110,14 +115,6 @@ class AddTempUserFormBase extends Component {
             let's go!
           </button>
         {error && <p>{error.message}</p>}
-        <Label color="black" style={{textAlign:"center",color:"white"}}>
-          Hey, just so you know, <br></br> 
-          you're logging in as a guest user, <br></br>
-          so we won't be keeping track of your progress. <br></br>
-          To start your own game <br></br> 
-          sign up for a real account, stranger <br></br>
-          <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
-        </Label>
       </form>
     );
   }
