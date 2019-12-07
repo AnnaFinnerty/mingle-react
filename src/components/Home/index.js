@@ -10,7 +10,7 @@ import UserView from '../UserView';
 // import AuthUserContext from '../Session';
 
 import '../../App.css';
-import { Grid, Label, Feed, Button, Header } from 'semantic-ui-react'
+import { Modal, Grid, Label, Feed, Button, Header } from 'semantic-ui-react'
 import { Playlist } from '../Playlist';
 
 
@@ -40,18 +40,25 @@ class HomeBase extends Component {
       authUser: props.authUser,
       players: [],
       activePlaylist: '',
-      activePlaylistId: '0I2oIPyR2VHtMtTQSYd4',
+      activePlaylistId: 'rEZzXFXXfADqn5shewsm',
       playlists: [],
       creatorMode: true,
       secondChance: true,
       playThrough: false,
       suddenDeath: false,
+      modalOpen: true,
+      modalType: 'newSong',
     }
   }
   componentDidMount(){
     console.log('home did mount', this.state);
     if(!this.state.authUser){
       this.props.history.push('/signin');
+    } else {
+      if(this.state.activePlaylistId){
+        this.getUsers(this.state.activePlaylistId);
+        this.getPlaylists(this.state.activePlaylistId);
+      }
     }
     // this.getUsers();
     //this.getPlaylists();
@@ -106,10 +113,10 @@ class HomeBase extends Component {
       });
     });
   }
-  getUsers() {
+  getUsers = (playlistId) => {
     console.log('getting users');
     const itemsRef = this.props.firebase.db.collection('temp_users');
-    itemsRef.where('playlistId', '==', this.state.activePlaylistId).get().then((snapshot) => {
+    itemsRef.where('playlistId', '==', playlistId).get().then((snapshot) => {
       console.log('snapshot',snapshot)
       let newUsers = [];
       snapshot.forEach((i) => {
@@ -142,6 +149,9 @@ class HomeBase extends Component {
     console.log('toggling view mode');
     this.setState({creatorMode: !this.state.creatorMode})
   }
+  closeModal = () => {
+    this.setState({modalOpen: false})
+  }
   render(){
     console.log('home props', this.props)
     const playlists = !this.state.playlists.length ?
@@ -161,10 +171,13 @@ class HomeBase extends Component {
                              toggleViewMode={this.toggleViewMode} 
                              addPlaylist={this.addPlaylist}
                              history={this.props.history} match={this.props.match} location={this.props.location}
+                             playlistId={this.state.activePlaylistId}
                              /> 
                 : 
                 <UserView userId={this.state.authUser}
-                          toggleViewMode={this.toggleViewMode}/>;
+                          toggleViewMode={this.toggleViewMode}
+                          playlistId={this.state.activePlaylistId}
+                          />;
     return (
       <React.Fragment>
         <Grid columns={1} fluid={'true'} centered style={{textAlign:"centered"}}>
@@ -172,7 +185,7 @@ class HomeBase extends Component {
                 !this.state.activePlaylistId ?
                 <React.Fragment>
                   
-                  <Playlist activatePlaylist={this.activatePlaylist} firebase={this.props.firebase}/>
+                  <Playlist authUser={this.state.authUser} activatePlaylist={this.activatePlaylist} firebase={this.props.firebase}/>
                 </React.Fragment>
                 :
                 <React.Fragment>
@@ -180,6 +193,20 @@ class HomeBase extends Component {
                 </React.Fragment>    
             }
         </Grid>
+        <Modal open={this.state.modalOpen}>
+          <Button onClick={this.closeModal}>X</Button>
+          <Modal.Header>Select a Photo</Modal.Header>
+          <Modal.Content>
+            <Modal.Description>
+              <Header>Default Profile Image</Header>
+              <p>
+                We've found the following gravatar image associated with your e-mail
+                address.
+              </p>
+              <p>Is it okay to use this photo?</p>
+            </Modal.Description>
+          </Modal.Content>
+        </Modal>
       </React.Fragment>
     );
   }

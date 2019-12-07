@@ -81,7 +81,7 @@ class ActivePlaylistBase extends Component {
         console.log('Error getting documents', err);
       });
   }
-  getSongs() {
+  getSongs(playlistId) {
     const itemsRef = this.props.firebase.db.collection('songs');
     itemsRef.get().then((snapshot) => {
       //let items = snapshot.val();

@@ -38,7 +38,7 @@ class PlaylistBase extends Component {
           active: true,
           title: title,
           mood: this.state.newPlaylistMood,
-          userId: 1,
+          userId: this.props.authUser,
           date: date
         }
       })
