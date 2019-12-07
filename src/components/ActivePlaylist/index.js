@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { withRouter, useParams } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 
@@ -10,7 +10,7 @@ import { Card, Grid, Button, Label, Icon } from 'semantic-ui-react';
 
 
 const ActivePlaylistPage = (props) => {
-  console.log('active playlist wrapper props', props)
+  console.log('active playlist wrapper props', props);
   return(
     <div>
     <FirebaseContext.Consumer>
@@ -34,26 +34,53 @@ class ActivePlaylistBase extends Component {
   }
   componentDidMount(){
     console.log('activeplaylist did mount', this.props);
-    this.getSongs();
-    console.log(this.state.user);
-    const userRef = this.props.firebase.db.doc(`/temp_users/${this.props.match.params.userId}`);
-    let query = userRef.get()
+    //this.getSongs();
+    console.log(this.props);
+    if(this.props.authUser || this.props.match.params.userId){
+       const userId = this.props.match.params.userId ? this.props.match.params.userId : this.props.authUser;
+    }
+    
+    // const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
+    // const self = this;
+    // let query = userRef.get()
+    //   .then(snapshot => {
+    //     if (snapshot.empty) {
+    //       console.log('No matching user');
+    //       return;
+    //     }  
+    //     console.log('user snapshot', snapshot.data())
+    //     const data = snapshot.data();
+    //     this.setState({
+    //       username: data.username,
+    //       secretname: data.secretname
+    //     })
+    //     self.getPlaylist(data.playlistId);
+    //   })
+    //   .catch(err => {
+    //     console.log('Error getting documents', err);
+    //   });
+  }
+  loadUser = (userId) => {
+    console.log('active playlist loading user');
+    const ui = this.props.match.params.userId ? this.props.match.params.userId : this.props.authUser;
+  }
+  getPlaylist = (playlistId) => {
+    console.log('getting playlist: ' + playlistId );
+    const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+    let query = itemRef.get()
       .then(snapshot => {
         if (snapshot.empty) {
-          console.log('No matching user');
+          console.log('No matching documents.');
           return;
         }  
-        console.log('user snapshot', snapshot.data())
-        const data = snapshot.data();
+        console.log('get snapshot', snapshot.data())
         this.setState({
-          username: data.username,
-          secretname: data.secretname
+          activePlaylist: snapshot.data(),
         })
       })
       .catch(err => {
         console.log('Error getting documents', err);
       });
-    
   }
   getSongs() {
     const itemsRef = this.props.firebase.db.collection('songs');
@@ -126,21 +153,20 @@ class ActivePlaylistBase extends Component {
       const linkFrag = song.url.split('=')[1];
       return(
         <Card fluid key={song.id}>
-         <Grid columns={2} divided>
-          <Grid.Row>
-            <Grid.Column>
-              <iframe className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen></iframe>
-            </Grid.Column>
-            <Grid.Column>
-            <Card.Content header={song.title} />
-              <button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/></button>
-              <button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/></button>
-              <button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></button>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid> 
+          <Grid columns={2} divided>
+            <Grid.Row>
+              <Grid.Column>
+                <iframe className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen></iframe>
+              </Grid.Column>
+              <Grid.Column>
+              <Card.Content header={song.title} />
+                <button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/></button>
+                <button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/></button>
+                <button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></button>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid> 
         </Card>
-        
       )
     })
     return (

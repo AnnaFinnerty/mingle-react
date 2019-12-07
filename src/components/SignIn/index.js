@@ -4,12 +4,12 @@ import { SignUpLink } from '../SignUp';
 import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
-const SignInPage = () => (
+const SignInPage = (props) => (
   <div>
     <h2>Sign In</h2>
 
     <FirebaseContext.Consumer>
-      {firebase => <SignInForm firebase={firebase} />}
+      {firebase => <SignInForm firebase={firebase} authUser={props.authUser}/>}
     </FirebaseContext.Consumer>
     <SignUpLink />
   </div>
@@ -23,6 +23,11 @@ class SignInFormBase extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
+  }
+  componentWillReceiveProps(nextProps){
+    if(nextProps.authUser){
+      this.props.history.push('/home');
+    }
   }
   onSubmit = event => {
     event.preventDefault();

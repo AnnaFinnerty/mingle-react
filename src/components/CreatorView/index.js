@@ -31,6 +31,7 @@ class CreatorView extends Component{
         document.execCommand("copy");
     }
     render(){
+        console.log('creatorView props', this.props)
         return(
    
             <React.Fragment>
@@ -55,7 +56,7 @@ class CreatorView extends Component{
                         <Label>Contributors</Label>
                     </Grid.Column>
                     <Grid.Column>
-                        <ActivePlaylist/>
+                        <ActivePlaylist userId={this.props.userId} history={this.props.history} match={this.props.match} location={this.props.location} />
                     </Grid.Column>
                 </Grid>
             </React.Fragment>

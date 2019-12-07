@@ -15,6 +15,7 @@ import { Playlist } from '../Playlist';
 
 
 const HomePage = (props) => {
+  console.log('home wrapper props', props)
   return (
   <div>
     {/* <AuthUserContext.Consumer> */}
@@ -34,8 +35,9 @@ const HomePage = (props) => {
 class HomeBase extends Component {
   constructor(props) {
     super(props);
-    // console.log('Constructor Props are:', props)
+    console.log('Constructor Props are:', props)
     this.state = {
+      authUser: props.authUser,
       players: [],
       activePlaylist: '',
       activePlaylistId: '0I2oIPyR2VHtMtTQSYd4',
@@ -47,40 +49,43 @@ class HomeBase extends Component {
     }
   }
   componentDidMount(){
-    console.log('home did mount');
-    this.getUsers();
+    console.log('home did mount', this.state);
+    if(!this.state.authUser){
+      this.props.history.push('/signin');
+    }
+    // this.getUsers();
     //this.getPlaylists();
     // instead of checking for a playlist prop we should be authenticating
     // logged in user, then checking to see if they have an active playlist
-    const playlistId = this.props.match.params.playlistId;
-    // const playlistId = this.state.activePlaylistId;
-    if(playlistId){
-      console.log("found playlistId:  " +  playlistId);
-      this.getPlaylist(playlistId);
-    } else {
-      console.log('no playlist to load');
-    }
+    // const playlistId = this.props.match.params.playlistId;
+    // // const playlistId = this.state.activePlaylistId;
+    // if(playlistId){
+    //   console.log("found playlistId:  " +  playlistId);
+    //   this.getPlaylist(playlistId);
+    // } else {
+    //   console.log('no playlist to load');
+    // }
   }
-  getPlaylist(playlistId) {
-    console.log('getting playlist');
-    const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    let query = itemRef.get()
-      .then(snapshot => {
-        if (snapshot.empty) {
-          console.log('No matching documents.');
-          return;
-        }  
-        console.log('get snapshot', snapshot.data())
-        this.setState({
-          activePlaylist: snapshot.data(),
-          activePlaylistId: playlistId
-        })
-      })
-      .catch(err => {
-        console.log('Error getting documents', err);
-      });
-  }
-  getPlaylists() {
+  // getPlaylist(playlistId) {
+  //   console.log('getting playlist');
+  //   const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+  //   let query = itemRef.get()
+  //     .then(snapshot => {
+  //       if (snapshot.empty) {
+  //         console.log('No matching documents.');
+  //         return;
+  //       }  
+  //       console.log('get snapshot', snapshot.data())
+  //       this.setState({
+  //         activePlaylist: snapshot.data(),
+  //         activePlaylistId: playlistId
+  //       })
+  //     })
+  //     .catch(err => {
+  //       console.log('Error getting documents', err);
+  //     });
+  // }
+  getPlaylists = () => {
     const itemsRef = this.props.firebase.db.collection('playlists');
     itemsRef.where('userId', '==', true).get().then((snapshot) => {
       console.log('snapshot',snapshot)
@@ -152,9 +157,14 @@ class HomeBase extends Component {
       )
     })
     const view = this.state.creatorMode ? 
-                <CreatorView playlistId={this.state.activePlaylistId} toggleViewMode={this.toggleViewMode} addPlaylist={this.addPlaylist}/> 
+                <CreatorView userId={this.state.authUser} 
+                             toggleViewMode={this.toggleViewMode} 
+                             addPlaylist={this.addPlaylist}
+                             history={this.props.history} match={this.props.match} location={this.props.location}
+                             /> 
                 : 
-                <UserView toggleViewMode={this.toggleViewMode}/>;
+                <UserView userId={this.state.authUser}
+                          toggleViewMode={this.toggleViewMode}/>;
     return (
       <React.Fragment>
         <Grid columns={1} fluid={'true'} centered style={{textAlign:"centered"}}>

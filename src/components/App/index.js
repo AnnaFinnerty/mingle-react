@@ -31,7 +31,7 @@ class App extends Component{
     this.listener = this.props.firebase.auth.onAuthStateChanged(
       authUser => {
         authUser
-          ? this.setState({ authUser })
+          ? this.setState({ authUser: authUser.uid })
           : this.setState({ authUser: null });
       },
     );
@@ -40,6 +40,7 @@ class App extends Component{
     this.listener();
   }
   render(){
+    console.log('app mounted. auth user:' + this.state.authUser)
     return(
       // <AuthUserContext.Provider value={this.state.authUser}>
         <Router>
@@ -49,8 +50,10 @@ class App extends Component{
             <Route exact path={ROUTES.TEST} component={ParamTest}/>
             <Route exact path={ROUTES.LANDING} component={SignInPage} />
             <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
-            <Route path={ROUTES.SIGN_IN} component={SignInPage} />
-            
+            {/* <Route path={ROUTES.SIGN_IN} component={SignInPage} /> */}
+            <Route exact path={ROUTES.SIGN_IN} render={
+              (props) => <SignInPage {...props} authUser={this.state.authUser} someProp={'test'}/>
+            }/>
             <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
             {/* <Route exact path={ROUTES.HOME} component={HomePage}/> */}
             <Route exact path={ROUTES.HOME} render={
