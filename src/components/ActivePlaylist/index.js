@@ -36,29 +36,27 @@ class ActivePlaylistBase extends Component {
     console.log('activeplaylist did mount', this.props);
     //this.getSongs();
     console.log(this.props);
-    if(this.props.authUser || this.props.match.params.userId){
-       const userId = this.props.match.params.userId ? this.props.match.params.userId : this.props.authUser;
-    }
-    
-    // const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
-    // const self = this;
-    // let query = userRef.get()
-    //   .then(snapshot => {
-    //     if (snapshot.empty) {
-    //       console.log('No matching user');
-    //       return;
-    //     }  
-    //     console.log('user snapshot', snapshot.data())
-    //     const data = snapshot.data();
-    //     this.setState({
-    //       username: data.username,
-    //       secretname: data.secretname
-    //     })
-    //     self.getPlaylist(data.playlistId);
-    //   })
-    //   .catch(err => {
-    //     console.log('Error getting documents', err);
-    //   });
+    const userId = !this.props.authUser ? this.props.match.params.userId : this.props.authUser;
+    console.log('userId in playlist' + userId)
+    const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
+    const self = this;
+    let query = userRef.get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          console.log('No matching user');
+          return;
+        }  
+        console.log('user snapshot', snapshot.data())
+        const data = snapshot.data();
+        this.setState({
+          username: data.username,
+          secretname: data.secretname
+        })
+        self.getPlaylist(data.playlistId);
+      })
+      .catch(err => {
+        console.log('Error getting documents', err);
+      });
   }
   loadUser = (userId) => {
     console.log('active playlist loading user');

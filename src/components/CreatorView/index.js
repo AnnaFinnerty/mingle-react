@@ -56,7 +56,7 @@ class CreatorView extends Component{
                         <Label>Contributors</Label>
                     </Grid.Column>
                     <Grid.Column>
-                        <ActivePlaylist userId={this.props.userId} history={this.props.history} match={this.props.match} location={this.props.location} />
+                        <ActivePlaylist authUser={this.props.userId} history={this.props.history} match={this.props.match} location={this.props.location} />
                     </Grid.Column>
                 </Grid>
             </React.Fragment>

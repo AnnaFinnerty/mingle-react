@@ -10,7 +10,7 @@ const UserView = (props) => (
         <Grid columns={1} divided>
             <Grid.Column>
                 <Button onClick={props.toggleViewMode}>Go to Creator View</Button>
-                <ActivePlaylist userId={props.authUser}/>
+                <ActivePlaylist authUser={props.authUser}/>
             </Grid.Column>
         </Grid>
         </React.Fragment>
