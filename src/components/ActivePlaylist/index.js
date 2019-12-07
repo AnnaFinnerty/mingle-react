@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import firebase from '../Firebase';
 import { FirebaseContext } from '../Firebase';
 import '../../App.css';
-import { Card, Grid, Button, Label } from 'semantic-ui-react'
+import { Card, Grid, Button, Label, Icon } from 'semantic-ui-react'
 
 const ActivePlaylistPage = () => (
   <div>
@@ -48,6 +48,30 @@ class ActivePlaylist extends Component {
       });
     });
   }
+  upvoteSong(e,songId){
+    console.log('upvoting song: ' + songId);
+    // const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
+    // deleteRef.delete()
+    // .then(()=>{
+    //   console.log(songId + " deleted successfully")
+    // })
+    // .catch((err) => {
+    //   console.log("error deleting song")
+    // })
+    // this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
+  }
+  downvoteSong(e,songId){
+    console.log('downvoting song: ' + songId);
+    // const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
+    // deleteRef.delete()
+    // .then(()=>{
+    //   console.log(songId + " deleted successfully")
+    // })
+    // .catch((err) => {
+    //   console.log("error deleting song")
+    // })
+    // this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
+  }
   deleteSong(e,songId){
     console.log('deleting song: ' + songId);
     const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
@@ -72,11 +96,13 @@ class ActivePlaylist extends Component {
          <Grid columns={2} divided>
           <Grid.Row>
             <Grid.Column>
-            <iframe className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen></iframe>
+              <iframe className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen></iframe>
             </Grid.Column>
             <Grid.Column>
             <Card.Content header={song.title} />
-            <Button onClick={(e)=>this.deleteSong(e,song.id)}>X</Button>
+              <Button onClick={(e)=>this.upvoteSong(e,song.id)} style={{color:"green"}}><Icon name="thumbs up"/></Button>
+              <Button onClick={(e)=>this.downvoteSong(e,song.id)} style={{color:"red"}}><Icon name="thumbs down"/></Button>
+              <Button onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></Button>
             </Grid.Column>
           </Grid.Row>
         </Grid> 

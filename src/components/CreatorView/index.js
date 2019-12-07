@@ -16,15 +16,16 @@ class CreatorView extends Component{
     }
     genInviteCode = () => {
         console.log('generating invite code');
-        const code = "https://song-battle.herokuapp.com/" + this.props.playlistId;
+        const code = "http://localhost:3000/login/" + this.props.playlistId;
         this.setState({
             inviteCode: code
         })
     }
     copyInviteCode = () => {
+        const input = document.getElementById("invite-code");
         //select text field
-        this.state.inviteCodeInput.select();
-        this.state.inviteCodeInput.setSelectionRange(0, 99999); //for mobile devices
+        input.select();
+        input.setSelectionRange(0, 99999); //for mobile devices
 
         //copy text inside text field
         document.execCommand("copy");

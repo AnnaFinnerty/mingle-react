@@ -38,6 +38,7 @@ class SignInTempFormBase extends Component {
     } 
   }
   onSubmit = event => {
+    console.log('submitting temp user')
     event.preventDefault();
     const { username, secretname } = this.state;
     //TODO how to get playlistId into props???
@@ -51,7 +52,7 @@ class SignInTempFormBase extends Component {
       })
       .then((docRef) => {
           console.log("Document written with ID: ", docRef.id);
-          //this.props.history.push('/playlist/'+this.props.match.params.playlistId);
+          this.props.history.push('/activeplaylist/'+this.props.match.params.playlistId);
       })
       .catch(function(error) {
           console.error("Error adding document: ", error);
@@ -60,7 +61,8 @@ class SignInTempFormBase extends Component {
   onChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
-  randomNameGen = () => {
+  randomNameGen = (e) => {
+    e.preventDefault();
     function randomFromArray(arr){
       return arr[Math.floor(Math.random()*arr.length)]
     }
@@ -81,7 +83,7 @@ class SignInTempFormBase extends Component {
       username === '' ||
       secretname === '';
     return (
-      <form>
+      <form onSubmit={this.onSubmit}>
           <Label>a secret name to hide your identity</Label>
           <Button onClick={this.randomNameGen}>just give me a random name</Button>
           <input
@@ -99,7 +101,8 @@ class SignInTempFormBase extends Component {
             type="text"
             placeholder="username"
           />
-          <button disabled={isInvalid} type="submit">
+          <button type="submit" disabled={isInvalid} 
+                  >
             let's go!
           </button>
         {error && <p>{error.message}</p>}
@@ -110,7 +113,7 @@ class SignInTempFormBase extends Component {
           To start your own game <br></br> 
           sign up for a real account, stranger <br></br>
           <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
-          </Label>
+        </Label>
       </form>
     );
   }

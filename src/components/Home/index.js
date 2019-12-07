@@ -13,15 +13,16 @@ import { Grid, Button, Header } from 'semantic-ui-react'
 import { Playlist } from '../Playlist';
 
 
-const HomePage = () => (
+const HomePage = (props) => {
+  return (
   <div>
     {/* <AuthUserContext.Consumer> */}
       <FirebaseContext.Consumer>
-        {firebase => <Home firebase={firebase} />}
+        {firebase => <Home firebase={firebase} authUser={props.authUser} />}
       </FirebaseContext.Consumer>
     {/* </AuthUserContext.Consumer> */}
   </div>
-);
+)};
 
 //POTENTIAL GAME SETTINGS
 //give eliminated users a change to replay: Second chance
@@ -31,11 +32,12 @@ const HomePage = () => (
 
 class HomeBase extends Component {
   constructor(props) {
-    super();
+    super(props);
+    console.log('Constructor Props are:', props)
     this.state = {
       players: [],
       activePlaylist: '',
-      activePlaylistId: '',
+      activePlaylistId: '0I2oIPyR2VHtMtTQSYd4',
       playlists: [],
       creatorMode: true,
       secondChance: true,
@@ -44,8 +46,12 @@ class HomeBase extends Component {
     }
   }
   componentDidMount(){
-    this.getPlaylists();
-    const playlistId = this.props.match.params.playlistId;
+    this.getUsers();
+    //this.getPlaylists();
+    // instead of checking for a playlist prop we should be authenticating
+    // logged in user, then checking to see if they have an active playlist
+    // const playlistId = this.props.match.params.playlistId;
+    const playlistId = this.state.activePlaylistId;
     if(playlistId){
       console.log("found playlistId:  " +  playlistId);
       this.getPlaylist(playlistId);
@@ -74,7 +80,7 @@ class HomeBase extends Component {
   }
   getPlaylists() {
     const itemsRef = this.props.firebase.db.collection('playlists');
-    itemsRef.where('capital', '==', true).get().then((snapshot) => {
+    itemsRef.where('userId', '==', true).get().then((snapshot) => {
       console.log('snapshot',snapshot)
       let newItems = [];
       snapshot.forEach((i) => {
@@ -94,8 +100,9 @@ class HomeBase extends Component {
     });
   }
   getUsers() {
+    console.log('getting users');
     const itemsRef = this.props.firebase.db.collection('temp_users');
-    itemsRef.get().then((snapshot) => {
+    itemsRef.where('playlistId', '==', this.state.activePlaylistId).get().then((snapshot) => {
       console.log('snapshot',snapshot)
       let newUsers = [];
       snapshot.forEach((i) => {
@@ -129,7 +136,7 @@ class HomeBase extends Component {
     this.setState({creatorMode: !this.state.creatorMode})
   }
   render(){
-    console.log('home props', this.props.authUser)
+    console.log('home props', this.props)
     //!TODO wait until saving playlists works, this was just to test route
     // const playlists = !this.state.playlists.length ?
     // <Label>no playlists</Label> :
@@ -149,7 +156,7 @@ class HomeBase extends Component {
                 <UserView toggleViewMode={this.toggleViewMode}/>;
     return (
       <React.Fragment>
-        <Grid columns={1} fluid centered style={{textAlign:"centered"}}>
+        <Grid columns={1} fluid={'true'} centered style={{textAlign:"centered"}}>
            {
                 !this.state.activePlaylist ?
                 <React.Fragment>
