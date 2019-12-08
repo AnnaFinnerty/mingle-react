@@ -15,7 +15,9 @@ class CreatorView extends Component{
             inviteCode: '',
             modalOpen: true,
             modalType: 'newPlaylist',
-            userId: props.userId
+            userId: props.userId,
+            showSongLabels: false,
+            reduceApiCalls: props.reduceApiCalls
         }
     }
     genInviteCode = () => {
@@ -94,22 +96,28 @@ class CreatorView extends Component{
                     </Grid.Column>
                     <Grid.Column>
                         <Grid.Row>
-                            <Button onClick={this.props.addPlaylist}>new playlist</Button>
-                            <Button onClick={this.props.addPlaylist}>edit playlist</Button>
-                            <Button onClick={this.props.addPlaylist}>delete playlist</Button>
+                            <Grid columns={3} divided fluid="true" color="white">
+                            <Grid.Column><Button onClick={this.props.addPlaylist}>new playlist</Button></Grid.Column>
+                            <Grid.Column><Button onClick={this.props.addPlaylist}>edit playlist</Button></Grid.Column>
+                            <Grid.Column><Button onClick={this.props.addPlaylist}>delete playlist</Button></Grid.Column>
+                            </Grid>
                         </Grid.Row>
                         <Grid.Row>
                             <ActivePlaylist authUser={this.props.userId} 
                                             playlistId={this.state.playlistId} 
                                             history={this.props.history} 
                                             match={this.props.match} 
-                                            location={this.props.location} />
+                                            location={this.props.location} 
+                                            reduceApiCalls={this.props.reduceApiCalls}
+                                            />
                         </Grid.Row>
                     </Grid.Column>
                 </Grid>
                 <Modal open={this.state.modalOpen}>
                     <Button onClick={this.closeModal}>X</Button>
-                    <ModalWindow closeModal={this.closeModal} modalType={this.state.modalType} userProps={this.state}/>
+                    <ModalWindow closeModal={this.closeModal} 
+                                 modalType={this.state.modalType} 
+                                 userProps={this.state}/>
                 </Modal>
             </React.Fragment>
             

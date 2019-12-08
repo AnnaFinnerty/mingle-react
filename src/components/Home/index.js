@@ -48,6 +48,7 @@ class HomeBase extends Component {
       secondChance: true,
       playThrough: false,
       suddenDeath: false,
+      reduceApiCalls: true,
     }
   }
   componentDidMount(){
@@ -56,8 +57,10 @@ class HomeBase extends Component {
       this.props.history.push('/signin');
     } else {
       if(this.state.activePlaylistId){
-        this.getUsers(this.state.activePlaylistId);
-        this.getPlaylists(this.state.authUser);
+        if(!this.state.reduceApiCalls){
+          this.getUsers(this.state.activePlaylistId);
+          this.getPlaylists(this.state.authUser);
+        }
       }
     }
   }
@@ -132,11 +135,13 @@ class HomeBase extends Component {
                              playlistId={this.state.activePlaylistId}
                              playlists={this.state.playlists}
                              players={this.state.players}
+                             reduceApiCalls={this.state.reduceApiCalls}
                              /> 
                 : 
                 <UserView userId={this.state.authUser}
                           toggleViewMode={this.toggleViewMode}
                           playlistId={this.state.activePlaylistId}
+                          reduceApiCalls={this.state.reduceApiCalls}
                           />;
     return (
       <React.Fragment>
