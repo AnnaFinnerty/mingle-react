@@ -25,6 +25,8 @@ class ActivePlaylistBase extends Component {
     super(props);
     this.unsubscribe = null;
     this.state = {
+      userId: null,
+      playlistId: null,
       isLoading: true,
       songs: [],
       currentSong: 0,

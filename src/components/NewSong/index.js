@@ -68,7 +68,9 @@ class NewSongForm extends Component {
         title: title,
         url: url,
         playlistId: playlistId,
-        userId: userId
+        userId: userId,
+        upvotes: 0,
+        downvotes: 0
     })
     .then(function(docRef) {
         console.log("Document written with ID: ", docRef.id);

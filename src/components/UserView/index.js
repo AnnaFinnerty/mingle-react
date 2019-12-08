@@ -15,7 +15,7 @@ class UserView extends Component{
             messageOpen: false,
             messageText: '',
             modalOpen: true,
-            modalType: 'newPlaylist',
+            modalType: 'newSong',
             userId: props.authUser ? props.authUser : null,
             showSongLabels: false,
             reduceApiCalls: props.reduceApiCalls
@@ -45,8 +45,10 @@ class UserView extends Component{
                     <Grid.Column>
                         <Button onClick={this.props.toggleViewMode}>Go to Creator View</Button>
                         <ActivePlaylist 
+                                        authUser={null}
                                         userId={this.props.userId} 
                                         playlistId={this.state.playlistId} 
+                                        openModal={this.openModal} 
                                         history={this.props.history} 
                                         match={this.props.match} 
                                         location={this.props.location} 

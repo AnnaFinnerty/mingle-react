@@ -10,16 +10,16 @@ class ModalWindow extends Component{
         switch(this.props.modalType){
 
             case 'newTempProfile':
-                return <SignInTemp userProps={this.props.userProps}/>
+                return <SignInTemp userProps={this.props.userProps} callback={this.props.callback}/>
 
             case 'newPlaylist':
-                return <AddPlaylist userProps={this.props.userProps}/>
+                return <AddPlaylist userProps={this.props.userProps} callback={this.props.callback}/>
 
             case 'editPlaylist':
-                return <EditPlaylist userProps={this.props.userProps}/>
+                return <EditPlaylist userProps={this.props.userProps} callback={this.props.callback}/>
 
             case 'newSong':
-                return <NewSong userProps={this.props.userProps}/>
+                return <NewSong userProps={this.props.userProps} callback={this.props.callback}/>
 
             default:
                 return <div>MODAL WORkING</div> 

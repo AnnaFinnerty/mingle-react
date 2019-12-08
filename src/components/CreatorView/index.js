@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 
-import ModalWindow from '../Modal';
+
 import ActivePlaylist from '../ActivePlaylist';
+import ModalWindow from '../Modal';
 import Message from '../Message';
 
 import { Modal, Feed, Grid, Icon, Button, Label, TextArea } from 'semantic-ui-react';
@@ -10,6 +11,7 @@ class CreatorView extends Component{
     constructor(props){
         super()
         this.state = {
+            activePlaylist: null,
             invites: 0,
             players: 0,
             inviteCode: '',
@@ -17,11 +19,41 @@ class CreatorView extends Component{
             messageText: '',
             modalOpen: false,
             modalType: 'newPlaylist',
-            userId: props.userId,
+            authUser: props.authUser,
             showSongInfo: false,
-
             reduceApiCalls: props.reduceApiCalls
         }
+    }
+    componentDidMount(){
+        // if(!this.state.activePlaylist){
+        //     this.openMessage("no active playlist")
+        // }
+        //this.getPlaylists(this.state.authUser);
+    }
+    getPlaylists = (userId) => {
+        console.log('getting playlists for: ' + userId);
+        const itemsRef = this.props.firebase.db.collection('playlists');
+        console.log('playlists item ref', itemsRef)
+        const query = itemsRef.get().then((snapshot) => {
+          console.log('getPlaylists snapshot',snapshot)
+          let newItems = [];
+          snapshot.forEach((i) => {
+            const item = i.data()
+            console.log('playlist item', item)
+            const id = i.id;
+            newItems.push({
+              date: item.date,
+              userId: item.userId,
+              title: item.title,
+              mood: item.mood,
+              id: id,
+            });
+          });
+          console.log('newItems',newItems)
+          this.setState({
+            playlists: newItems
+          });
+        });
     }
     getPlaylist = (playlistId) => {
         console.log('getting playlist: ' + playlistId );
@@ -41,6 +73,19 @@ class CreatorView extends Component{
         .catch(err => {
             console.log('Error getting documents', err);
         });
+    }
+    deletePlaylist = (playlistId) => {
+        console.log('deleting playlist: ' + playlistId);
+        const deleteRef = this.props.firebase.db.collection('playlists').doc(playlistId);
+        deleteRef.delete()
+        .then(()=>{
+            console.log(playlistId + " deleted successfully")
+            // this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
+        })
+        .catch((err) => {
+        console.log("error deleting song")
+        })
+        
     }
     genInviteCode = () => {
         console.log('generating invite code');
@@ -79,6 +124,11 @@ class CreatorView extends Component{
             messageText: ''
         })
     }
+    addedPlaylist = (playlistId) => {
+        console.log('activating playlist in creator view:  ' + playlistId);
+        this.closeModal();
+        this.props.activatePlaylist(playlistId);
+    }
     render(){
         console.log('creatorView props', this.props);
         const users = this.props.players.map((user)=>{
@@ -95,10 +145,12 @@ class CreatorView extends Component{
           this.props.playlists.map((playlist)=>{
             console.log(playlist);
             return(
-              <Feed.Event style={{backgroundColor:"lightgray", padding:"2% 5%", margin:"0 5%", width:"90%"}}>
+              <Feed.Event key={playlist.id} style={{backgroundColor:"lightgray", padding:"2% 5%", margin:"0 5%", width:"90%"}}>
                 <Feed.Label>
                   {playlist.title}
-                  <Button><Icon name="delete"></Icon></Button>
+                  <Button onClick={()=>this.deletePlaylist(playlist.id)}>
+                    <Icon name="delete"/>
+                </Button>
                 </Feed.Label>
               </Feed.Event>
             )
@@ -140,8 +192,10 @@ class CreatorView extends Component{
                             </Grid>
                         </Grid.Row>
                         <Grid.Row>
-                            <ActivePlaylist authUser={this.props.userId} 
-                                            playlistId={this.state.playlistId} 
+                            <ActivePlaylist authUser={this.props.userId}
+                                            userId={null} 
+                                            playlistId={this.state.playlistId}
+                                            openModal={this.openModal} 
                                             history={this.props.history} 
                                             match={this.props.match} 
                                             location={this.props.location} 
@@ -150,17 +204,25 @@ class CreatorView extends Component{
                         </Grid.Row>
                     </Grid.Column>
                 </Grid>
-                <Modal open={this.state.modalOpen}>
-                    <Button onClick={this.closeModal}>X</Button>
-                    <ModalWindow closeModal={this.closeModal} 
-                                 modalType={this.state.modalType} 
-                                 userProps={this.state}/>
-                </Modal>
-                <Message 
-                    open={this.state.messageOpen}
-                    text={this.state.messageText}
-                    closeMessage={this.closeMessage}
-                />
+                {
+                    !this.state.modalOpen ? "" :
+                    <Modal open={this.state.modalOpen}>
+                        <Button onClick={this.closeModal}>X</Button>
+                        <ModalWindow closeModal={this.closeModal} 
+                                     modalType={this.state.modalType} 
+                                     userProps={this.state}
+                                     callback={this.addedPlaylist}
+                                     />
+                    </Modal>
+                }
+                {
+                    !this.state.messageOpen ? "" :
+                    <Message 
+                        open={this.state.messageOpen}
+                        text={this.state.messageText}
+                        closeMessage={this.closeMessage}
+                    />
+                }   
             </React.Fragment>
             
         )
