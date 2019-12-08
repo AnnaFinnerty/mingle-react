@@ -61,7 +61,7 @@ class App extends Component{
             {/* <Route path={ROUTES.ACCOUNT} component={AccountPage} />
             <Route path={ROUTES.ADMIN} component={AdminPage} /> */}
             {/* <Route path={ROUTES.NEWSONG} component={NewSongPage} /> */}
-            <Route path={ROUTES.PLAYLIST} component={Playlist} />
+            {/* <Route path={ROUTES.PLAYLIST} component={Playlist} /> */}
             <Route exact path={ROUTES.SIGN_IN_TEMP} children={SignInTempPage}/>
             <Route exact path={ROUTES.ACTIVEPLAYLIST} children={ActivePlaylist}/>
             

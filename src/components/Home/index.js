@@ -116,7 +116,7 @@ class HomeBase extends Component {
   }
   addPlaylist = () => {
     console.log('adding playlist');
-    this.props.history.push(ROUTES.PLAYLIST)
+    // this.props.history.push(ROUTES.PLAYLIST)
   }
   toggleViewMode = () => {
     console.log('toggling view mode');
