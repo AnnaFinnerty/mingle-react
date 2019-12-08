@@ -40,6 +40,8 @@ class HomeBase extends Component {
     console.log('Constructor Props are:', props)
     this.state = {
       authUser: props.authUser,
+      authUserDisplayName: '',
+      authUserSecretName: '',
       players: [],
       activePlaylist: '',
       activePlaylistId: 'rEZzXFXXfADqn5shewsm',
@@ -63,6 +65,30 @@ class HomeBase extends Component {
         }
       }
     }
+  }
+  getAuthUser = () => {
+    console.log('getting authorized user info:' + this.state.authUser);
+    // const itemsRef = this.props.firebase.db.collection('temp_users');
+    // const query = await itemsRef.where('playlistId', '==', playlistId).get().then((snapshot) => {
+    //   console.log('getUsers snapshot',snapshot)
+    //   let newUsers = [];
+    //   snapshot.forEach((i) => {
+    //     const item = i.data()
+    //     const id = i.id;
+    //     newUsers.push({
+    //       username: item.username,
+    //       secretname: item.secretname,
+    //       songId: item.songId,
+    //       downvotes: item.downvotes,
+    //       upvotes: item.upvotes,
+    //       id: id,
+    //     });
+    //   });
+    //   console.log('users',newUsers);
+    //   this.setState({
+    //     players: newUsers
+    //   });
+    // });
   }
   getPlaylists = (userId) => {
     console.log('getting playlists for: ' + userId);
@@ -146,17 +172,12 @@ class HomeBase extends Component {
     return (
       <React.Fragment>
         <Grid columns={1} fluid={'true'} centered style={{textAlign:"centered"}}>
-           {
-                // !this.state.activePlaylistId ?
-                // <React.Fragment>
-                  
-                //   {/* <Playlist authUser={this.state.authUser} activatePlaylist={this.activatePlaylist} firebase={this.props.firebase}/> */}
-                // </React.Fragment>
-                // :
-                <React.Fragment>
-                  {view}
-                </React.Fragment>    
-            }
+           <Grid.Row>
+              <h3>{this.state.authUser}</h3>
+           </Grid.Row>
+           <Grid.Row>
+              {view}
+            </Grid.Row>
         </Grid>
       </React.Fragment>
     );

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 
 import ActivePlaylist from '../ActivePlaylist';
 import ModalWindow from '../Modal';
+import Message from '../Message';
 
 import { Modal, Grid, Button, Label, Input } from 'semantic-ui-react';
 

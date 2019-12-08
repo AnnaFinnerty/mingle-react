@@ -60,7 +60,9 @@ class ActivePlaylistBase extends Component {
         });
     } else {
       // this.getPlaylist(this.props.playlistId);
-      this.getSongs();
+      if(!this.props.reduceApiCalls){
+        this.getSongs();
+      }  
     }
   }
   // getPlaylist = (playlistId) => {

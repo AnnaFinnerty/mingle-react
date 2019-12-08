@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import ModalWindow from '../Modal';
 import ActivePlaylist from '../ActivePlaylist';
 import AddTempUser from '../AddTempUser';
+import Message from '../Message';
 
 import { Modal, Feed, Grid, Icon, Button, Label, TextArea } from 'semantic-ui-react';
 
