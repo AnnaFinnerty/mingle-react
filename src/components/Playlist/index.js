@@ -7,13 +7,16 @@ import '../../App.css';
 import { Container, Form, Button, Label, Input } from 'semantic-ui-react'
 
 
-const PlaylistPage = () => (
-  <div>
+const PlaylistPage = (props) => {
+  console.log('playlist props', props)
+  return(
+    <div>
     <FirebaseContext.Consumer>
-      {firebase => <Playlist firebase={firebase} />}
+      {firebase => <Playlist firebase={firebase} userProps={props.userProps} />}
     </FirebaseContext.Consumer>
   </div>
-);
+  )
+};
 
 class PlaylistBase extends Component {
   constructor(props) {
@@ -37,17 +40,17 @@ class PlaylistBase extends Component {
           active: true,
           title: title,
           mood: this.state.newPlaylistMood,
-          userId: this.props.authUser,
+          userId: this.props.userProps.userId,
           date: date
       })
       .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id);
-          activateCallback(docRef.id);
-          history.push(ROUTES.HOME)
+          // activateCallback(docRef.id);
+          // history.push(ROUTES.HOME)
       })
       .catch(function(error) {
           console.error("Error adding document: ", error);
-          history.push(ROUTES.HOME)
+          // history.push(ROUTES.HOME)
       });
   }
   deletePlaylist(e,playlistId){
