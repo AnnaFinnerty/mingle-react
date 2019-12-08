@@ -29,54 +29,6 @@ class SignInTempFormBase extends Component {
     super(props);
     this.state = { ...INITIAL_STATE };
   }
-  // componentDidMount = () => {
-  //   console.log('signInTemp did mount', this.props)
-  //   const playlistId = this.props.match.params.playlistId;
-  //   if(!playlistId){
-  //     console.log("found playlistId:  " +  playlistId);
-  //     this.setState({
-  //       showManualPlaylistEntry: true,
-  //     })
-  //   } else {
-  //     this.setState({
-  //       playlistId: playlistId,
-  //     })
-  //   }
-  // }
-  // onSubmit = event => {
-  //   console.log('submitting temp user')
-  //   event.preventDefault();
-  //   const { username, secretname } = this.state;
-  //   this.props.firebase.db.collection("temp_users").add({
-  //     username: username,
-  //     secretname: secretname,
-  //     playlistId: this.state.playlistId,
-  //     upvotes: 0,
-  //     downvotes: 0,
-  //     songId: '',
-  //     })
-  //     .then((userRef) => {
-  //         console.log("Document written with ID: ", userRef.id);
-  //         this.props.history.push('/activeplaylist/'+userRef.id);
-  //     })
-  //     .catch(function(error) {
-  //         console.error("Error adding document: ", error);
-  //     });
-  //     };
-  // onChange = event => {
-  //   this.setState({ [event.target.name]: event.target.value });
-  // };
-  // randomNameGen = (e) => {
-  //   e.preventDefault();
-  //   function randomFromArray(arr){
-  //     return arr[Math.floor(Math.random()*arr.length)]
-  //   }
-  //   const name1 = randomFromArray(this.randomNamesPart1);
-  //   const name2 = randomFromArray(this.randomNamesPart2);
-  //   this.setState({
-  //     secretname:name1+name2
-  //   })
-  // }
   render() {
     console.log("signInTempProps",this.props);
     const {

@@ -64,7 +64,7 @@ class HomeBase extends Component {
       //send back to signin if creator is not authenicated
       this.props.history.push('/signin');
     } else {
-      this.getPlaylists(this.state.authUser);
+      //this.getPlaylists(this.state.authUser);
       if(!this.state.reduceApiCalls){
         //retrieve and populate users and playlists for this creator
         this.getUsers(this.state.activePlaylistId);
@@ -171,9 +171,24 @@ class HomeBase extends Component {
   }
   activatePlaylist = (playlistId) => {
     //console.log('activating playlist in home: ' + playlistId);
-    this.setState({
-      activatePlaylistId: playlistId
+    console.log('getting playlist: ' + playlistId );
+    const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+    const self = this;
+    let query = itemRef.get()
+    .then(snapshot => {
+        if (snapshot.empty) {
+        console.log('No matching documents.');
+        return;
+        }  
+        console.log('active playlist snapshot', snapshot.data())
+        this.setState({
+            activePlaylist: snapshot.data(),
+            activatePlaylistId: playlistId
+        })
     })
+    .catch(err => {
+        console.log('Error getting documents', err);
+    });
   }
   toggleViewMode = () => {
     console.log('toggling view mode');
@@ -212,12 +227,14 @@ class HomeBase extends Component {
                              players={this.state.players}
                              activatePlaylist={this.activatePlaylist}
                              reduceApiCalls={this.state.reduceApiCalls}
+                             firebase={this.props.firebase}
                              /> 
                 : 
                 <UserView authUser={this.state.authUser}
                           toggleViewMode={this.toggleViewMode}
                           playlistId={this.state.activePlaylistId}
                           reduceApiCalls={this.state.reduceApiCalls}
+                          firebase={this.props.firebase}
                           />;
     return (
       <React.Fragment>

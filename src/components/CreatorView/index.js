@@ -11,10 +11,11 @@ class CreatorView extends Component{
     constructor(props){
         super()
         this.state = {
-            activePlaylist: null,
+            playlists: [],
             invites: 0,
             players: 0,
             inviteCode: '',
+            playlistToEdit: '',
             messageOpen: false,
             messageText: '',
             modalOpen: false,
@@ -28,7 +29,7 @@ class CreatorView extends Component{
         // if(!this.state.activePlaylist){
         //     this.openMessage("no active playlist")
         // }
-        //this.getPlaylists(this.state.authUser);
+        this.getPlaylists(this.state.authUser);
     }
     getPlaylists = (userId) => {
         console.log('getting playlists for: ' + userId);
@@ -55,24 +56,26 @@ class CreatorView extends Component{
           });
         });
     }
-    getPlaylist = (playlistId) => {
+    editPlaylist = (playlistId) => {
         console.log('getting playlist: ' + playlistId );
         const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-        const self = this;
-        let query = itemRef.get()
-        .then(snapshot => {
-            if (snapshot.empty) {
-            console.log('No matching documents.');
-            return;
-            }  
-            console.log('get snapshot', snapshot.data())
-            this.setState({
-            activePlaylist: snapshot.data(),
+        let query = itemRef.get().then(snapshot => {
+                if (snapshot.empty) {
+                console.log('No matching documents.');
+                return;
+                }  
+                console.log('get snapshot', snapshot.data())
+                const data = snapshot.data();
+                data['id'] = snapshot.id;
+                this.setState({
+                    playlistToEdit: data,
+                    modalOpen: true,
+                    modalType: 'editPlaylist'
+                })
             })
-        })
-        .catch(err => {
-            console.log('Error getting documents', err);
-        });
+            .catch(err => {
+                console.log('Error getting documents', err);
+            });
     }
     deletePlaylist = (playlistId) => {
         console.log('deleting playlist: ' + playlistId);
@@ -80,12 +83,11 @@ class CreatorView extends Component{
         deleteRef.delete()
         .then(()=>{
             console.log(playlistId + " deleted successfully")
-            // this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
+            this.setState({playlists: this.state.playlists.filter((playlist) => (playlist.id != playlistId))})
         })
         .catch((err) => {
         console.log("error deleting song")
         })
-        
     }
     genInviteCode = () => {
         console.log('generating invite code');
@@ -140,18 +142,21 @@ class CreatorView extends Component{
               </Feed.Event>
             )
           })
-        const playlists = !this.props.playlists.length ?
+        const playlists = !this.state.playlists.length ?
           <Label>no playlists</Label> :
-          this.props.playlists.map((playlist)=>{
+          this.state.playlists.map((playlist)=>{
             console.log(playlist);
             return(
               <Feed.Event key={playlist.id} style={{backgroundColor:"lightgray", padding:"2% 5%", margin:"0 5%", width:"90%"}}>
                 <Feed.Label>
                   {playlist.title}
-                  <Button onClick={()=>this.deletePlaylist(playlist.id)}>
+                </Feed.Label>
+                <Button size="small" onClick={()=>this.deletePlaylist(playlist.id)}>
                     <Icon name="delete"/>
                 </Button>
-                </Feed.Label>
+                <Button size="small" onClick={()=>this.editPlaylist(playlist.id)}>
+                    <Icon name="edit"/>
+                </Button>
               </Feed.Event>
             )
           })

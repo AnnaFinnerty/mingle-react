@@ -23,70 +23,36 @@ class EditPlaylistBase extends Component {
     super();
     //!TODO update prop names
     this.state = {
-      title:props.title,
-      mood:props.mood,
-      date: props.date,
-      active: props.active
+      title:props.userProps.playlistToEdit.title,
+      mood:props.userProps.playlistToEdit.mood,
+      date: props.userProps.playlistToEdit.date,
+      active: props.userProps.playlistToEdit.active
     }
     //TODO change to default moods, let users add one
     this.moods = ['party','chill','dance','default']
   }
-  createPlaylist = () => {
-    console.log("creating playlist");
+  updatePlaylist = () => {
+    const playlistId = this.props.userProps.playlistToEdit.id;
+    console.log("updating playlist:  " + playlistId);
     console.log(this.props);
-    const date = new Date();
-    const history = this.props.history;
-    const activateCallback = this.props.activatePlaylist;
-    const title = this.state.newPlaylistTitle;
-    this.props.firebase.db.collection("playlists").add({
-          active: true,
-          title: title,
-          mood: this.state.newPlaylistMood,
-          userId: this.props.userProps.userId,
-          date: date
+    const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+    playlistRef.update({
+          active: this.state.active,
+          title: this.state.title,
+          mood: this.state.mood,
+          userId: this.props.userProps.authUser,
+          date: this.state.date
       })
       .then(function(docRef) {
-          console.log("Document written with ID: ", docRef.id);
+          console.log("document updated");
           // activateCallback(docRef.id);
           // history.push(ROUTES.HOME)
       })
       .catch(function(error) {
-          console.error("Error adding document: ", error);
+          console.error("Error updating document: ", error);
           // history.push(ROUTES.HOME)
       });
   }
-  // updatePlaylist = (playlistId) => {
-  //   console.log("updating playlist");
-  //   console.log(this.props);
-  //   const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-  //   playlistRef.update({
-  //         active: this,
-  //         title: title,
-  //         mood: this.state.newPlaylistMood,
-  //         userId: this.props.userProps.userId,
-  //         date: date
-  //     })
-  //     .then(function(docRef) {
-  //         console.log("Document written with ID: ", docRef.id);
-  //         // activateCallback(docRef.id);
-  //         // history.push(ROUTES.HOME)
-  //     })
-  //     .catch(function(error) {
-  //         console.error("Error adding document: ", error);
-  //         // history.push(ROUTES.HOME)
-  //     });
-  // }
-  // deletePlaylist(e,playlistId){
-  //   console.log('deleting playlist: ' + playlistId);
-  //   const deleteRef = this.props.firebase.db.collection('playlists').doc(playlistId);
-  //   deleteRef.delete()
-  //   .then(()=>{
-  //     console.log(playlistId + " deleted successfully")
-  //   })
-  //   .catch((err) => {
-  //     console.log("error deleting playlist")
-  //   })
-  // }
   handleChange = (e) => {
     this.setState({
       [e.target.name] : e.target.value
@@ -96,17 +62,18 @@ class EditPlaylistBase extends Component {
     return (
         <Container fluid centered="true" style={{width:"100%"}}>
             <Form >
-            <Label>Edit Playlist</Label>
-            <Input value={this.state.newPlaylistTitle} 
-                name="newPlaylistTitle" 
+            <Label><h3>Edit Playlist:{this.state.title}</h3></Label>
+            {/* <h4>Created:{this.state.date}</h4> */}
+            <Input value={this.state.title} 
+                name="title" 
                 placeholder='playlist name'
                 onChange={(e)=>this.handleChange(e)}
             />
-            <Input value={this.state.newPlaylistMood} 
-                name="newPlaylistMood" 
+            <Input value={this.state.mood} 
+                name="mood" 
                 onChange={this.handleChange}
             />
-            <Button onClick={this.createPlaylist}>start</Button>
+            <Button onClick={this.updatePlaylist}>start</Button>
             </Form>
         </Container>
         

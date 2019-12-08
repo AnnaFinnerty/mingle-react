@@ -25,6 +25,25 @@ class UserView extends Component{
         //load auth user or user idea from params
         
     }
+    getPlaylist = (playlistId) => {
+        console.log('getting playlist: ' + playlistId );
+        const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+        const self = this;
+        let query = itemRef.get()
+        .then(snapshot => {
+            if (snapshot.empty) {
+            console.log('No matching documents.');
+            return;
+            }  
+            console.log('get snapshot', snapshot.data())
+            this.setState({
+                activePlaylist: snapshot.data(),
+            })
+        })
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+    }
     openMessage = (messageText) => {
         this.setState({
             messageOpen: true,
