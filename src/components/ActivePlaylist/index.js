@@ -28,9 +28,8 @@ class ActivePlaylistBase extends Component {
       isLoading: true,
       songs: [],
       currentSong: 0,
-      username: '',
-      secretname: '',
-      userSong: null,
+      user: '',
+      showSongInfo: true,
     };
   }
   componentDidMount(){
@@ -184,7 +183,7 @@ class ActivePlaylistBase extends Component {
       )
     })
     return (
-      <Grid columns={1} style={{backgroundColor:"white"}}>
+      <Grid columns={1}>
           <Grid.Row columns={2}>
             <Grid.Column>
               <h2>{this.state.username}</h2>

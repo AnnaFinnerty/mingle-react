@@ -164,7 +164,7 @@ class HomeBase extends Component {
                              reduceApiCalls={this.state.reduceApiCalls}
                              /> 
                 : 
-                <UserView userId={this.state.authUser}
+                <UserView authUser={this.state.authUser}
                           toggleViewMode={this.toggleViewMode}
                           playlistId={this.state.activePlaylistId}
                           reduceApiCalls={this.state.reduceApiCalls}
@@ -173,7 +173,13 @@ class HomeBase extends Component {
       <React.Fragment>
         <Grid columns={1} fluid={'true'} centered style={{textAlign:"centered"}}>
            <Grid.Row>
-              <h3>{this.state.authUser}</h3>
+              <Button onClick={this.toggleViewMode}>
+                {
+                    this.state.creatorMode ? 
+                    "go to user view" :
+                    "go to creator view"
+                }
+              </Button>
            </Grid.Row>
            <Grid.Row>
               {view}

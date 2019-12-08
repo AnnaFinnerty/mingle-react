@@ -3,12 +3,14 @@ import React, {Component} from 'react';
 import NewSong from '../NewSong';
 import AddPlaylist from '../AddPlaylist';
 import EditPlaylist from '../EditPlaylist';
-
-import { Modal, Grid, Label, Feed, Button, Header } from 'semantic-ui-react';
+import SignInTemp from '../SignInTemp';
 
 class ModalWindow extends Component{
     getModalContent = () => {
         switch(this.props.modalType){
+
+            case 'newTempProfile':
+                return <SignInTemp userProps={this.props.userProps}/>
 
             case 'newPlaylist':
                 return <AddPlaylist userProps={this.props.userProps}/>
@@ -29,17 +31,6 @@ class ModalWindow extends Component{
         return(
             <React.Fragment>
                 {content}
-                {/* <Modal.Header>Select a Photo</Modal.Header>
-                <Modal.Content>
-                    <Modal.Description>
-                    <Header>Default Profile Image</Header>
-                    <p>
-                        We've found the following gravatar image associated with your e-mail
-                        address.
-                    </p>
-                    <p>Is it okay to use this photo?</p>
-                    </Modal.Description>
-                </Modal.Content> */}
             </React.Fragment>
         )
     }

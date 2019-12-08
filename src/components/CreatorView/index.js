@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 
 import ModalWindow from '../Modal';
 import ActivePlaylist from '../ActivePlaylist';
-import AddTempUser from '../AddTempUser';
 import Message from '../Message';
 
 import { Modal, Feed, Grid, Icon, Button, Label, TextArea } from 'semantic-ui-react';
@@ -14,32 +13,35 @@ class CreatorView extends Component{
             invites: 0,
             players: 0,
             inviteCode: '',
+            messageOpen: false,
+            messageText: '',
             modalOpen: false,
             modalType: 'newPlaylist',
             userId: props.userId,
-            showSongLabels: false,
+            showSongInfo: false,
+
             reduceApiCalls: props.reduceApiCalls
         }
     }
-   getPlaylist = (playlistId) => {
-    console.log('getting playlist: ' + playlistId );
-    const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    const self = this;
-    let query = itemRef.get()
-      .then(snapshot => {
-        if (snapshot.empty) {
-          console.log('No matching documents.');
-          return;
-        }  
-        console.log('get snapshot', snapshot.data())
-        this.setState({
-          activePlaylist: snapshot.data(),
+    getPlaylist = (playlistId) => {
+        console.log('getting playlist: ' + playlistId );
+        const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+        const self = this;
+        let query = itemRef.get()
+        .then(snapshot => {
+            if (snapshot.empty) {
+            console.log('No matching documents.');
+            return;
+            }  
+            console.log('get snapshot', snapshot.data())
+            this.setState({
+            activePlaylist: snapshot.data(),
+            })
         })
-      })
-      .catch(err => {
-        console.log('Error getting documents', err);
-      });
-  }
+        .catch(err => {
+            console.log('Error getting documents', err);
+        });
+    }
     genInviteCode = () => {
         console.log('generating invite code');
         const code = "http://localhost:3000/login/" + this.props.playlistId;
@@ -65,6 +67,18 @@ class CreatorView extends Component{
     closeModal = () => {
         this.setState({modalOpen: false})
       }
+    openMessage = (messageText) => {
+        this.setState({
+            messageOpen: true,
+            messageText: messageText
+        })
+    }
+    closeMessage = () => {
+        this.setState({
+            messageOpen: false,
+            messageText: ''
+        })
+    }
     render(){
         console.log('creatorView props', this.props);
         const users = this.props.players.map((user)=>{
@@ -93,9 +107,9 @@ class CreatorView extends Component{
    
             <React.Fragment>
                 <Grid columns={2} divided fluid="true">
-                    <Grid.Column>
+                    <Grid.Column style={{backgroundColor:"gray", height: '80vh'}}>
                         <Grid.Row>
-                            <Button onClick={this.props.toggleViewMode}>go to user view</Button>
+                            
                         </Grid.Row>
                         <Grid.Row>
                             <Grid columns={2}>
@@ -116,13 +130,10 @@ class CreatorView extends Component{
                             <Label>Playlists</Label>
                             {playlists}
                         </Grid.Row>
-                        <Grid.Row>
-                            <AddTempUser />
-                        </Grid.Row>
                     </Grid.Column>
-                    <Grid.Column>
+                    <Grid.Column >
                         <Grid.Row>
-                            <Grid columns={3} divided fluid="true" color="white">
+                            <Grid columns={3} fluid="true">
                             <Grid.Column><Button onClick={()=>this.openModal("newPlaylist")}>new playlist</Button></Grid.Column>
                             <Grid.Column><Button onClick={()=>this.openModal("editPlaylist")}>edit playlist</Button></Grid.Column>
                             <Grid.Column><Button >delete playlist</Button></Grid.Column>
@@ -145,6 +156,11 @@ class CreatorView extends Component{
                                  modalType={this.state.modalType} 
                                  userProps={this.state}/>
                 </Modal>
+                <Message 
+                    open={this.state.messageOpen}
+                    text={this.state.messageText}
+                    closeMessage={this.closeMessage}
+                />
             </React.Fragment>
             
         )

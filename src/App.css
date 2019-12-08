@@ -93,6 +93,8 @@ button{
 .header-link{
   color: orangered;
   border: none;
+  background: transparent;
+  border: none;
 }
 
 .header-link:hover{
