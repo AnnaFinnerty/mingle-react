@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 
 import NewSong from '../NewSong';
-import Playlist from '../Playlist';
+import AddPlaylist from '../AddPlaylist';
+import EditPlaylist from '../EditPlaylist';
 
 import { Modal, Grid, Label, Feed, Button, Header } from 'semantic-ui-react';
 
@@ -10,10 +11,10 @@ class ModalWindow extends Component{
         switch(this.props.modalType){
 
             case 'newPlaylist':
-                return <Playlist userProps={this.props.userProps}/>
+                return <AddPlaylist userProps={this.props.userProps}/>
 
             case 'editPlaylist':
-                return <Playlist userProps={this.props.userProps}/>
+                return <EditPlaylist userProps={this.props.userProps}/>
 
             case 'newSong':
                 return <NewSong userProps={this.props.userProps}/>

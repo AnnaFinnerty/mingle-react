@@ -13,7 +13,7 @@ import AddTempUser from '../AddTempUser';
 
 import '../../App.css';
 import { Modal, Grid, Label, Feed, Button, Header } from 'semantic-ui-react'
-import { Playlist } from '../Playlist';
+import { AddPlaylist } from '../AddPlaylist';
 
 
 const HomePage = (props) => {
@@ -147,12 +147,12 @@ class HomeBase extends Component {
       <React.Fragment>
         <Grid columns={1} fluid={'true'} centered style={{textAlign:"centered"}}>
            {
-                !this.state.activePlaylistId ?
-                <React.Fragment>
+                // !this.state.activePlaylistId ?
+                // <React.Fragment>
                   
-                  <Playlist authUser={this.state.authUser} activatePlaylist={this.activatePlaylist} firebase={this.props.firebase}/>
-                </React.Fragment>
-                :
+                //   {/* <Playlist authUser={this.state.authUser} activatePlaylist={this.activatePlaylist} firebase={this.props.firebase}/> */}
+                // </React.Fragment>
+                // :
                 <React.Fragment>
                   {view}
                 </React.Fragment>    

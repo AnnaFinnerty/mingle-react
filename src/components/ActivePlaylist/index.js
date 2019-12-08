@@ -35,7 +35,6 @@ class ActivePlaylistBase extends Component {
   }
   componentDidMount(){
     console.log('activeplaylist did mount', this.props);
-    this.getSongs();
     const userId = !this.props.authUser ? this.props.match.params.userId : this.props.authUser;
     console.log('userId in playlist:  ' + userId);
     if(!this.props.authUser){
@@ -60,28 +59,29 @@ class ActivePlaylistBase extends Component {
           console.log('Error getting documents', err);
         });
     } else {
-      this.getPlaylist(this.props.playlistId);
+      // this.getPlaylist(this.props.playlistId);
+      this.getSongs();
     }
   }
-  getPlaylist = (playlistId) => {
-    console.log('getting playlist: ' + playlistId );
-    const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    const self = this;
-    let query = itemRef.get()
-      .then(snapshot => {
-        if (snapshot.empty) {
-          console.log('No matching documents.');
-          return;
-        }  
-        console.log('get snapshot', snapshot.data())
-        this.setState({
-          activePlaylist: snapshot.data(),
-        })
-      })
-      .catch(err => {
-        console.log('Error getting documents', err);
-      });
-  }
+  // getPlaylist = (playlistId) => {
+  //   console.log('getting playlist: ' + playlistId );
+  //   const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+  //   const self = this;
+  //   let query = itemRef.get()
+  //     .then(snapshot => {
+  //       if (snapshot.empty) {
+  //         console.log('No matching documents.');
+  //         return;
+  //       }  
+  //       console.log('get snapshot', snapshot.data())
+  //       this.setState({
+  //         activePlaylist: snapshot.data(),
+  //       })
+  //     })
+  //     .catch(err => {
+  //       console.log('Error getting documents', err);
+  //     });
+  // }
   getSongs(playlistId) {
     const itemsRef = this.props.firebase.db.collection('songs');
     itemsRef.where('playlistId', '==', 1).get().then((snapshot) => {
@@ -129,6 +129,18 @@ class ActivePlaylistBase extends Component {
     // this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
   }
   deleteSong(e,songId){
+    console.log('deleting song: ' + songId);
+    const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
+    deleteRef.delete()
+    .then(()=>{
+      console.log(songId + " deleted successfully")
+    })
+    .catch((err) => {
+      console.log("error deleting song")
+    })
+    this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
+  }
+  updateSong(e,songId){
     console.log('deleting song: ' + songId);
     const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
     deleteRef.delete()

@@ -13,7 +13,7 @@ import HomePage from '../Home';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
 import NewSongPage from '../NewSong';
-import Playlist from '../Playlist';
+import Playlist from '../AddPlaylist';
 import ActivePlaylist from '../ActivePlaylist';
 import ParamTest from '../ParamTest';
 import * as ROUTES from '../../constants/routes';

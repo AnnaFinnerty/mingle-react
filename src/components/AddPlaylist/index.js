@@ -7,18 +7,18 @@ import '../../App.css';
 import { Container, Form, Button, Label, Input } from 'semantic-ui-react'
 
 
-const PlaylistPage = (props) => {
+const AddPlaylistPage = (props) => {
   console.log('playlist props', props)
   return(
     <div>
     <FirebaseContext.Consumer>
-      {firebase => <Playlist firebase={firebase} userProps={props.userProps} />}
+      {firebase => <AddPlaylist firebase={firebase} userProps={props.userProps} />}
     </FirebaseContext.Consumer>
   </div>
   )
 };
 
-class PlaylistBase extends Component {
+class AddPlaylistBase extends Component {
   constructor(props) {
     super();
     //!TODO update prop names
@@ -94,7 +94,7 @@ class PlaylistBase extends Component {
     return (
         <Container fluid centered="true" style={{width:"100%"}}>
             <Form >
-            <Label>New Playlist</Label>
+            <Label>Create New Playlist</Label>
             <Input value={this.state.newPlaylistTitle} 
                 name="newPlaylistTitle" 
                 placeholder='playlist name'
@@ -112,6 +112,6 @@ class PlaylistBase extends Component {
   }
 }
 
-const Playlist = withRouter(PlaylistBase)
-export default PlaylistPage;
-export {Playlist};
+const AddPlaylist = withRouter(AddPlaylistBase)
+export default AddPlaylistPage;
+export {AddPlaylist};

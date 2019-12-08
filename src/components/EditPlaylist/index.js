@@ -7,21 +7,26 @@ import '../../App.css';
 import { Container, Form, Button, Label, Input } from 'semantic-ui-react'
 
 
-const PlaylistPage = () => (
-  <div>
+const EditPlaylistPage = (props) => {
+  console.log('playlist props', props)
+  return(
+    <div>
     <FirebaseContext.Consumer>
-      {firebase => <Playlist firebase={firebase} />}
+      {firebase => <EditPlaylist firebase={firebase} userProps={props.userProps} />}
     </FirebaseContext.Consumer>
   </div>
-);
+  )
+};
 
-class PlaylistBase extends Component {
+class EditPlaylistBase extends Component {
   constructor(props) {
     super();
     //!TODO update prop names
     this.state = {
-      newPlaylistTitle:'',
-      newPlaylistMood:'default',
+      title:props.title,
+      mood:props.mood,
+      date: props.date,
+      active: props.active
     }
     //TODO change to default moods, let users add one
     this.moods = ['party','chill','dance','default']
@@ -34,35 +39,54 @@ class PlaylistBase extends Component {
     const activateCallback = this.props.activatePlaylist;
     const title = this.state.newPlaylistTitle;
     this.props.firebase.db.collection("playlists").add({
-      title:{
           active: true,
           title: title,
           mood: this.state.newPlaylistMood,
-          userId: 1,
+          userId: this.props.userProps.userId,
           date: date
-        }
       })
       .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id);
-          activateCallback(docRef.id);
-          history.push(ROUTES.HOME)
+          // activateCallback(docRef.id);
+          // history.push(ROUTES.HOME)
       })
       .catch(function(error) {
           console.error("Error adding document: ", error);
-          history.push(ROUTES.HOME)
+          // history.push(ROUTES.HOME)
       });
   }
-  deletePlaylist(e,playlistId){
-    console.log('deleting playlist: ' + playlistId);
-    const deleteRef = this.props.firebase.db.collection('playlists').doc(playlistId);
-    deleteRef.delete()
-    .then(()=>{
-      console.log(playlistId + " deleted successfully")
-    })
-    .catch((err) => {
-      console.log("error deleting playlist")
-    })
-  }
+  // updatePlaylist = (playlistId) => {
+  //   console.log("updating playlist");
+  //   console.log(this.props);
+  //   const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+  //   playlistRef.update({
+  //         active: this,
+  //         title: title,
+  //         mood: this.state.newPlaylistMood,
+  //         userId: this.props.userProps.userId,
+  //         date: date
+  //     })
+  //     .then(function(docRef) {
+  //         console.log("Document written with ID: ", docRef.id);
+  //         // activateCallback(docRef.id);
+  //         // history.push(ROUTES.HOME)
+  //     })
+  //     .catch(function(error) {
+  //         console.error("Error adding document: ", error);
+  //         // history.push(ROUTES.HOME)
+  //     });
+  // }
+  // deletePlaylist(e,playlistId){
+  //   console.log('deleting playlist: ' + playlistId);
+  //   const deleteRef = this.props.firebase.db.collection('playlists').doc(playlistId);
+  //   deleteRef.delete()
+  //   .then(()=>{
+  //     console.log(playlistId + " deleted successfully")
+  //   })
+  //   .catch((err) => {
+  //     console.log("error deleting playlist")
+  //   })
+  // }
   handleChange = (e) => {
     this.setState({
       [e.target.name] : e.target.value
@@ -72,7 +96,7 @@ class PlaylistBase extends Component {
     return (
         <Container fluid centered="true" style={{width:"100%"}}>
             <Form >
-            <Label>New Playlist</Label>
+            <Label>Edit Playlist</Label>
             <Input value={this.state.newPlaylistTitle} 
                 name="newPlaylistTitle" 
                 placeholder='playlist name'
@@ -85,10 +109,11 @@ class PlaylistBase extends Component {
             <Button onClick={this.createPlaylist}>start</Button>
             </Form>
         </Container>
+        
     );
   }
 }
 
-const Playlist = withRouter(PlaylistBase)
-export default PlaylistPage;
-export {Playlist};
+const EditPlaylist = withRouter(EditPlaylistBase)
+export default EditPlaylistPage;
+export {EditPlaylist};

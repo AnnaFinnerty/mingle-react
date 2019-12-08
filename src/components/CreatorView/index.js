@@ -13,13 +13,32 @@ class CreatorView extends Component{
             invites: 0,
             players: 0,
             inviteCode: '',
-            modalOpen: true,
+            modalOpen: false,
             modalType: 'newPlaylist',
             userId: props.userId,
             showSongLabels: false,
             reduceApiCalls: props.reduceApiCalls
         }
     }
+   getPlaylist = (playlistId) => {
+    console.log('getting playlist: ' + playlistId );
+    const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+    const self = this;
+    let query = itemRef.get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          console.log('No matching documents.');
+          return;
+        }  
+        console.log('get snapshot', snapshot.data())
+        this.setState({
+          activePlaylist: snapshot.data(),
+        })
+      })
+      .catch(err => {
+        console.log('Error getting documents', err);
+      });
+  }
     genInviteCode = () => {
         console.log('generating invite code');
         const code = "http://localhost:3000/login/" + this.props.playlistId;
@@ -35,6 +54,12 @@ class CreatorView extends Component{
 
         //copy text inside text field
         document.execCommand("copy");
+    }
+    openModal = (modalType) => {
+        this.setState({
+            modalOpen: true,
+            modalType: modalType
+        })
     }
     closeModal = () => {
         this.setState({modalOpen: false})
@@ -97,9 +122,9 @@ class CreatorView extends Component{
                     <Grid.Column>
                         <Grid.Row>
                             <Grid columns={3} divided fluid="true" color="white">
-                            <Grid.Column><Button onClick={this.props.addPlaylist}>new playlist</Button></Grid.Column>
-                            <Grid.Column><Button onClick={this.props.addPlaylist}>edit playlist</Button></Grid.Column>
-                            <Grid.Column><Button onClick={this.props.addPlaylist}>delete playlist</Button></Grid.Column>
+                            <Grid.Column><Button onClick={()=>this.openModal("newPlaylist")}>new playlist</Button></Grid.Column>
+                            <Grid.Column><Button onClick={()=>this.openModal("editPlaylist")}>edit playlist</Button></Grid.Column>
+                            <Grid.Column><Button >delete playlist</Button></Grid.Column>
                             </Grid>
                         </Grid.Row>
                         <Grid.Row>
