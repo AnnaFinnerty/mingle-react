@@ -34,9 +34,8 @@ class ActivePlaylistBase extends Component {
     };
   }
   componentDidMount(){
-    // console.log('activeplaylist did mount', this.props);
+    console.log('activeplaylist did mount', this.props);
     this.getSongs();
-    // console.log(this.props);
     const userId = !this.props.authUser ? this.props.match.params.userId : this.props.authUser;
     console.log('userId in playlist:  ' + userId);
     if(!this.props.authUser){

@@ -53,17 +53,38 @@ class PlaylistBase extends Component {
           // history.push(ROUTES.HOME)
       });
   }
-  deletePlaylist(e,playlistId){
-    console.log('deleting playlist: ' + playlistId);
-    const deleteRef = this.props.firebase.db.collection('playlists').doc(playlistId);
-    deleteRef.delete()
-    .then(()=>{
-      console.log(playlistId + " deleted successfully")
-    })
-    .catch((err) => {
-      console.log("error deleting playlist")
-    })
-  }
+  // updatePlaylist = (playlistId) => {
+  //   console.log("updating playlist");
+  //   console.log(this.props);
+  //   const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+  //   playlistRef.update({
+  //         active: this,
+  //         title: title,
+  //         mood: this.state.newPlaylistMood,
+  //         userId: this.props.userProps.userId,
+  //         date: date
+  //     })
+  //     .then(function(docRef) {
+  //         console.log("Document written with ID: ", docRef.id);
+  //         // activateCallback(docRef.id);
+  //         // history.push(ROUTES.HOME)
+  //     })
+  //     .catch(function(error) {
+  //         console.error("Error adding document: ", error);
+  //         // history.push(ROUTES.HOME)
+  //     });
+  // }
+  // deletePlaylist(e,playlistId){
+  //   console.log('deleting playlist: ' + playlistId);
+  //   const deleteRef = this.props.firebase.db.collection('playlists').doc(playlistId);
+  //   deleteRef.delete()
+  //   .then(()=>{
+  //     console.log(playlistId + " deleted successfully")
+  //   })
+  //   .catch((err) => {
+  //     console.log("error deleting playlist")
+  //   })
+  // }
   handleChange = (e) => {
     this.setState({
       [e.target.name] : e.target.value
