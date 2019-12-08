@@ -85,7 +85,6 @@ class PlaylistBase extends Component {
             <Button onClick={this.createPlaylist}>start</Button>
             </Form>
         </Container>
-        
     );
   }
 }

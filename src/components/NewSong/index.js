@@ -197,35 +197,35 @@ class NewSongForm extends Component {
        <div> 
         <form onSubmit={this.onSubmit}>
             <Input
-            name="title/artist"
-            value={title}
-            onChange={this.onChange}
-            type="text"
-            placeholder="Song Title"
+              name="title/artist"
+              value={title}
+              onChange={this.onChange}
+              type="text"
+              placeholder="Song Title"
             />
             <Input
-            name="url"
-            value={url}
-            onChange={this.onChange}
-            type="text"
-            placeholder="Song URL"
+              name="url"
+              value={url}
+              onChange={this.onChange}
+              type="text"
+              placeholder="Song URL"
             />
             <Input
-            name="userId"
-            value={userId}
-            onChange={this.onChange}
-            type="text"
-            placeholder="userId (temp)"
+              name="userId"
+              value={userId}
+              onChange={this.onChange}
+              type="text"
+              placeholder="userId (temp)"
             />
             <Input
-            name="playlistId"
-            value={playlistId}
-            onChange={this.onChange}
-            type="text"
-            placeholder="playlistId"
+              name="playlistId"
+              value={playlistId}
+              onChange={this.onChange}
+              type="text"
+              placeholder="playlistId"
             />
             <Button color="orange" disabled={isInvalid} type="submit">
-            Submit Song
+              Submit Song
             </Button>
             <br></br>
             <Button onClick={this.toggleEnterMode}>Search Youtube</Button>

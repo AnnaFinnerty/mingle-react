@@ -10,7 +10,7 @@ import { Card, Grid, Button, Label, Icon } from 'semantic-ui-react';
 
 
 const ActivePlaylistPage = (props) => {
-  console.log('active playlist wrapper props', props);
+  //console.log('active playlist wrapper props', props);
   return(
     <div>
     <FirebaseContext.Consumer>
@@ -29,43 +29,45 @@ class ActivePlaylistBase extends Component {
       songs: [],
       currentSong: 0,
       username: '',
-      secretname: ''
+      secretname: '',
+      userSong: null,
     };
   }
   componentDidMount(){
-    console.log('activeplaylist did mount', this.props);
-    //this.getSongs();
-    console.log(this.props);
+    // console.log('activeplaylist did mount', this.props);
+    this.getSongs();
+    // console.log(this.props);
     const userId = !this.props.authUser ? this.props.match.params.userId : this.props.authUser;
-    console.log('userId in playlist' + userId)
-    const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
-    const self = this;
-    let query = userRef.get()
-      .then(snapshot => {
-        if (snapshot.empty) {
-          console.log('No matching user');
-          return;
-        }  
-        console.log('user snapshot', snapshot.data())
-        const data = snapshot.data();
-        this.setState({
-          username: data.username,
-          secretname: data.secretname,
-          playlistId: data.playlistId
+    console.log('userId in playlist:  ' + userId);
+    if(!this.props.authUser){
+      const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
+      const self = this;
+      let query = userRef.get()
+        .then(snapshot => {
+          if (snapshot.empty) {
+            console.log('No matching user');
+            return;
+          }  
+          console.log('user snapshot', snapshot.data())
+          const data = snapshot.data();
+          this.setState({
+            username: data.username,
+            secretname: data.secretname,
+            playlistId: data.playlistId
+          })
+          self.getPlaylist(data.playlistId);
         })
-        self.getPlaylist(data.playlistId);
-      })
-      .catch(err => {
-        console.log('Error getting documents', err);
-      });
-  }
-  loadUser = (userId) => {
-    console.log('active playlist loading user');
-    const ui = this.props.match.params.userId ? this.props.match.params.userId : this.props.authUser;
+        .catch(err => {
+          console.log('Error getting documents', err);
+        });
+    } else {
+      this.getPlaylist(this.props.playlistId);
+    }
   }
   getPlaylist = (playlistId) => {
     console.log('getting playlist: ' + playlistId );
     const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+    const self = this;
     let query = itemRef.get()
       .then(snapshot => {
         if (snapshot.empty) {
@@ -169,7 +171,7 @@ class ActivePlaylistBase extends Component {
       )
     })
     return (
-      <Grid columns={1}>
+      <Grid columns={1} style={{backgroundColor:"white"}}>
           <Grid.Row columns={2}>
             <Grid.Column>
               <h2>{this.state.username}</h2>

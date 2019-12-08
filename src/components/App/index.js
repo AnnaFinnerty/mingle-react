@@ -24,17 +24,17 @@ class App extends Component{
   constructor(props) {
     super(props);
     this.state = {
-      authUser: null,
+      authUser: 'QBREKglF9YNmQQKgEhrvsCxX0w3',
     };
   }
   componentDidMount() {
-    this.listener = this.props.firebase.auth.onAuthStateChanged(
-      authUser => {
-        authUser
-          ? this.setState({ authUser: authUser.uid })
-          : this.setState({ authUser: null });
-      },
-    );
+    // this.listener = this.props.firebase.auth.onAuthStateChanged(
+    //   authUser => {
+    //     authUser
+    //       ? this.setState({ authUser: authUser.uid })
+    //       : this.setState({ authUser: null });
+    //   },
+    // );
   }
   componentWillUnmount() {
     this.listener();

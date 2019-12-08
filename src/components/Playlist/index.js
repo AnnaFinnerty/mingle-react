@@ -34,13 +34,11 @@ class PlaylistBase extends Component {
     const activateCallback = this.props.activatePlaylist;
     const title = this.state.newPlaylistTitle;
     this.props.firebase.db.collection("playlists").add({
-      title:{
           active: true,
           title: title,
           mood: this.state.newPlaylistMood,
           userId: this.props.authUser,
           date: date
-        }
       })
       .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id);
