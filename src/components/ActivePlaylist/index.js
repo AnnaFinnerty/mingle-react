@@ -155,31 +155,24 @@ class ActivePlaylistBase extends Component {
           
             <Grid key={song.id} style={{border:borderStyle, margin:"1vh 0"}} columns={2} divided>
                 <Grid.Column width={10}>
-                  {/* <iframe id={song.id} className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen allow="autoplay"></iframe> */}
                   <ReactPlayer
                     url={'https://www.youtube.com/watch?v='+linkFrag}
                     className='react-player'
                     playing={playing}
                     width='100%'
-                    height='50%'
+                    height='100%'
                 />
                 </Grid.Column>
                 <Grid.Column width={6}>
-                
-                
                   <Grid columns={3}>
                     <span style={{width:"40vw", height: "10vh", overflow:"hidden" }}>
                       {song.title}
                     </span>
                     <Grid.Column>
-                      <Button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/></Button>
-                      <Label>
-                          {song.upvotes}
-                      </Label>
+                      <Button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/>{song.upvotes}</Button>
                     </Grid.Column>
                     <Grid.Column>
-                      <Button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/></Button>
-                      <Label>{song.downvotes}</Label>
+                      <Button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/>{song.downvotes}</Button>
                     </Grid.Column>
                     <Grid.Column>
                       <Button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></Button>
