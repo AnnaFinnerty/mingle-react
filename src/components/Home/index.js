@@ -65,6 +65,7 @@ class HomeBase extends Component {
       this.props.history.push('/signin');
     } else {
       //this.getPlaylists(this.state.authUser);
+      this.getUsers(this.state.activePlaylistId);
       if(!this.state.reduceApiCalls){
         //retrieve and populate users and playlists for this creator
         this.getUsers(this.state.activePlaylistId);
@@ -120,41 +121,17 @@ class HomeBase extends Component {
     //   });
     // });
   }
-  getPlaylists = (userId) => {
-    console.log('getting playlists for: ' + userId);
-    const itemsRef = this.props.firebase.db.collection('playlists');
-    console.log('playlists item ref', itemsRef)
-    const query = itemsRef.get().then((snapshot) => {
-      console.log('getPlaylists snapshot',snapshot)
-      let newItems = [];
-      snapshot.forEach((i) => {
-        const item = i.data()
-        console.log('playlist item', item)
-        const id = i.id;
-        newItems.push({
-          date: item.date,
-          userId: item.userId,
-          title: item.title,
-          mood: item.mood,
-          id: id,
-        });
-      });
-      console.log('newItems',newItems)
-      this.setState({
-        playlists: newItems
-      });
-    });
-  }
-  getUsers = async (playlistId) => {
+  getUsers = (playlistId) => {
     console.log('getting users for playlist:' + playlistId);
     const itemsRef = this.props.firebase.db.collection('temp_users');
-    const query = await itemsRef.where('playlistId', '==', playlistId).get().then((snapshot) => {
+    const query = itemsRef.where('playlistId', '==', playlistId).get().then((snapshot) => {
       console.log('getUsers snapshot',snapshot)
       let newUsers = [];
       snapshot.forEach((i) => {
         const item = i.data()
         const id = i.id;
         newUsers.push({
+          playlistId: item.playlistId,
           username: item.username,
           secretname: item.secretname,
           songId: item.songId,
@@ -172,8 +149,18 @@ class HomeBase extends Component {
   activatePlaylist = (playlistId) => {
     //console.log('activating playlist in home: ' + playlistId);
     console.log('getting playlist: ' + playlistId );
+    //deactivate all playlists in users collection
+    // db.collection("cities").get().then(function(querySnapshot) {
+    //   querySnapshot.forEach(function(doc) {
+    //       var cityRef = db.collection("cities").doc(doc.id);
+  
+    //       return cityRef.update({
+    //           capital: true
+    //       });
+    //   });
+    // });
+    //activate active playlist
     const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    const self = this;
     let query = itemRef.get()
     .then(snapshot => {
         if (snapshot.empty) {

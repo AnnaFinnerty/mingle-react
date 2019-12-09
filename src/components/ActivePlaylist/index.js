@@ -175,34 +175,35 @@ class ActivePlaylistBase extends Component {
       <Label>No songs added</Label>
       :
       this.state.songs.map((song,i)=>{
-      const linkFrag = song.url.split('=')[1];
-      const playing = i === this.state.currentSong && this.state.playing;
-      const borderStyle = i === this.state.currentSong && this.state.playing ? "2px solid aqua" :"2px solid transparent";
-      return(
-        <Card fluid key={song.id} style={{border:borderStyle}}>
-          <Grid columns={2} divided>
-            <Grid.Row>
-              <Grid.Column>
-                {/* <iframe id={song.id} className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen allow="autoplay"></iframe> */}
-                <ReactPlayer
-                  url={'https://www.youtube.com/watch?v='+linkFrag}
-                  className='react-player'
-                  playing={playing}
-                  width='100%'
-                  height='100%'
-              />
-              </Grid.Column>
-              <Grid.Column>
-              <Card.Content header={song.title} />
-                <button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/></button>
-                <button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/></button>
-                <button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></button>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid> 
-        </Card>
-      )
-    })
+        console.log('song', song);
+        const linkFrag = song.url.split('=')[1];
+        const playing = i === this.state.currentSong && this.state.playing;
+        const borderStyle = i === this.state.currentSong && this.state.playing ? "2px solid aqua" :"2px solid transparent";
+        return(
+          <Card fluid key={song.id} style={{border:borderStyle}}>
+            <Grid columns={2} divided>
+              <Grid.Row>
+                <Grid.Column>
+                  {/* <iframe id={song.id} className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen allow="autoplay"></iframe> */}
+                  <ReactPlayer
+                    url={'https://www.youtube.com/watch?v='+linkFrag}
+                    className='react-player'
+                    playing={playing}
+                    width='100%'
+                    height='100%'
+                />
+                </Grid.Column>
+                <Grid.Column>
+                <Card.Content header={song.title} />
+                  <button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/></button>
+                  <button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/></button>
+                  <button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></button>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid> 
+          </Card>
+        )
+      })
     return (
       <Grid columns={1}>
         <Grid.Column>

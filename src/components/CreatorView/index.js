@@ -5,7 +5,7 @@ import ActivePlaylist from '../ActivePlaylist';
 import ModalWindow from '../Modal';
 import Message from '../Message';
 
-import { Modal, Feed, Grid, Icon, Button, Label, TextArea } from 'semantic-ui-react';
+import { Modal, Feed, Grid, Icon, Button, Label, TextArea, Tab } from 'semantic-ui-react';
 
 class CreatorView extends Component{
     constructor(props){
@@ -31,6 +31,7 @@ class CreatorView extends Component{
         // if(!this.state.activePlaylist){
         //     this.openMessage("no active playlist")
         // }
+        this.getPlaylists(this.state.authUser);
         if(!this.state.reduceApiCalls){
             this.getPlaylists(this.state.authUser);
         }
@@ -137,7 +138,10 @@ class CreatorView extends Component{
     }
     render(){
         console.log('creatorView props', this.props);
-        const users = this.props.players.map((user)=>{
+        const users = !this.props.players.length ?
+        <Label>no users</Label> :
+        this.props.players.map((user)=>{
+            console.log('user',user);
             return(
               <Feed.Event style={{backgroundColor:"lightgray", padding:"2% 5%", margin:"0 5%", width:"90%"}}>
                 <Feed.Label>
@@ -164,10 +168,14 @@ class CreatorView extends Component{
               </Feed.Event>
             )
           })
+        const panes = [
+            { menuItem: 'Users', render: () => <Tab.Pane>{users}</Tab.Pane> },
+            { menuItem: 'Playlists', render: () => <Tab.Pane>{playlists}</Tab.Pane> },
+        ]
         return(
             <React.Fragment>
                 <Grid columns={2} divided fluid="true">
-                    <Grid.Column style={{backgroundColor:"gray", height: '80vh'}}>
+                    <Grid.Column width={5} style={{backgroundColor:"gray", height: '80vh'}}>
                         <Grid.Row>
                             <Grid columns={2}>
                                 <Grid.Column>
@@ -180,13 +188,9 @@ class CreatorView extends Component{
                             </Grid>            
                         </Grid.Row>
                         <Grid.Row>
-                            <Label>Users</Label>
-                            {users}
+                            <Tab panes={panes} />
                         </Grid.Row>
-                        <Grid.Row>
-                            <Label>Playlists</Label>
-                            {playlists}
-                        </Grid.Row>
+                        
                     </Grid.Column>
                     <Grid.Column >
                         <Grid.Row>
