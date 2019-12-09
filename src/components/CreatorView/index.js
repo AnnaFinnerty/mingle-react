@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 
 
+import PlayersList from '../PlayersList';
 import ActivePlaylist from '../ActivePlaylist';
 import ModalWindow from '../Modal';
 import Message from '../Message';
@@ -8,12 +9,14 @@ import Message from '../Message';
 import { Modal, Feed, Grid, Icon, Button, Label, TextArea, Tab } from 'semantic-ui-react';
 
 class CreatorView extends Component{
+   
     constructor(props){
         super()
+        console.log('cretorView props', props)
         this.state = {
             playlists: [],
+            players: props.players,
             invites: 0,
-            players: 0,
             inviteCode: '',
             playlistToEdit: '',
             messageOpen: false,
@@ -138,18 +141,6 @@ class CreatorView extends Component{
     }
     render(){
         console.log('creatorView props', this.props);
-        const users = !this.props.players.length ?
-        <Label>no users</Label> :
-        this.props.players.map((user)=>{
-            console.log('user',user);
-            return(
-              <Feed.Event style={{backgroundColor:"lightgray", padding:"2% 5%", margin:"0 5%", width:"90%"}}>
-                <Feed.Label>
-                  {user.secretname}
-                </Feed.Label>
-              </Feed.Event>
-            )
-          })
         const playlists = !this.state.playlists.length ?
           <Label>no playlists</Label> :
           this.state.playlists.map((playlist)=>{
@@ -169,7 +160,7 @@ class CreatorView extends Component{
             )
           })
         const panes = [
-            { menuItem: 'Users', render: () => <Tab.Pane>{users}</Tab.Pane> },
+            { menuItem: 'Users', render: () => <Tab.Pane><PlayersList playlistId={this.state.playlistId} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls}/></Tab.Pane> },
             { menuItem: 'Playlists', render: () => <Tab.Pane>{playlists}</Tab.Pane> },
         ]
         return(

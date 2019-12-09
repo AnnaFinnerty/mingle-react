@@ -34,6 +34,7 @@ const HomePage = (props) => {
 //sudden death
 //end song immediately on vote completion or play through
 //speed through? Or should this be default?
+//do not allow vote until song play for X seconds
 
 class HomeBase extends Component {
   constructor(props) {
@@ -203,7 +204,7 @@ class HomeBase extends Component {
       })
   }
   render(){
-    // console.log('home props', this.props)
+    console.log('home state', this.state)
     const view = this.state.creatorMode ? 
                 <CreatorView authUser={this.state.authUser}
                              playlistId={this.state.activePlaylistId} 
