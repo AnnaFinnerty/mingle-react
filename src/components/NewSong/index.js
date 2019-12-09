@@ -126,7 +126,9 @@ class NewSongForm extends Component {
         title: songToAdd.title,
         url: songToAdd.url,
         playlistId: songToAdd.playlistId,
-        userId : songToAdd.userId
+        userId : songToAdd.userId,
+        upvotes: 0,
+        downvotes:0
     }
     this.props.firebase.db.collection("songs").push(newSong)
             .then(function(docRef) {

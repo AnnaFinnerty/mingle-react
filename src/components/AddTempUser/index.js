@@ -51,16 +51,17 @@ class AddTempUserFormBase extends Component {
     event.preventDefault();
     const { username, secretname , playlistId} = this.state;
     this.props.firebase.db.collection("temp_users").add({
-      username: username,
-      secretname: secretname,
-      playlistId: playlistId,
-      upvotes: 0,
-      downvotes: 0,
-      songId: '',
+        username: username,
+        secretname: secretname,
+        playlistId: playlistId,
+        upvotes: 0,
+        downvotes: 0,
+        songId: '',
+        authUser: false,
       })
       .then((userRef) => {
           console.log("Document written with ID: ", userRef.id);
-          this.props.history.push('/activeplaylist/'+userRef.id);
+          this.props.history.push('/playlist/'+userRef.id);
       })
       .catch(function(error) {
           console.error("Error adding document: ", error);

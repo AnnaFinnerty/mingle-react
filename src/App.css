@@ -1,5 +1,6 @@
 body{
   background: rgb(58, 57, 57);
+  box-shadow: 0 0 10px  black inset ;
   width: 100vw;
   height: 100vh;
   overflow-x: hidden;
@@ -102,6 +103,17 @@ button{
   text-decoration: underline;
 }
 
+.list-item{
+  border:.1px solid gray;
+  padding: 1vw;
+  margin: .5vw 0;
+}
+
+/* .list-item:hover{
+  background: rgba(0,255,255,.2);
+  color: orangered;
+} */
+
 .border-hover{
   margin: 0 20vw;
   border: 3px solid transparent;
@@ -120,6 +132,18 @@ button{
 .share-link{
   min-height: 3vh;
   border: 1px solid black;
+}
+
+.orange-hover:hover{
+  color: orangered;
+}
+
+.delete-hover:hover{
+  color: rgb(110, 7, 7);
+}
+
+.edit-hover:hover{
+  color: green;
 }
 
 #invite-code{
