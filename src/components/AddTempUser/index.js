@@ -60,7 +60,7 @@ class AddTempUserFormBase extends Component {
       })
       .then((userRef) => {
           console.log("Document written with ID: ", userRef.id);
-          this.props.history.push('/activeplaylist/'+userRef.id);
+          this.props.history.push('/playlist/'+userRef.id);
       })
       .catch(function(error) {
           console.error("Error adding document: ", error);
