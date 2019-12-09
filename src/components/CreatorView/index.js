@@ -144,7 +144,6 @@ class CreatorView extends Component{
         const playlists = !this.state.playlists.length ?
           <Label>no playlists</Label> :
           this.state.playlists.map((playlist)=>{
-            console.log(playlist);
             return(
               <Feed.Event key={playlist.id} style={{backgroundColor:"lightgray", padding:"2% 5%", margin:"0 5%", width:"90%"}}>
                 <Feed.Label>

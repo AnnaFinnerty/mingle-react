@@ -175,7 +175,6 @@ class ActivePlaylistBase extends Component {
       <Label>No songs added</Label>
       :
       this.state.songs.map((song,i)=>{
-        console.log('song', song);
         const linkFrag = song.url.split('=')[1];
         const playing = i === this.state.currentSong && this.state.playing;
         const borderStyle = i === this.state.currentSong && this.state.playing ? "2px solid aqua" :"2px solid transparent";

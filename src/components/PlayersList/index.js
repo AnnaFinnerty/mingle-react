@@ -70,7 +70,6 @@ class PlayersList extends Component {
     const users = !this.state.players.length ?
     <Label>no users</Label> :
     this.state.players.map((user)=>{
-        console.log('user',user);
         return(
           <Feed.Event key={user.id} style={{backgroundColor:"lightgray", padding:"2% 5%", margin:"0 5%", width:"90%"}}>
             <Feed.Label>
