@@ -31,7 +31,9 @@ class CreatorView extends Component{
         // if(!this.state.activePlaylist){
         //     this.openMessage("no active playlist")
         // }
-        this.getPlaylists(this.state.authUser);
+        if(!this.state.reduceApiCalls){
+            this.getPlaylists(this.state.authUser);
+        }
     }
     getPlaylists = (userId) => {
         console.log('getting playlists for: ' + userId);

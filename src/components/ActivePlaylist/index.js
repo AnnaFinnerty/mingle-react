@@ -25,6 +25,7 @@ class ActivePlaylistBase extends Component {
     super(props);
     this.unsubscribe = null;
     this.state = {
+      isAuthUser: props.authUser,
       userId: props.userId,
       playlistId: props.playlistId,
       usersSong: props.usersSong,
@@ -139,8 +140,25 @@ class ActivePlaylistBase extends Component {
     })
     this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
   }
-  playPlaylist(){
+  playPlaylist = () => {
     console.log("playing playlist");
+    console.log(this.state);
+    const currentSong = this.state.songs[this.state.currentSong];
+    console.log('current song', currentSong);
+    const currentVideo = document.querySelector("#"+currentSong.id);
+    console.log(currentVideo);
+    currentVideo.playVideo();
+    
+  }
+  advancePlaylist = () => {
+
+  }
+  pausePlaylist = () => {
+    console.log("pausing playlist");
+    
+  }
+  stopPlaylist = () => {
+    console.log("stopping playlist");
     
   }
   render(){
@@ -155,7 +173,7 @@ class ActivePlaylistBase extends Component {
           <Grid columns={2} divided>
             <Grid.Row>
               <Grid.Column>
-                <iframe className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen></iframe>
+                <iframe id={song.id} className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen></iframe>
               </Grid.Column>
               <Grid.Column>
               <Card.Content header={song.title} />
@@ -170,13 +188,33 @@ class ActivePlaylistBase extends Component {
     })
     return (
       <Grid columns={1}>
+        <Grid.Column>
           <Grid.Row columns={2}>
-            <Grid.Column>
-              <h2>{this.state.username}</h2>
-            </Grid.Column>
-            <Grid.Column><h2>{this.state.username}/{this.state.secretname}</h2></Grid.Column>
-        </Grid.Row>
-        {songs}
+              <Grid.Column>
+                <h2>{this.state.username}</h2>
+              </Grid.Column>
+              <Grid.Column><h2>{this.state.username}/{this.state.secretname}</h2></Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            {
+              !this.state.isAuthUser ? "":
+              <React.Fragment>
+                <Button onClick={this.playPlaylist}>
+                  <Icon color="green" name="play"/>
+                </Button>
+                <Button onClick={this.pausePlaylist}>
+                  <Icon color="grey" name="pause"/>
+                </Button>
+                <Button onClick={this.stopPlaylist}>
+                  <Icon color="red" name="stop"/>
+                </Button>
+              </React.Fragment>
+            }
+          </Grid.Row>
+          <Grid.Row>
+            {songs}
+          </Grid.Row>
+        </Grid.Column>
       </Grid>
     );
   }
