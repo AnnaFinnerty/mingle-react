@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 
 import NewSong from '../NewSong';
+import EditSong from '../EditSong';
 import AddPlaylist from '../AddPlaylist';
 import EditPlaylist from '../EditPlaylist';
 import SignInTemp from '../SignInTemp';
@@ -21,8 +22,11 @@ class ModalWindow extends Component{
             case 'newSong':
                 return <NewSong userProps={this.props.userProps} callback={this.props.callback}/>
 
+            case 'editSong':
+                return <EditSong userProps={this.props.userProps} callback={this.props.callback}/>
+
             default:
-                return <div>MODAL WORkING</div> 
+                return <div>MODAL DID NOT LOAD</div> 
         }
     }
     render(){

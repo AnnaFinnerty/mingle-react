@@ -31,7 +31,7 @@ class EditSongBase extends Component {
     //TODO change to default moods, let users add one
     this.moods = ['party','chill','dance','default']
   }
-  updatePlaylist = () => {
+  updateSong = () => {
     const playlistId = this.props.userProps.playlistToEdit.id;
     console.log("updating playlist:  " + playlistId);
     console.log(this.props);

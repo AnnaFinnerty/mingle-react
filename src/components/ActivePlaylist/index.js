@@ -64,6 +64,7 @@ class ActivePlaylistBase extends Component {
           playlistId: item.playlistId,
           upvotes: item.upvotes,
           downvotes: item.downvotes,
+          votedOn: false,
           id: id,
         });
       });
@@ -75,35 +76,149 @@ class ActivePlaylistBase extends Component {
   upvoteSong = (e,songId) => {
     console.log('upvoting song: ' + songId);
     // const increment = this.props.firebase.db.FieldValue.increment(1);
-    const songRef = this.props.firebase.db.collection('songs').doc(songId);
-    // Update read count
     // songRef.update({ upvotes: admin.FieldValue.increment(1) });
+    // dumb workaround while decrement won't work
+    const songRef = this.props.firebase.db.collection('songs').doc(songId);
+    let currentVotes = 0;
+    let query = songRef.get().then(snapshot => {
+        if (snapshot.empty) {
+        console.log('No matching documents.');
+        return;
+        }  
+        console.log('increment snapshot', snapshot.data())
+        const data = snapshot.data();
+        const id = snapshot.id;
+        currentVotes = data.upvotes + 1;
+        songRef.update({ upvotes: currentVotes});
+        data['upvotes'] = currentVotes;
+        data['id'] = id;
+        data['votedOn'] = true;
+        console.log('updated song vals', data)
+        const updatedSongArray = this.state.songs.map((song) => {
+          if(song.id === id){
+              song = data
+          }
+          return song;
+        });
+        console.log('updated songs',updatedSongArray);
+        this.setState({
+          songs: updatedSongArray
+        })
+    })
+    .catch(err => {
+        console.log('Error getting documents', err);
+    });
+  }
+  undoUpvote = (e,songId) => {
+    console.log('undoing downvote song: ' + songId);
+    // songRef.update({ downvotes: admin.FieldValue.decrement(1) });
+    // dumb workaround while decrement won't work
+    const songRef = this.props.firebase.db.collection('songs').doc(songId);
+    let currentVotes = 0;
+    let query = songRef.get().then(snapshot => {
+        if (snapshot.empty) {
+        console.log('No matching documents.');
+        return;
+        }  
+        console.log('increment snapshot', snapshot.data())
+        const data = snapshot.data();
+        const id = snapshot.id;
+        currentVotes = data.upvotes - 1;
+        songRef.update({ upvotes: currentVotes});
+        data['upvotes'] = currentVotes;
+        data['id'] = id;
+        data['votedOn'] = false;
+        console.log('updated song vals', data)
+        const updatedSongArray = this.state.songs.map((song) => {
+          if(song.id === id){
+              song = data
+          }
+          return song;
+        });
+        console.log('updated songs',updatedSongArray);
+        this.setState({
+          songs: updatedSongArray
+        })
+    })
+    .catch(err => {
+        console.log('Error getting documents', err);
+    });
   }
   downvoteSong = (e,songId) => {
     console.log('downvoting song: ' + songId);
-    // const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
-    // deleteRef.delete()
-    // .then(()=>{
-    //   console.log(songId + " deleted successfully")
-    // })
-    // .catch((err) => {
-    //   console.log("error deleting song")
-    // })
-    // this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
+    // songRef.update({ upvotes: admin.FieldValue.decrement(1) });
+    // dumb workaround while decrement won't work
+    const songRef = this.props.firebase.db.collection('songs').doc(songId);
+    let currentVotes = 0;
+    let query = songRef.get().then(snapshot => {
+        if (snapshot.empty) {
+        console.log('No matching documents.');
+        return;
+        }  
+        console.log('increment snapshot', snapshot.data())
+        const data = snapshot.data();
+        const id = snapshot.id;
+        currentVotes = data.downvotes + 1;
+        songRef.update({ downvotes: currentVotes});
+        data['downvotes'] = currentVotes;
+        data['id'] = id;
+        data['votedOn'] = true;
+        console.log('updated song vals', data)
+        const updatedSongArray = this.state.songs.map((song) => {
+          if(song.id === id){
+              song = data
+          }
+          return song;
+        });
+        console.log('updated songs',updatedSongArray);
+        this.setState({
+          songs: updatedSongArray
+        })
+    })
+    .catch(err => {
+        console.log('Error getting documents', err);
+    });
+  }
+  undoDownvote = (e,songId) => {
+    console.log('undoing downvote song: ' + songId);
+    // songRef.update({ downvotes: admin.FieldValue.decrement(1) });
+    // dumb workaround while decrement won't work
+    const songRef = this.props.firebase.db.collection('songs').doc(songId);
+    let currentVotes = 0;
+    let query = songRef.get().then(snapshot => {
+        if (snapshot.empty) {
+        console.log('No matching documents.');
+        return;
+        }  
+        console.log('increment snapshot', snapshot.data())
+        const data = snapshot.data();
+        const id = snapshot.id;
+        currentVotes = data.downvotes - 1;
+        songRef.update({ downvotes: currentVotes});
+        data['downvotes'] = currentVotes;
+        data['id'] = id;
+        data['votedOn'] = false;
+        console.log('updated song vals', data)
+        const updatedSongArray = this.state.songs.map((song) => {
+          if(song.id === id){
+              song = data
+          }
+          return song;
+        });
+        console.log('updated songs',updatedSongArray);
+        this.setState({
+          songs: updatedSongArray
+        })
+    })
+    .catch(err => {
+        console.log('Error getting documents', err);
+    });
+  }
+  editSong = (songId) => {
+    console.log('deleting song: ' + songId);
+    //need callback to open modal
   }
   deleteSong = (e,songId) => {
-    console.log('deleting song: ' + songId);
-    const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
-    deleteRef.delete()
-    .then(()=>{
-      console.log(songId + " deleted successfully")
-    })
-    .catch((err) => {
-      console.log("error deleting song")
-    })
-    this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
-  }
-  updateSong = (e,songId) => {
     console.log('deleting song: ' + songId);
     const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
     deleteRef.delete()
@@ -148,11 +263,25 @@ class ActivePlaylistBase extends Component {
       <Label>No songs added</Label>
       :
       this.state.songs.map((song,i)=>{
+        console.log(song);
         const linkFrag = song.url.split('=')[1];
         const playing = i === this.state.currentSong && this.state.playing;
-        const borderStyle = i === this.state.currentSong && this.state.playing ? "2px solid aqua" :"2px solid transparent";
+        const selfSong = song.userId === this.state.userId;
+        console.log("this song belongs to user: " + selfSong);
+         const votedOnByThisUser = song.votedOn;
+        console.log("this song voted on by user: " + song.votedOn)
+        // const borderStyle = i === this.state.currentSong && this.state.playing ? "2px solid aqua" : "2px solid transparent";
+        let borderStyle;
+        if(i === this.state.currentSong && this.state.playing){
+          borderStyle = "2px solid aqua";
+        } else if (!selfSong && !votedOnByThisUser){
+          borderStyle = "2px solid red";
+        } else if (selfSong){
+          borderStyle = "2px solid black";
+        } else {
+          borderStyle = "2px solid transparent"
+        }
         return(
-          
             <Grid key={song.id} style={{border:borderStyle, margin:"1vh 0"}} columns={2} divided>
                 <Grid.Column width={10}>
                   <ReactPlayer
@@ -168,11 +297,26 @@ class ActivePlaylistBase extends Component {
                     <span style={{width:"40vw", height: "10vh", overflow:"hidden" }}>
                       {song.title}
                     </span>
+                    {
+                        votedOnByThisUser ? 
+                        <Grid.Column>
+                          <Button className="song-button upvote-button" onClick={(e)=>this.undoUpvote(e,song.id)}><Icon name="thumbs up" style={{color:"green"}}/>{song.upvotes}</Button>
+                        </Grid.Column> :
+                        <Grid.Column>
+                          <Button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/>{song.upvotes}</Button>
+                        </Grid.Column>
+                    }
+                    {
+                      votedOnByThisUser ? 
+                      <Grid.Column>
+                        <Button className="song-button downvote-button" onClick={(e)=>this.undoDownvote(e,song.id)}><Icon name="thumbs down" style={{color:"red"}}/>{song.downvotes}</Button>
+                      </Grid.Column> :
+                      <Grid.Column>
+                        <Button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/>{song.downvotes}</Button>
+                      </Grid.Column>
+                    }
                     <Grid.Column>
-                      <Button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/>{song.upvotes}</Button>
-                    </Grid.Column>
-                    <Grid.Column>
-                      <Button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/>{song.downvotes}</Button>
+                      <Button className="song-button edit-button" onClick={(e)=>this.editSong(e,song.id)}><Icon name="edit"/></Button>
                     </Grid.Column>
                     <Grid.Column>
                       <Button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></Button>

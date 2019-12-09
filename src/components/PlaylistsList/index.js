@@ -41,7 +41,7 @@ class PlaylistsList extends Component{
         });
     }
     editPlaylist = (playlistId) => {
-        console.log('getting playlist: ' + playlistId );
+        console.log('editing playlist: ' + playlistId );
         const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
         let query = itemRef.get().then(snapshot => {
                 if (snapshot.empty) {
