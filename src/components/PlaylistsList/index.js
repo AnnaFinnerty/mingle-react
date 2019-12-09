@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 
+import EditPlaylist from '../EditPlaylist';
+
 import { Modal, Feed, Grid, Icon, Button, Label, TextArea, Tab } from 'semantic-ui-react';
 
 class PlaylistsList extends Component{
@@ -7,6 +9,9 @@ class PlaylistsList extends Component{
         super()
         this.state = {
             playlists: [],
+            playlistToEdit: null,
+            modalOpen: false,
+            modalType: 'newPlaylist',
         }
     }
     componentDidMount(){
@@ -41,6 +46,12 @@ class PlaylistsList extends Component{
         });
     }
     editPlaylist = (playlistId) => {
+        this.setState({
+            modalOpen: true,
+            playlistToEdit: playlistId
+        })
+    }
+    updatePlaylist = (playlistId) => {
         console.log('getting playlist: ' + playlistId );
         const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
         let query = itemRef.get().then(snapshot => {
@@ -73,6 +84,15 @@ class PlaylistsList extends Component{
         console.log("error deleting song")
         })
     }
+    openModal = (modalType) => {
+        this.setState({
+            modalOpen: true,
+            modalType: modalType
+        })
+    }
+    closeModal = () => {
+        this.setState({modalOpen: false})
+      }
     render(){
         const playlists = !this.state.playlists.length ?
           <Label>no playlists</Label> :
@@ -96,9 +116,19 @@ class PlaylistsList extends Component{
             )
           })
         return(
-            <Feed>
-                {playlists}
-            </Feed>
+            <React.Fragment>
+                <Feed>
+                    {playlists}
+                </Feed>
+                {
+                    !this.state.modalOpen ? "" :
+                    <Modal open={this.state.modalOpen}>
+                        <Button onClick={this.closeModal}>X</Button>
+                        <EditPlaylist />
+                    </Modal>
+                }
+            </React.Fragment>
+            
         )
     }
 } 

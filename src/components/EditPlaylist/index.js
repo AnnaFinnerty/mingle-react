@@ -45,12 +45,9 @@ class EditPlaylistBase extends Component {
       })
       .then(function(docRef) {
           console.log("document updated");
-          // activateCallback(docRef.id);
-          // history.push(ROUTES.HOME)
       })
       .catch(function(error) {
           console.error("Error updating document: ", error);
-          // history.push(ROUTES.HOME)
       });
   }
   handleChange = (e) => {
