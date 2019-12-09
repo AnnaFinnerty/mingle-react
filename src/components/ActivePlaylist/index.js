@@ -25,8 +25,9 @@ class ActivePlaylistBase extends Component {
     super(props);
     this.unsubscribe = null;
     this.state = {
-      userId: null,
-      playlistId: null,
+      userId: props.userId,
+      playlistId: props.playlistId,
+      usersSong: props.usersSong,
       isLoading: true,
       songs: [],
       currentSong: 0,
@@ -38,57 +39,35 @@ class ActivePlaylistBase extends Component {
     console.log('activeplaylist did mount', this.props);
     const userId = !this.props.authUser ? this.props.match.params.userId : this.props.authUser;
     console.log('userId in playlist:  ' + userId);
-    if(!this.props.authUser){
-      const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
-      const self = this;
-      let query = userRef.get()
-        .then(snapshot => {
-          if (snapshot.empty) {
-            console.log('No matching user');
-            return;
-          }  
-          console.log('user snapshot', snapshot.data())
-          const data = snapshot.data();
-          this.setState({
-            username: data.username,
-            secretname: data.secretname,
-            playlistId: data.playlistId
-          })
-          self.getPlaylist(data.playlistId);
-        })
-        .catch(err => {
-          console.log('Error getting documents', err);
-        });
-    } else {
-      // this.getPlaylist(this.props.playlistId);
+  
+      //move to user view!
+      // const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
+      // const self = this;
+      // let query = userRef.get()
+      //   .then(snapshot => {
+      //     if (snapshot.empty) {
+      //       console.log('No matching user');
+      //       return;
+      //     }  
+      //     console.log('user snapshot in active playlist', snapshot.data())
+      //     const data = snapshot.data();
+      //     this.setState({
+      //       username: data.username,
+      //       secretname: data.secretname,
+      //     })
+      //   })
+      //   .catch(err => {
+      //     console.log('Error getting documents', err);
+      //   });
       this.getSongs();
       if(!this.props.reduceApiCalls){
         this.getSongs();
-      }  
-    }
+      } 
   }
-  // getPlaylist = (playlistId) => {
-  //   console.log('getting playlist: ' + playlistId );
-  //   const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-  //   const self = this;
-  //   let query = itemRef.get()
-  //     .then(snapshot => {
-  //       if (snapshot.empty) {
-  //         console.log('No matching documents.');
-  //         return;
-  //       }  
-  //       console.log('get snapshot', snapshot.data())
-  //       this.setState({
-  //         activePlaylist: snapshot.data(),
-  //       })
-  //     })
-  //     .catch(err => {
-  //       console.log('Error getting documents', err);
-  //     });
-  // }
-  getSongs(playlistId) {
+  getSongs() {
+    console.log('getting songs');
     const itemsRef = this.props.firebase.db.collection('songs');
-    itemsRef.where('playlistId', '==', 1).get().then((snapshot) => {
+    itemsRef.get().then((snapshot) => {
       //let items = snapshot.val();
       console.log('snapshot',snapshot)
       let newState = [];
@@ -110,6 +89,10 @@ class ActivePlaylistBase extends Component {
   }
   upvoteSong(e,songId){
     console.log('upvoting song: ' + songId);
+    const increment = this.props.firebase.firestore.FieldValue.increment(1);
+    const songRef = this.props.firebase.db.collection('songs').doc(songId);
+    // Update read count
+    songRef.update({ upvotes: increment });
     // const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
     // deleteRef.delete()
     // .then(()=>{
