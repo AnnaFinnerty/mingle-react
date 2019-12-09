@@ -4,30 +4,29 @@ import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 import { Feed, Input, Button, Label } from 'semantic-ui-react'
 
-const NewSongPage = () => (
+const NewSongPage = (props) => (
   <div>
     <h2>Add New Song</h2>
     <FirebaseContext.Consumer>
-      {firebase => <NewSongForm firebase={firebase} />}
+      {firebase => <NewSongForm {...props} firebase={firebase} />}
     </FirebaseContext.Consumer>
   </div>
 );
 
-const INITIAL_STATE = {
-    title: '',
-    url: '',
-    playlistId: '',
-    userId: '',
-    apiSearch: '',
-    searchResults: [],
-    error: null,
-    manualEnter: false,
-  };
-
 class NewSongForm extends Component {
   constructor(props) {
     super(props);
-    this.state = { ...INITIAL_STATE };
+    console.log('new song form props', props)
+    this.state = { 
+      title: '',
+      url: '',
+      playlistId: props.userProps.playlistId,
+      userId: props.userProps.authUser ? props.userProps.authUser : props.userProps.userId,
+      apiSearch: '',
+      searchResults: [],
+      error: null,
+      manualEnter: false,
+    };
   }
   componentDidMount(){
     this.loadSearchResults();
@@ -62,13 +61,16 @@ class NewSongForm extends Component {
 
   onSubmit = event => {
     event.preventDefault();
+    console.log('submitting new song', this.state);
     const { title, url, playlistId, userId } = this.state;
     //submit form information to firebase DB
     this.props.firebase.db.collection("songs").add({
         title: title,
         url: url,
         playlistId: playlistId,
-        userId: userId
+        userId: userId,
+        upvotes: 0,
+        downvotes: 0
     })
     .then(function(docRef) {
         console.log("Document written with ID: ", docRef.id);
@@ -95,8 +97,8 @@ class NewSongForm extends Component {
             this.props.firebase.db.collection("songs").add({
                 title: item.snippet.title,
                 url: 'https://www.youtube.com/watch?v='+videoId,
-                playlistId: 1,
-                userId: 1
+                playlistId: this.state.playlistId,
+                userId: this.state.userId
             })
             .then(function(docRef) {
                 console.log("Document written with ID: ", docRef.id);
@@ -197,35 +199,35 @@ class NewSongForm extends Component {
        <div> 
         <form onSubmit={this.onSubmit}>
             <Input
-            name="title/artist"
-            value={title}
-            onChange={this.onChange}
-            type="text"
-            placeholder="Song Title"
+              name="title/artist"
+              value={title}
+              onChange={this.onChange}
+              type="text"
+              placeholder="Song Title"
             />
             <Input
-            name="url"
-            value={url}
-            onChange={this.onChange}
-            type="text"
-            placeholder="Song URL"
+              name="url"
+              value={url}
+              onChange={this.onChange}
+              type="text"
+              placeholder="Song URL"
             />
             <Input
-            name="userId"
-            value={userId}
-            onChange={this.onChange}
-            type="text"
-            placeholder="userId (temp)"
+              name="userId"
+              value={userId}
+              onChange={this.onChange}
+              type="text"
+              placeholder="userId (temp)"
             />
             <Input
-            name="playlistId"
-            value={playlistId}
-            onChange={this.onChange}
-            type="text"
-            placeholder="playlistId"
+              name="playlistId"
+              value={playlistId}
+              onChange={this.onChange}
+              type="text"
+              placeholder="playlistId"
             />
             <Button color="orange" disabled={isInvalid} type="submit">
-            Submit Song
+              Submit Song
             </Button>
             <br></br>
             <Button onClick={this.toggleEnterMode}>Search Youtube</Button>

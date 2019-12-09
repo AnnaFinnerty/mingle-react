@@ -7,15 +7,18 @@ import { FirebaseContext } from '../Firebase';
 import CreatorView from '../CreatorView';
 import UserView from '../UserView';
 
+import ModalWindow from '../Modal';
+import Message from '../Message';
+
 // import AuthUserContext from '../Session';
 
 import '../../App.css';
-import { Grid, Label, Feed, Button, Header } from 'semantic-ui-react'
-import { Playlist } from '../Playlist';
+import { Modal, Grid,Button} from 'semantic-ui-react'
+
 
 
 const HomePage = (props) => {
-  console.log('home wrapper props', props)
+  // console.log('home wrapper props', props)
   return (
   <div>
     {/* <AuthUserContext.Consumer> */}
@@ -38,60 +41,46 @@ class HomeBase extends Component {
     console.log('Constructor Props are:', props)
     this.state = {
       authUser: props.authUser,
+      authUserDisplayName: '',
+      authUserSecretName: '',
       players: [],
       activePlaylist: '',
-      activePlaylistId: '0I2oIPyR2VHtMtTQSYd4',
+      activePlaylistId: 'rEZzXFXXfADqn5shewsm',
       playlists: [],
       creatorMode: true,
       secondChance: true,
       playThrough: false,
       suddenDeath: false,
+      messageOpen: false,
+      messageText: '',
+      modalOpen: false,
+      modalType: 'newTempProfile',
+      reduceApiCalls: true,
     }
   }
   componentDidMount(){
     console.log('home did mount', this.state);
     if(!this.state.authUser){
+      //send back to signin if creator is not authenicated
       this.props.history.push('/signin');
+    } else {
+      //this.getPlaylists(this.state.authUser);
+      if(!this.state.reduceApiCalls){
+        //retrieve and populate users and playlists for this creator
+        this.getUsers(this.state.activePlaylistId);
+        // this.getPlaylists(this.state.authUser);
+      }
     }
-    // this.getUsers();
-    //this.getPlaylists();
-    // instead of checking for a playlist prop we should be authenticating
-    // logged in user, then checking to see if they have an active playlist
-    // const playlistId = this.props.match.params.playlistId;
-    // // const playlistId = this.state.activePlaylistId;
-    // if(playlistId){
-    //   console.log("found playlistId:  " +  playlistId);
-    //   this.getPlaylist(playlistId);
-    // } else {
-    //   console.log('no playlist to load');
-    // }
   }
-  // getPlaylist(playlistId) {
-  //   console.log('getting playlist');
-  //   const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-  //   let query = itemRef.get()
-  //     .then(snapshot => {
-  //       if (snapshot.empty) {
-  //         console.log('No matching documents.');
-  //         return;
-  //       }  
-  //       console.log('get snapshot', snapshot.data())
-  //       this.setState({
-  //         activePlaylist: snapshot.data(),
-  //         activePlaylistId: playlistId
-  //       })
-  //     })
-  //     .catch(err => {
-  //       console.log('Error getting documents', err);
-  //     });
-  // }
-  getPlaylists = () => {
+  checkForActivePlaylist = () => {
+    console.log('looking for active playlist for: ' + this.state.authUser);
     const itemsRef = this.props.firebase.db.collection('playlists');
-    itemsRef.where('userId', '==', true).get().then((snapshot) => {
-      console.log('snapshot',snapshot)
+    const query = itemsRef.get().then((snapshot) => {
+      console.log('getPlaylists snapshot',snapshot)
       let newItems = [];
       snapshot.forEach((i) => {
         const item = i.data()
+        console.log('playlist item', item)
         const id = i.id;
         newItems.push({
           date: item.date,
@@ -101,16 +90,66 @@ class HomeBase extends Component {
           id: id,
         });
       });
+      console.log('newItems',newItems)
       this.setState({
         playlists: newItems
       });
     });
   }
-  getUsers() {
-    console.log('getting users');
+  getAuthUser = () => {
+    console.log('getting authorized user info:' + this.state.authUser);
+    // const itemsRef = this.props.firebase.db.collection('temp_users');
+    // const query = await itemsRef.where('playlistId', '==', playlistId).get().then((snapshot) => {
+    //   console.log('getUsers snapshot',snapshot)
+    //   let newUsers = [];
+    //   snapshot.forEach((i) => {
+    //     const item = i.data()
+    //     const id = i.id;
+    //     newUsers.push({
+    //       username: item.username,
+    //       secretname: item.secretname,
+    //       songId: item.songId,
+    //       downvotes: item.downvotes,
+    //       upvotes: item.upvotes,
+    //       id: id,
+    //     });
+    //   });
+    //   console.log('users',newUsers);
+    //   this.setState({
+    //     players: newUsers
+    //   });
+    // });
+  }
+  getPlaylists = (userId) => {
+    console.log('getting playlists for: ' + userId);
+    const itemsRef = this.props.firebase.db.collection('playlists');
+    console.log('playlists item ref', itemsRef)
+    const query = itemsRef.get().then((snapshot) => {
+      console.log('getPlaylists snapshot',snapshot)
+      let newItems = [];
+      snapshot.forEach((i) => {
+        const item = i.data()
+        console.log('playlist item', item)
+        const id = i.id;
+        newItems.push({
+          date: item.date,
+          userId: item.userId,
+          title: item.title,
+          mood: item.mood,
+          id: id,
+        });
+      });
+      console.log('newItems',newItems)
+      this.setState({
+        playlists: newItems
+      });
+    });
+  }
+  getUsers = async (playlistId) => {
+    console.log('getting users for playlist:' + playlistId);
     const itemsRef = this.props.firebase.db.collection('temp_users');
-    itemsRef.where('playlistId', '==', this.state.activePlaylistId).get().then((snapshot) => {
-      console.log('snapshot',snapshot)
+    const query = await itemsRef.where('playlistId', '==', playlistId).get().then((snapshot) => {
+      console.log('getUsers snapshot',snapshot)
       let newUsers = [];
       snapshot.forEach((i) => {
         const item = i.data()
@@ -131,55 +170,123 @@ class HomeBase extends Component {
     });
   }
   activatePlaylist = (playlistId) => {
-    console.log('activating playlist');
-    this.getPlaylist(playlistId);
-  }
-  addPlaylist = () => {
-    console.log('adding playlist');
-    this.props.history.push(ROUTES.PLAYLIST)
+    //console.log('activating playlist in home: ' + playlistId);
+    console.log('getting playlist: ' + playlistId );
+    const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+    const self = this;
+    let query = itemRef.get()
+    .then(snapshot => {
+        if (snapshot.empty) {
+        console.log('No matching documents.');
+        return;
+        }  
+        console.log('active playlist snapshot', snapshot.data())
+        this.setState({
+            activePlaylist: snapshot.data(),
+            activatePlaylistId: playlistId
+        })
+    })
+    .catch(err => {
+        console.log('Error getting documents', err);
+    });
   }
   toggleViewMode = () => {
     console.log('toggling view mode');
     this.setState({creatorMode: !this.state.creatorMode})
   }
-  render(){
-    console.log('home props', this.props)
-    const playlists = !this.state.playlists.length ?
-    <Label>no playlists</Label> :
-    this.state.playlists.map((playlist)=>{
-      console.log(playlist);
-      return(
-        <Feed.Event style={{backgroundColor:"lightgray", padding:"2% 5%", margin:"0 5%", width:"90%"}}>
-          <Feed.Label>
-            {playlist.title}
-          </Feed.Label>
-        </Feed.Event>
-      )
+  openModal = (modalType) => {
+    this.setState({
+        modalOpen: true,
+        modalType: modalType
     })
+  }
+  closeModal = () => {
+      this.setState({modalOpen: false})
+    }
+  openMessage = (messageText) => {
+      this.setState({
+          messageOpen: true,
+          messageText: messageText
+      })
+  }
+  closeMessage = () => {
+      this.setState({
+          messageOpen: false,
+          messageText: ''
+      })
+  }
+  render(){
+    // console.log('home props', this.props)
     const view = this.state.creatorMode ? 
-                <CreatorView userId={this.state.authUser} 
+                <CreatorView authUser={this.state.authUser}
+                             playlistId={this.state.activePlaylistId} 
                              toggleViewMode={this.toggleViewMode} 
                              addPlaylist={this.addPlaylist}
                              history={this.props.history} match={this.props.match} location={this.props.location}
+                             playlists={this.state.playlists}
+                             players={this.state.players}
+                             activatePlaylist={this.activatePlaylist}
+                             reduceApiCalls={this.state.reduceApiCalls}
+                             firebase={this.props.firebase}
                              /> 
                 : 
-                <UserView userId={this.state.authUser}
-                          toggleViewMode={this.toggleViewMode}/>;
+                <UserView authUser={this.state.authUser}
+                          playlistId={this.state.activePlaylistId}
+                          toggleViewMode={this.toggleViewMode}
+                          reduceApiCalls={this.state.reduceApiCalls}
+                          firebase={this.props.firebase}
+                          />;
     return (
       <React.Fragment>
         <Grid columns={1} fluid={'true'} centered style={{textAlign:"centered"}}>
-           {
-                !this.state.activePlaylistId ?
-                <React.Fragment>
-                  
-                  <Playlist activatePlaylist={this.activatePlaylist} firebase={this.props.firebase}/>
-                </React.Fragment>
-                :
-                <React.Fragment>
-                  {view}
-                </React.Fragment>    
-            }
+           <Grid.Row>
+              <Button onClick={this.toggleViewMode}
+                      style={{float:"left"}}
+              >
+                {
+                    //toggle states
+                    this.state.creatorMode ? 
+                    "go to user view" :
+                    "go to creator view"
+                }
+              </Button>
+              {
+                // add button if there is no active playlist
+                 !this.state.activatePlaylistId ? 
+                 <Button onClick={()=>this.openModal('newPlaylist')}>create new playlist to start</Button> : ""
+              }
+              {
+                // add button if creator has not set their temp_user profile for this round
+                 !this.state.authUserDisplayName || !this.state.authUserSecretName ?
+                 <Button onClick={()=>this.openModal('newTempProfile')}>create your profile</Button> :
+                 <React.Fragment>
+                    <h3>{this.state.authUserDisplayName}</h3>
+                    <h3>{this.state.authUserSecretName}</h3>
+                 </React.Fragment>
+              }
+              
+           </Grid.Row>
+           <Grid.Row>
+              {view}
+            </Grid.Row>
         </Grid>
+        {
+                    !this.state.modalOpen ? "" :
+                    <Modal open={this.state.modalOpen}>
+                        <Button onClick={this.closeModal}>X</Button>
+                        <ModalWindow closeModal={this.closeModal} 
+                                    modalType={this.state.modalType} 
+                                    userProps={this.state}/>
+                    </Modal>
+        }
+        {
+                    !this.state.messageOpen ? "" :
+                    <Message 
+                        open={this.state.messageOpen}
+                        text={this.state.messageText}
+                        closeMessage={this.closeMessage}
+                    />
+                } 
       </React.Fragment>
     );
   }

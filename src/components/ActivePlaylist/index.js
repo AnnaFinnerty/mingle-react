@@ -10,7 +10,7 @@ import { Card, Grid, Button, Label, Icon } from 'semantic-ui-react';
 
 
 const ActivePlaylistPage = (props) => {
-  console.log('active playlist wrapper props', props);
+  //console.log('active playlist wrapper props', props);
   return(
     <div>
     <FirebaseContext.Consumer>
@@ -25,63 +25,48 @@ class ActivePlaylistBase extends Component {
     super(props);
     this.unsubscribe = null;
     this.state = {
+      isAuthUser: props.authUser,
+      userId: props.userId,
+      playlistId: props.playlistId,
+      usersSong: props.usersSong,
       isLoading: true,
       songs: [],
       currentSong: 0,
-      username: '',
-      secretname: ''
+      user: '',
+      showSongInfo: true,
     };
   }
   componentDidMount(){
     console.log('activeplaylist did mount', this.props);
-    //this.getSongs();
-    console.log(this.props);
     const userId = !this.props.authUser ? this.props.match.params.userId : this.props.authUser;
-    console.log('userId in playlist' + userId)
-    const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
-    const self = this;
-    let query = userRef.get()
-      .then(snapshot => {
-        if (snapshot.empty) {
-          console.log('No matching user');
-          return;
-        }  
-        console.log('user snapshot', snapshot.data())
-        const data = snapshot.data();
-        this.setState({
-          username: data.username,
-          secretname: data.secretname,
-          playlistId: data.playlistId
-        })
-        self.getPlaylist(data.playlistId);
-      })
-      .catch(err => {
-        console.log('Error getting documents', err);
-      });
-  }
-  loadUser = (userId) => {
-    console.log('active playlist loading user');
-    const ui = this.props.match.params.userId ? this.props.match.params.userId : this.props.authUser;
-  }
-  getPlaylist = (playlistId) => {
-    console.log('getting playlist: ' + playlistId );
-    const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    let query = itemRef.get()
-      .then(snapshot => {
-        if (snapshot.empty) {
-          console.log('No matching documents.');
-          return;
-        }  
-        console.log('get snapshot', snapshot.data())
-        this.setState({
-          activePlaylist: snapshot.data(),
-        })
-      })
-      .catch(err => {
-        console.log('Error getting documents', err);
-      });
+    console.log('userId in playlist:  ' + userId);
+  
+      //move to user view!
+      // const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
+      // const self = this;
+      // let query = userRef.get()
+      //   .then(snapshot => {
+      //     if (snapshot.empty) {
+      //       console.log('No matching user');
+      //       return;
+      //     }  
+      //     console.log('user snapshot in active playlist', snapshot.data())
+      //     const data = snapshot.data();
+      //     this.setState({
+      //       username: data.username,
+      //       secretname: data.secretname,
+      //     })
+      //   })
+      //   .catch(err => {
+      //     console.log('Error getting documents', err);
+      //   });
+      this.getSongs();
+      if(!this.props.reduceApiCalls){
+        this.getSongs();
+      } 
   }
   getSongs() {
+    console.log('getting songs');
     const itemsRef = this.props.firebase.db.collection('songs');
     itemsRef.get().then((snapshot) => {
       //let items = snapshot.val();
@@ -105,6 +90,10 @@ class ActivePlaylistBase extends Component {
   }
   upvoteSong(e,songId){
     console.log('upvoting song: ' + songId);
+    const increment = this.props.firebase.firestore.FieldValue.increment(1);
+    const songRef = this.props.firebase.db.collection('songs').doc(songId);
+    // Update read count
+    songRef.update({ upvotes: increment });
     // const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
     // deleteRef.delete()
     // .then(()=>{
@@ -139,8 +128,37 @@ class ActivePlaylistBase extends Component {
     })
     this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
   }
-  playPlaylist(){
+  updateSong(e,songId){
+    console.log('deleting song: ' + songId);
+    const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
+    deleteRef.delete()
+    .then(()=>{
+      console.log(songId + " deleted successfully")
+    })
+    .catch((err) => {
+      console.log("error deleting song")
+    })
+    this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
+  }
+  playPlaylist = () => {
     console.log("playing playlist");
+    console.log(this.state);
+    const currentSong = this.state.songs[this.state.currentSong];
+    console.log('current song', currentSong);
+    const currentVideo = document.querySelector("#"+currentSong.id);
+    console.log(currentVideo);
+    currentVideo.playVideo();
+    
+  }
+  advancePlaylist = () => {
+
+  }
+  pausePlaylist = () => {
+    console.log("pausing playlist");
+    
+  }
+  stopPlaylist = () => {
+    console.log("stopping playlist");
     
   }
   render(){
@@ -155,7 +173,7 @@ class ActivePlaylistBase extends Component {
           <Grid columns={2} divided>
             <Grid.Row>
               <Grid.Column>
-                <iframe className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen></iframe>
+                <iframe id={song.id} className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen></iframe>
               </Grid.Column>
               <Grid.Column>
               <Card.Content header={song.title} />
@@ -170,13 +188,33 @@ class ActivePlaylistBase extends Component {
     })
     return (
       <Grid columns={1}>
+        <Grid.Column>
           <Grid.Row columns={2}>
-            <Grid.Column>
-              <h2>{this.state.username}</h2>
-            </Grid.Column>
-            <Grid.Column><h2>{this.state.username}/{this.state.secretname}</h2></Grid.Column>
-        </Grid.Row>
-        {songs}
+              <Grid.Column>
+                <h2>{this.state.username}</h2>
+              </Grid.Column>
+              <Grid.Column><h2>{this.state.username}/{this.state.secretname}</h2></Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            {
+              !this.state.isAuthUser ? "":
+              <React.Fragment>
+                <Button onClick={this.playPlaylist}>
+                  <Icon color="green" name="play"/>
+                </Button>
+                <Button onClick={this.pausePlaylist}>
+                  <Icon color="grey" name="pause"/>
+                </Button>
+                <Button onClick={this.stopPlaylist}>
+                  <Icon color="red" name="stop"/>
+                </Button>
+              </React.Fragment>
+            }
+          </Grid.Row>
+          <Grid.Row>
+            {songs}
+          </Grid.Row>
+        </Grid.Column>
       </Grid>
     );
   }

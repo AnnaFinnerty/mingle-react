@@ -7,15 +7,18 @@ import '../../App.css';
 import { Container, Form, Button, Label, Input } from 'semantic-ui-react'
 
 
-const PlaylistPage = () => (
-  <div>
+const AddPlaylistPage = (props) => {
+  console.log('playlist props', props)
+  return(
+    <div>
     <FirebaseContext.Consumer>
-      {firebase => <Playlist firebase={firebase} />}
+      {firebase => <AddPlaylist firebase={firebase} userProps={props.userProps} callback={props.callback} />}
     </FirebaseContext.Consumer>
   </div>
-);
+  )
+};
 
-class PlaylistBase extends Component {
+class AddPlaylistBase extends Component {
   constructor(props) {
     super();
     //!TODO update prop names
@@ -30,38 +33,24 @@ class PlaylistBase extends Component {
     console.log("creating playlist");
     console.log(this.props);
     const date = new Date();
-    const history = this.props.history;
-    const activateCallback = this.props.activatePlaylist;
+    const activateCallback = this.props.callback;
+    console.log(activateCallback);
     const title = this.state.newPlaylistTitle;
     this.props.firebase.db.collection("playlists").add({
-      title:{
           active: true,
           title: title,
           mood: this.state.newPlaylistMood,
-          userId: 1,
+          userId: this.props.userProps.authUser,
           date: date
-        }
       })
       .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id);
           activateCallback(docRef.id);
-          history.push(ROUTES.HOME)
       })
       .catch(function(error) {
           console.error("Error adding document: ", error);
-          history.push(ROUTES.HOME)
+          // history.push(ROUTES.HOME)
       });
-  }
-  deletePlaylist(e,playlistId){
-    console.log('deleting playlist: ' + playlistId);
-    const deleteRef = this.props.firebase.db.collection('playlists').doc(playlistId);
-    deleteRef.delete()
-    .then(()=>{
-      console.log(playlistId + " deleted successfully")
-    })
-    .catch((err) => {
-      console.log("error deleting playlist")
-    })
   }
   handleChange = (e) => {
     this.setState({
@@ -72,7 +61,7 @@ class PlaylistBase extends Component {
     return (
         <Container fluid centered="true" style={{width:"100%"}}>
             <Form >
-            <Label>New Playlist</Label>
+            <Label>Create New Playlist</Label>
             <Input value={this.state.newPlaylistTitle} 
                 name="newPlaylistTitle" 
                 placeholder='playlist name'
@@ -90,6 +79,6 @@ class PlaylistBase extends Component {
   }
 }
 
-const Playlist = withRouter(PlaylistBase)
-export default PlaylistPage;
-export {Playlist};
+const AddPlaylist = withRouter(AddPlaylistBase)
+export default AddPlaylistPage;
+export {AddPlaylist};

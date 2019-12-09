@@ -4,6 +4,8 @@ import { SignUpLink } from '../SignUp';
 import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
+import { Grid,Label } from 'semantic-ui-react';
+
 const SignInPage = (props) => (
   <div>
     <h2>Sign In</h2>
@@ -11,7 +13,6 @@ const SignInPage = (props) => (
     <FirebaseContext.Consumer>
       {firebase => <SignInForm firebase={firebase} authUser={props.authUser}/>}
     </FirebaseContext.Consumer>
-    <SignUpLink />
   </div>
 );
 const INITIAL_STATE = {
@@ -25,9 +26,9 @@ class SignInFormBase extends Component {
     this.state = { ...INITIAL_STATE };
   }
   componentWillReceiveProps(nextProps){
-    if(nextProps.authUser){
-      this.props.history.push('/home');
-    }
+    // if(nextProps.authUser){
+    //   this.props.history.push('/home');
+    // }
   }
   onSubmit = event => {
     event.preventDefault();
@@ -50,26 +51,37 @@ class SignInFormBase extends Component {
     const { email, password, error } = this.state;
     const isInvalid = password === '' || email === '';
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          name="email"
-          value={email}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Email Address"
-        />
-        <input
-          name="password"
-          value={password}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Password"
-        />
-        <button disabled={isInvalid} type="submit">
-          Sign In
-        </button>
-        {error && <p>{error.message}</p>}
-      </form>
+      <Grid>
+      <Grid.Row>
+        <Grid.Column width={5}>
+        </Grid.Column>
+        <Grid.Column width={10}>
+          <form onSubmit={this.onSubmit}>
+          <input
+            name="email"
+            value={email}
+            onChange={this.onChange}
+            type="text"
+            placeholder="Email Address"
+          />
+          <input
+            name="password"
+            value={password}
+            onChange={this.onChange}
+            type="password"
+            placeholder="Password"
+          />
+          <button disabled={isInvalid} type="submit">
+            Sign In
+          </button>
+          {error && <p>{error.message}</p>}
+        </form>
+        <SignUpLink />
+        </Grid.Column>
+        <Grid.Column width={5}>
+        </Grid.Column>
+      </Grid.Row>
+  </Grid>
     );
   }
 }

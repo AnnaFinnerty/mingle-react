@@ -13,7 +13,7 @@ import HomePage from '../Home';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
 import NewSongPage from '../NewSong';
-import Playlist from '../Playlist';
+import Playlist from '../AddPlaylist';
 import ActivePlaylist from '../ActivePlaylist';
 import ParamTest from '../ParamTest';
 import * as ROUTES from '../../constants/routes';
@@ -24,17 +24,17 @@ class App extends Component{
   constructor(props) {
     super(props);
     this.state = {
-      authUser: null,
+      authUser: 'QBREKglF9YNmQQKgEhrvsCxX0w3',
     };
   }
   componentDidMount() {
-    this.listener = this.props.firebase.auth.onAuthStateChanged(
-      authUser => {
-        authUser
-          ? this.setState({ authUser: authUser.uid })
-          : this.setState({ authUser: null });
-      },
-    );
+    // this.listener = this.props.firebase.auth.onAuthStateChanged(
+    //   authUser => {
+    //     authUser
+    //       ? this.setState({ authUser: authUser.uid })
+    //       : this.setState({ authUser: null });
+    //   },
+    // );
   }
   componentWillUnmount() {
     this.listener();
@@ -61,7 +61,7 @@ class App extends Component{
             {/* <Route path={ROUTES.ACCOUNT} component={AccountPage} />
             <Route path={ROUTES.ADMIN} component={AdminPage} /> */}
             {/* <Route path={ROUTES.NEWSONG} component={NewSongPage} /> */}
-            <Route path={ROUTES.PLAYLIST} component={Playlist} />
+            {/* <Route path={ROUTES.PLAYLIST} component={Playlist} /> */}
             <Route exact path={ROUTES.SIGN_IN_TEMP} children={SignInTempPage}/>
             <Route exact path={ROUTES.ACTIVEPLAYLIST} children={ActivePlaylist}/>
             

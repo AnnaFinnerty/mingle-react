@@ -50,7 +50,6 @@ class AddTempUserFormBase extends Component {
     console.log(this.props);
     event.preventDefault();
     const { username, secretname , playlistId} = this.state;
-    //TODO how to get playlistId into props???
     this.props.firebase.db.collection("temp_users").add({
       username: username,
       secretname: secretname,
@@ -82,7 +81,7 @@ class AddTempUserFormBase extends Component {
     })
   }
   render() {
-    console.log("addTempUserProps",this.props);
+    // console.log("addTempUserProps",this.props);
     const {
         username,
         secretname,

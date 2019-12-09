@@ -11,7 +11,6 @@ const NavigationAuth = () => (
     <h1>Playlist Battle</h1>
     <nav className="header-links">
       <Link className="header-link" to={ROUTES.HOME}>Home</Link>
-      <Link className="header-link" to={ROUTES.NEWSONG}>Add Song</Link>
       <Link className="header-link" to={ROUTES.ACCOUNT}>Account</Link>
       <SignOutButton/>
     </nav>
