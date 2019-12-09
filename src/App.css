@@ -103,6 +103,17 @@ button{
   text-decoration: underline;
 }
 
+.list-item{
+  border:.1px solid gray;
+  padding: 1vw;
+  margin: .5vw 0;
+}
+
+/* .list-item:hover{
+  background: rgba(0,255,255,.2);
+  color: orangered;
+} */
+
 .border-hover{
   margin: 0 20vw;
   border: 3px solid transparent;
@@ -121,6 +132,18 @@ button{
 .share-link{
   min-height: 3vh;
   border: 1px solid black;
+}
+
+.orange-hover:hover{
+  color: orangered;
+}
+
+.delete-hover:hover{
+  color: rgb(110, 7, 7);
+}
+
+.edit-hover:hover{
+  color: green;
 }
 
 #invite-code{

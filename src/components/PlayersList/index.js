@@ -71,16 +71,18 @@ class PlayersList extends Component {
     <Label>no users</Label> :
     this.state.players.map((user)=>{
         return(
-          <Feed.Event key={user.id} style={{backgroundColor:"lightgray", padding:"2% 5%", margin:"0 5%", width:"90%"}}>
+        <div className="list-item">
+          <Feed.Event key={user.id} className="list-item">
             <Feed.Label>
               {user.secretname}
-              <Icon name="delete" onClick={()=>this.deleteUser(user.id)}></Icon>
+              <Icon name="delete" className="delete-hover" onClick={()=>this.deleteUser(user.id)}></Icon>
             </Feed.Label>
           </Feed.Event>
+        </div>
         )
       })
     return (
-   
+        
         <Grid columns={1} fluid={'true'} centered style={{textAlign:"centered"}}>
            <Grid.Column>
                 {users}      

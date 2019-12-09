@@ -179,20 +179,20 @@ class ActivePlaylistBase extends Component {
         const playing = i === this.state.currentSong && this.state.playing;
         const borderStyle = i === this.state.currentSong && this.state.playing ? "2px solid aqua" :"2px solid transparent";
         return(
-          <Card fluid key={song.id} style={{border:borderStyle}}>
-            <Grid columns={2} divided>
+          
+            <Grid key={song.id} style={{border:borderStyle}} columns={2} divided>
               <Grid.Row>
-                <Grid.Column>
+                <Grid.Column width={10}>
                   {/* <iframe id={song.id} className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen allow="autoplay"></iframe> */}
                   <ReactPlayer
                     url={'https://www.youtube.com/watch?v='+linkFrag}
                     className='react-player'
                     playing={playing}
                     width='100%'
-                    height='100%'
+                    height='50%'
                 />
                 </Grid.Column>
-                <Grid.Column>
+                <Grid.Column width={6}>
                 <Card.Content header={song.title} />
                   <button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/></button>
                   <button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/></button>
@@ -200,7 +200,7 @@ class ActivePlaylistBase extends Component {
                 </Grid.Column>
               </Grid.Row>
             </Grid> 
-          </Card>
+  
         )
       })
     return (

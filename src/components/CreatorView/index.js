@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 
 
 import PlayersList from '../PlayersList';
+import PlaylistsList from '../PlaylistsList';
 import ActivePlaylist from '../ActivePlaylist';
 import ModalWindow from '../Modal';
 import Message from '../Message';
@@ -141,26 +142,9 @@ class CreatorView extends Component{
     }
     render(){
         console.log('creatorView props', this.props);
-        const playlists = !this.state.playlists.length ?
-          <Label>no playlists</Label> :
-          this.state.playlists.map((playlist)=>{
-            return(
-              <Feed.Event key={playlist.id} style={{backgroundColor:"lightgray", padding:"2% 5%", margin:"0 5%", width:"90%"}}>
-                <Feed.Label>
-                  {playlist.title}
-                </Feed.Label>
-                <Button size="small" onClick={()=>this.deletePlaylist(playlist.id)}>
-                    <Icon name="delete"/>
-                </Button>
-                <Button size="small" onClick={()=>this.editPlaylist(playlist.id)}>
-                    <Icon name="edit"/>
-                </Button>
-              </Feed.Event>
-            )
-          })
         const panes = [
             { menuItem: 'Users', render: () => <Tab.Pane><PlayersList playlistId={this.state.playlistId} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls}/></Tab.Pane> },
-            { menuItem: 'Playlists', render: () => <Tab.Pane>{playlists}</Tab.Pane> },
+            { menuItem: 'Playlists', render: () => <Tab.Pane><PlaylistsList playlistId={this.state.playlistId} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls}/></Tab.Pane> },
         ]
         return(
             <React.Fragment>
