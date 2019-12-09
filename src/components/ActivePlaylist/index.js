@@ -1,6 +1,7 @@
 import React, { Component, useState, useEffect } from 'react';
 import { withRouter, useParams } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
+import ReactPlayer from 'react-player';
 
 import firebase from '../Firebase';
 import { FirebaseContext } from '../Firebase';
@@ -31,6 +32,7 @@ class ActivePlaylistBase extends Component {
       usersSong: props.usersSong,
       isLoading: true,
       songs: [],
+      playing: false,
       currentSong: 0,
       user: '',
       showSongInfo: true,
@@ -142,38 +144,53 @@ class ActivePlaylistBase extends Component {
   }
   playPlaylist = () => {
     console.log("playing playlist");
-    console.log(this.state);
-    const currentSong = this.state.songs[this.state.currentSong];
-    console.log('current song', currentSong);
-    const currentVideo = document.querySelector("#"+currentSong.id);
-    console.log(currentVideo);
-    currentVideo.playVideo();
-    
+    this.setState({
+      playing: true,
+    })
   }
   advancePlaylist = () => {
-
+    console.log("advancing playlist");
+    const nextSong = this.state.currentSong >= this.state.songs.length - -1 ? 0 : this.state.currentSong + 1;
+    this.setState({
+      playing: true,
+      currentSong: nextSong,
+    })
   }
   pausePlaylist = () => {
     console.log("pausing playlist");
-    
+    this.setState({
+      playing: false,
+    })
   }
   stopPlaylist = () => {
     console.log("stopping playlist");
-    
+    this.setState({
+      playing: false,
+      currentSong: 0,
+    })
   }
   render(){
     // console.log('songs', this.state.songs)
     const songs = !this.state.songs.length ? 
       <Label>No songs added</Label>
       :
-      this.state.songs.map((song)=>{
+      this.state.songs.map((song,i)=>{
       const linkFrag = song.url.split('=')[1];
+      const playing = i === this.state.currentSong && this.state.playing;
+      const borderStyle = i === this.state.currentSong && this.state.playing ? "2px solid aqua" :"2px solid transparent";
       return(
-        <Card fluid key={song.id}>
+        <Card fluid key={song.id} style={{border:borderStyle}}>
           <Grid columns={2} divided>
             <Grid.Row>
               <Grid.Column>
-                <iframe id={song.id} className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen></iframe>
+                {/* <iframe id={song.id} className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen allow="autoplay"></iframe> */}
+                <ReactPlayer
+                  url={'https://www.youtube.com/watch?v='+linkFrag}
+                  className='react-player'
+                  playing={playing}
+                  width='100%'
+                  height='100%'
+              />
               </Grid.Column>
               <Grid.Column>
               <Card.Content header={song.title} />
@@ -201,6 +218,9 @@ class ActivePlaylistBase extends Component {
               <React.Fragment>
                 <Button onClick={this.playPlaylist}>
                   <Icon color="green" name="play"/>
+                </Button>
+                <Button onClick={this.advancePlaylist}>
+                  <Icon color="grey" name="forward"/>
                 </Button>
                 <Button onClick={this.pausePlaylist}>
                   <Icon color="grey" name="pause"/>
