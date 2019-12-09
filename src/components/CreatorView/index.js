@@ -21,6 +21,7 @@ class CreatorView extends Component{
             modalOpen: false,
             modalType: 'newPlaylist',
             authUser: props.authUser,
+            userSong: null,
             showSongInfo: false,
             reduceApiCalls: props.reduceApiCalls
         }
@@ -145,7 +146,6 @@ class CreatorView extends Component{
         const playlists = !this.state.playlists.length ?
           <Label>no playlists</Label> :
           this.state.playlists.map((playlist)=>{
-            console.log(playlist);
             return(
               <Feed.Event key={playlist.id} style={{backgroundColor:"lightgray", padding:"2% 5%", margin:"0 5%", width:"90%"}}>
                 <Feed.Label>
@@ -161,13 +161,9 @@ class CreatorView extends Component{
             )
           })
         return(
-   
             <React.Fragment>
                 <Grid columns={2} divided fluid="true">
                     <Grid.Column style={{backgroundColor:"gray", height: '80vh'}}>
-                        <Grid.Row>
-                            
-                        </Grid.Row>
                         <Grid.Row>
                             <Grid columns={2}>
                                 <Grid.Column>
@@ -197,6 +193,16 @@ class CreatorView extends Component{
                             </Grid>
                         </Grid.Row>
                         <Grid.Row>
+                        <Grid.Row>
+                        {
+                            this.props.userSong ? "" :
+                            <Button color="red" onClick={()=>this.openModal('newSong')}>
+                                add your song<br></br>
+                                we can't start without you
+                            </Button>
+                        }
+                        </Grid.Row>
+                        <Grid.Row>
                             <ActivePlaylist authUser={this.props.userId}
                                             userId={null} 
                                             playlistId={this.state.playlistId}
@@ -206,6 +212,7 @@ class CreatorView extends Component{
                                             location={this.props.location} 
                                             reduceApiCalls={this.props.reduceApiCalls}
                                             />
+                        </Grid.Row>
                         </Grid.Row>
                     </Grid.Column>
                 </Grid>

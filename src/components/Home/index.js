@@ -231,8 +231,8 @@ class HomeBase extends Component {
                              /> 
                 : 
                 <UserView authUser={this.state.authUser}
-                          toggleViewMode={this.toggleViewMode}
                           playlistId={this.state.activePlaylistId}
+                          toggleViewMode={this.toggleViewMode}
                           reduceApiCalls={this.state.reduceApiCalls}
                           firebase={this.props.firebase}
                           />;

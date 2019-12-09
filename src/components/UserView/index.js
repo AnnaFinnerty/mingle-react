@@ -1,4 +1,7 @@
 import React, {Component} from 'react';
+import { withRouter, useParams } from 'react-router-dom';
+import firebase from '../Firebase';
+import { FirebaseContext } from '../Firebase';
 
 import ActivePlaylist from '../ActivePlaylist';
 import ModalWindow from '../Modal';
@@ -6,7 +9,18 @@ import Message from '../Message';
 
 import { Modal, Grid, Button, Label, Input } from 'semantic-ui-react';
 
-class UserView extends Component{
+const UserViewPage = (props) => {
+    //console.log('active playlist wrapper props', props);
+    return(
+      <div>
+      <FirebaseContext.Consumer>
+        {(firebase) => <UserViewBase {...props} firebase={firebase} />}
+      </FirebaseContext.Consumer>
+    </div>
+    )
+  };
+
+class UserViewBase extends Component{
     constructor(props){
         super();
         this.state = {
@@ -14,9 +28,10 @@ class UserView extends Component{
             inviteCode: '',
             messageOpen: false,
             messageText: '',
-            modalOpen: true,
+            modalOpen: false,
             modalType: 'newSong',
             userId: props.authUser ? props.authUser : null,
+            userSong: props.userSong,
             showSongLabels: false,
             reduceApiCalls: props.reduceApiCalls
         }
@@ -56,23 +71,43 @@ class UserView extends Component{
             messageText: ''
         })
     }
+    closeModal = () => {
+        this.setState({modalOpen: false})
+      }
+    openMessage = (messageText) => {
+        this.setState({
+            messageOpen: true,
+            messageText: messageText
+        })
+    }
     render(){
         console.log('user view props', this.props);
         return(
             <React.Fragment>
                 <Grid columns={1} divided>
                     <Grid.Column>
-                        <Button onClick={this.props.toggleViewMode}>Go to Creator View</Button>
-                        <ActivePlaylist 
-                                        authUser={null}
-                                        userId={this.props.userId} 
-                                        playlistId={this.state.playlistId} 
-                                        openModal={this.openModal} 
-                                        history={this.props.history} 
-                                        match={this.props.match} 
-                                        location={this.props.location} 
-                                        reduceApiCalls={this.props.reduceApiCalls}
-                                        />
+                        <Grid.Row>
+                        {
+                            this.props.userSong ? "" :
+                            <Button color="red"
+                                    onClick={()=>this.openModal('newSong')}
+                            >
+                                add your song<br></br>
+                                we can't start without you
+                            </Button>
+                        }
+                        </Grid.Row>
+                        <Grid.Row>
+                            <ActivePlaylist authUser={this.props.authUser}
+                                            userId={null} 
+                                            playlistId={this.state.playlistId}
+                                            openModal={this.openModal} 
+                                            history={this.props.history} 
+                                            match={this.props.match} 
+                                            location={this.props.location} 
+                                            reduceApiCalls={this.props.reduceApiCalls}
+                                            />
+                        </Grid.Row>
                     </Grid.Column>
                 </Grid>
                 <Modal open={this.state.modalOpen}>
@@ -90,4 +125,6 @@ class UserView extends Component{
     
 }
 
-export default UserView
+const UserView = withRouter(UserViewBase)
+export default UserViewPage;
+export {UserView};
