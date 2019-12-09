@@ -27,14 +27,14 @@ class App extends Component{
     };
   }
   componentDidMount() {
-    //DO NOT DELETE -- UNCOMMENT BEFORE DEPLOY
-    // this.listener = this.props.firebase.auth.onAuthStateChanged(
-    //   authUser => {
-    //     authUser
-    //       ? this.setState({ authUser: authUser.uid })
-    //       : this.setState({ authUser: null });
-    //   },
-    // );
+    // DO NOT DELETE -- UNCOMMENT BEFORE DEPLOY
+    this.listener = this.props.firebase.auth.onAuthStateChanged(
+      authUser => {
+        authUser
+          ? this.setState({ authUser: authUser.uid })
+          : this.setState({ authUser: null });
+      },
+    );
   }
   componentWillUnmount() {
     this.listener();
