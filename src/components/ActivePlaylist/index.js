@@ -5,6 +5,7 @@ import ReactPlayer from 'react-player';
 
 import firebase from '../Firebase';
 import { FirebaseContext } from '../Firebase';
+// import * as admin from 'firebase-admin';
 
 import '../../App.css';
 import { Card, Grid, Button, Label, Icon } from 'semantic-ui-react';
@@ -23,6 +24,7 @@ const ActivePlaylistPage = (props) => {
 
 class ActivePlaylistBase extends Component {
   constructor(props) {
+    console.log("active playlist props in constructor:", props)
     super(props);
     this.unsubscribe = null;
     this.state = {
@@ -40,34 +42,12 @@ class ActivePlaylistBase extends Component {
   }
   componentDidMount(){
     console.log('activeplaylist did mount', this.props);
-    const userId = !this.props.authUser ? this.props.match.params.userId : this.props.authUser;
-    console.log('userId in playlist:  ' + userId);
-  
-      //move to user view!
-      // const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
-      // const self = this;
-      // let query = userRef.get()
-      //   .then(snapshot => {
-      //     if (snapshot.empty) {
-      //       console.log('No matching user');
-      //       return;
-      //     }  
-      //     console.log('user snapshot in active playlist', snapshot.data())
-      //     const data = snapshot.data();
-      //     this.setState({
-      //       username: data.username,
-      //       secretname: data.secretname,
-      //     })
-      //   })
-      //   .catch(err => {
-      //     console.log('Error getting documents', err);
-      //   });
       this.getSongs();
       if(!this.props.reduceApiCalls){
         this.getSongs();
       } 
   }
-  getSongs() {
+  getSongs = () => {
     console.log('getting songs');
     const itemsRef = this.props.firebase.db.collection('songs');
     itemsRef.where('playlistId', '==', this.state.playlistId).get().then((snapshot) => {
@@ -82,6 +62,8 @@ class ActivePlaylistBase extends Component {
           url: item.url,
           userId: item.userId,
           playlistId: item.playlistId,
+          upvotes: item.upvotes,
+          downvotes: item.downvotes,
           id: id,
         });
       });
@@ -90,14 +72,14 @@ class ActivePlaylistBase extends Component {
       });
     });
   }
-  upvoteSong(e,songId){
+  upvoteSong = (e,songId) => {
     console.log('upvoting song: ' + songId);
-    const increment = this.props.firebase.firestore.FieldValue.increment(1);
+    // const increment = this.props.firebase.db.FieldValue.increment(1);
     const songRef = this.props.firebase.db.collection('songs').doc(songId);
     // Update read count
-    songRef.update({ upvotes: increment });
+    // songRef.update({ upvotes: admin.FieldValue.increment(1) });
   }
-  downvoteSong(e,songId){
+  downvoteSong = (e,songId) => {
     console.log('downvoting song: ' + songId);
     // const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
     // deleteRef.delete()
@@ -109,7 +91,7 @@ class ActivePlaylistBase extends Component {
     // })
     // this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
   }
-  deleteSong(e,songId){
+  deleteSong = (e,songId) => {
     console.log('deleting song: ' + songId);
     const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
     deleteRef.delete()
@@ -121,7 +103,7 @@ class ActivePlaylistBase extends Component {
     })
     this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
   }
-  updateSong(e,songId){
+  updateSong = (e,songId) => {
     console.log('deleting song: ' + songId);
     const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
     deleteRef.delete()
@@ -190,17 +172,17 @@ class ActivePlaylistBase extends Component {
                       {song.title}
                     </span>
                     <Grid.Column>
-                      <button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/></button>
+                      <Button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/></Button>
                       <Label>
                           {song.upvotes}
                       </Label>
                     </Grid.Column>
                     <Grid.Column>
-                      <button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/></button>
+                      <Button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/></Button>
                       <Label>{song.downvotes}</Label>
                     </Grid.Column>
                     <Grid.Column>
-                      <button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></button>
+                      <Button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></Button>
                     </Grid.Column>
                   </Grid>
                 </Grid.Column>

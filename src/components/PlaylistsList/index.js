@@ -3,10 +3,8 @@ import React, {Component} from 'react';
 import { Modal, Feed, Grid, Icon, Button, Label, TextArea, Tab } from 'semantic-ui-react';
 
 class PlaylistsList extends Component{
-   
     constructor(props){
         super()
-        console.log('playlistsList props', props)
         this.state = {
             playlists: [],
         }
@@ -17,8 +15,8 @@ class PlaylistsList extends Component{
             this.getPlaylists(this.state.authUser);
         }
     }
-    getPlaylists = (userId) => {
-        console.log('getting playlists for: ' + userId);
+    getPlaylists = () => {
+        console.log('getting playlists for: ' + this.props.userId);
         const itemsRef = this.props.firebase.db.collection('playlists');
         console.log('playlists item ref', itemsRef)
         const query = itemsRef.get().then((snapshot) => {

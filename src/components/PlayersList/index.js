@@ -1,14 +1,7 @@
 import React, {Component} from 'react';
-import * as ROUTES from '../../constants/routes';
-import { withRouter, useParams } from 'react-router-dom';
-
-import { FirebaseContext } from '../Firebase';
-
-import ModalWindow from '../Modal';
-import Message from '../Message';
 
 import '../../App.css';
-import { Feed, Grid, Label, Icon} from 'semantic-ui-react'
+import { Feed, Grid, Label, Icon, Loader} from 'semantic-ui-react'
 
 
 class PlayersList extends Component {

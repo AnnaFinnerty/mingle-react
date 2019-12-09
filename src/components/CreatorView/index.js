@@ -13,12 +13,11 @@ class CreatorView extends Component{
    
     constructor(props){
         super()
-        console.log('cretorView props', props)
+        // console.log('cretorView props', props)
         this.state = {
             playlists: [],
             players: props.players,
             invites: 0,
-            inviteCode: '',
             playlistToEdit: '',
             messageOpen: false,
             messageText: '',
@@ -26,26 +25,23 @@ class CreatorView extends Component{
             modalType: 'newPlaylist',
             authUser: props.authUser,
             playlistId: props.playlistId,
+            inviteCode: this.genInviteCode(props.playlistId),
             userSong: null,
             showSongInfo: false,
             reduceApiCalls: props.reduceApiCalls
         }
     }
     componentDidMount(){
-        // if(!this.state.activePlaylist){
-        //     this.openMessage("no active playlist")
-        // }
         this.getPlaylists(this.state.authUser);
         if(!this.state.reduceApiCalls){
             this.getPlaylists(this.state.authUser);
         }
     }
     getPlaylists = (userId) => {
-        console.log('getting playlists for: ' + userId);
+        // console.log('getting playlists for: ' + userId);
         const itemsRef = this.props.firebase.db.collection('playlists');
-        console.log('playlists item ref', itemsRef)
         const query = itemsRef.get().then((snapshot) => {
-          console.log('getPlaylists snapshot',snapshot)
+        //   console.log('getPlaylists snapshot',snapshot)
           let newItems = [];
           snapshot.forEach((i) => {
             const item = i.data()
@@ -59,14 +55,13 @@ class CreatorView extends Component{
               id: id,
             });
           });
-          console.log('newItems',newItems)
           this.setState({
             playlists: newItems
           });
         });
     }
     editPlaylist = (playlistId) => {
-        console.log('getting playlist: ' + playlistId );
+        console.log('editing playlist: ' + playlistId );
         const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
         let query = itemRef.get().then(snapshot => {
                 if (snapshot.empty) {
@@ -98,12 +93,10 @@ class CreatorView extends Component{
         console.log("error deleting song")
         })
     }
-    genInviteCode = () => {
+    genInviteCode = (playlistId) => {
         console.log('generating invite code');
-        const code = "http://localhost:3000/login/" + this.props.playlistId;
-        this.setState({
-            inviteCode: code
-        })
+        const code = "http://localhost:3000/login/" + playlistId;
+        return code
     }
     copyInviteCode = () => {
         const input = document.getElementById("invite-code");
@@ -141,7 +134,7 @@ class CreatorView extends Component{
         this.props.activatePlaylist(playlistId);
     }
     render(){
-        console.log('creatorView props', this.props);
+        // console.log('creatorView props', this.props);
         const panes = [
             { menuItem: 'Users', render: () => <Tab.Pane><PlayersList playlistId={this.state.playlistId} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls}/></Tab.Pane> },
             { menuItem: 'Playlists', render: () => <Tab.Pane><PlaylistsList playlistId={this.state.playlistId} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls}/></Tab.Pane> },
@@ -153,13 +146,13 @@ class CreatorView extends Component{
                         <Grid.Row>
                             <Grid columns={2}>
                                 <Grid.Column>
-                                    <Button onClick={this.genInviteCode}>share link</Button>
+                                    <Button onClick={this.copyInviteCode}>copy link</Button>
                                 </Grid.Column>
                                 <Grid.Column>
-                                    <TextArea id="invite-code" value={this.state.inviteCode}></TextArea>
-                                    <Button onClick={this.copyInviteCode}>copy</Button>
+                                    <Button onClick={this.showQRCode}>show QR</Button>
                                 </Grid.Column>
-                            </Grid>            
+                            </Grid>
+                            <TextArea id="invite-code" value={this.state.inviteCode}></TextArea>            
                         </Grid.Row>
                         <Grid.Row>
                             <Tab panes={panes} />
