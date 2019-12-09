@@ -70,9 +70,9 @@ class ActivePlaylistBase extends Component {
   getSongs() {
     console.log('getting songs');
     const itemsRef = this.props.firebase.db.collection('songs');
-    itemsRef.get().then((snapshot) => {
+    itemsRef.where('playlistId', '==', this.state.playlistId).get().then((snapshot) => {
       //let items = snapshot.val();
-      console.log('snapshot',snapshot)
+      console.log('songs snapshot',snapshot)
       let newState = [];
       snapshot.forEach((i) => {
         const item = i.data()
@@ -96,15 +96,6 @@ class ActivePlaylistBase extends Component {
     const songRef = this.props.firebase.db.collection('songs').doc(songId);
     // Update read count
     songRef.update({ upvotes: increment });
-    // const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
-    // deleteRef.delete()
-    // .then(()=>{
-    //   console.log(songId + " deleted successfully")
-    // })
-    // .catch((err) => {
-    //   console.log("error deleting song")
-    // })
-    // this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
   }
   downvoteSong(e,songId){
     console.log('downvoting song: ' + songId);
@@ -180,8 +171,7 @@ class ActivePlaylistBase extends Component {
         const borderStyle = i === this.state.currentSong && this.state.playing ? "2px solid aqua" :"2px solid transparent";
         return(
           
-            <Grid key={song.id} style={{border:borderStyle}} columns={2} divided>
-              <Grid.Row>
+            <Grid key={song.id} style={{border:borderStyle, margin:"1vh 0"}} columns={2} divided>
                 <Grid.Column width={10}>
                   {/* <iframe id={song.id} className="videoIFrame" src={"https://www.youtube.com/embed/"+linkFrag+"?rel=0&showinfo=0"} frameBorder="0" allowFullScreen allow="autoplay"></iframe> */}
                   <ReactPlayer
@@ -193,12 +183,27 @@ class ActivePlaylistBase extends Component {
                 />
                 </Grid.Column>
                 <Grid.Column width={6}>
-                <Card.Content header={song.title} />
-                  <button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/></button>
-                  <button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/></button>
-                  <button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></button>
+                
+                
+                  <Grid columns={3}>
+                    <span style={{width:"40vw", height: "10vh", overflow:"hidden" }}>
+                      {song.title}
+                    </span>
+                    <Grid.Column>
+                      <button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/></button>
+                      <Label>
+                          {song.upvotes}
+                      </Label>
+                    </Grid.Column>
+                    <Grid.Column>
+                      <button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/></button>
+                      <Label>{song.downvotes}</Label>
+                    </Grid.Column>
+                    <Grid.Column>
+                      <button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></button>
+                    </Grid.Column>
+                  </Grid>
                 </Grid.Column>
-              </Grid.Row>
             </Grid> 
   
         )
