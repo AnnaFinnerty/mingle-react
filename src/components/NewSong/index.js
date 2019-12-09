@@ -98,7 +98,10 @@ class NewSongForm extends Component {
                 title: item.snippet.title,
                 url: 'https://www.youtube.com/watch?v='+videoId,
                 playlistId: this.state.playlistId,
-                userId: this.state.userId
+                userId: this.state.userId,
+                upvotes: 0,
+                downvotes: 0
+
             })
             .then(function(docRef) {
                 console.log("Document written with ID: ", docRef.id);
@@ -106,13 +109,6 @@ class NewSongForm extends Component {
             .catch(function(error) {
                 console.error("Error adding document: ", error);
             });
-            // const newSong={
-            //     title: item.snippet.title,
-            //     url: 'https://www.youtube.com/watch?v='+videoId,
-            //     playlistId: 1,
-            //     userId : 1
-            // }
-            //this.addSong();
         }
   }
   addSong = (songToAdd) => {

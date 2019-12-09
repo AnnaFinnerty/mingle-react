@@ -30,6 +30,7 @@ class UserViewBase extends Component{
             messageText: '',
             modalOpen: false,
             modalType: 'newSong',
+            playlistId: props.playlistId,
             userId: props.authUser ? props.authUser : null,
             userSong: props.userSong,
             showSongLabels: false,
@@ -59,6 +60,15 @@ class UserViewBase extends Component{
             console.log('Error getting documents', err);
         });
     }
+    openModal = (modalType) => {
+        this.setState({
+            modalOpen: true,
+            modalType: modalType
+        })
+    }
+    closeModal = () => {
+        this.setState({modalOpen: false})
+      }
     openMessage = (messageText) => {
         this.setState({
             messageOpen: true,
@@ -69,15 +79,6 @@ class UserViewBase extends Component{
         this.setState({
             messageOpen: false,
             messageText: ''
-        })
-    }
-    closeModal = () => {
-        this.setState({modalOpen: false})
-      }
-    openMessage = (messageText) => {
-        this.setState({
-            messageOpen: true,
-            messageText: messageText
         })
     }
     render(){
