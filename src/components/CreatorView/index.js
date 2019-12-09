@@ -23,6 +23,7 @@ class CreatorView extends Component{
             messageText: '',
             modalOpen: false,
             modalType: 'newPlaylist',
+            modalCallback: null,
             authUser: props.authUser,
             playlistId: props.playlistId,
             inviteCode: this.genInviteCode(props.playlistId),
@@ -32,67 +33,67 @@ class CreatorView extends Component{
         }
     }
     componentDidMount(){
-        this.getPlaylists(this.state.authUser);
-        if(!this.state.reduceApiCalls){
-            this.getPlaylists(this.state.authUser);
-        }
+        // this.getPlaylists(this.state.authUser);
+        // if(!this.state.reduceApiCalls){
+        //     this.getPlaylists(this.state.authUser);
+        // }
     }
-    getPlaylists = (userId) => {
-        // console.log('getting playlists for: ' + userId);
-        const itemsRef = this.props.firebase.db.collection('playlists');
-        const query = itemsRef.get().then((snapshot) => {
-        //   console.log('getPlaylists snapshot',snapshot)
-          let newItems = [];
-          snapshot.forEach((i) => {
-            const item = i.data()
-            // console.log('playlist item', item)
-            const id = i.id;
-            newItems.push({
-              date: item.date,
-              userId: item.userId,
-              title: item.title,
-              mood: item.mood,
-              id: id,
-            });
-          });
-          this.setState({
-            playlists: newItems
-          });
-        });
-    }
-    editPlaylist = (playlistId) => {
-        console.log('editing playlist: ' + playlistId );
-        const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-        let query = itemRef.get().then(snapshot => {
-                if (snapshot.empty) {
-                console.log('No matching documents.');
-                return;
-                }  
-                console.log('get snapshot', snapshot.data())
-                const data = snapshot.data();
-                data['id'] = snapshot.id;
-                this.setState({
-                    playlistToEdit: data,
-                    modalOpen: true,
-                    modalType: 'editPlaylist'
-                })
-            })
-            .catch(err => {
-                console.log('Error getting documents', err);
-            });
-    }
-    deletePlaylist = (playlistId) => {
-        console.log('deleting playlist: ' + playlistId);
-        const deleteRef = this.props.firebase.db.collection('playlists').doc(playlistId);
-        deleteRef.delete()
-        .then(()=>{
-            console.log(playlistId + " deleted successfully")
-            this.setState({playlists: this.state.playlists.filter((playlist) => (playlist.id != playlistId))})
-        })
-        .catch((err) => {
-        console.log("error deleting song")
-        })
-    }
+    // getPlaylists = (userId) => {
+    //     // console.log('getting playlists for: ' + userId);
+    //     const itemsRef = this.props.firebase.db.collection('playlists');
+    //     const query = itemsRef.get().then((snapshot) => {
+    //     //   console.log('getPlaylists snapshot',snapshot)
+    //       let newItems = [];
+    //       snapshot.forEach((i) => {
+    //         const item = i.data()
+    //         // console.log('playlist item', item)
+    //         const id = i.id;
+    //         newItems.push({
+    //           date: item.date,
+    //           userId: item.userId,
+    //           title: item.title,
+    //           mood: item.mood,
+    //           id: id,
+    //         });
+    //       });
+    //       this.setState({
+    //         playlists: newItems
+    //       });
+    //     });
+    // }
+    // editPlaylist = (playlistId) => {
+    //     console.log('editing playlist: ' + playlistId );
+    //     const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+    //     let query = itemRef.get().then(snapshot => {
+    //             if (snapshot.empty) {
+    //             console.log('No matching documents.');
+    //             return;
+    //             }  
+    //             console.log('get snapshot', snapshot.data())
+    //             const data = snapshot.data();
+    //             data['id'] = snapshot.id;
+    //             this.setState({
+    //                 playlistToEdit: data,
+    //                 modalOpen: true,
+    //                 modalType: 'editPlaylist'
+    //             })
+    //         })
+    //         .catch(err => {
+    //             console.log('Error getting documents', err);
+    //         });
+    // }
+    // deletePlaylist = (playlistId) => {
+    //     console.log('deleting playlist: ' + playlistId);
+    //     const deleteRef = this.props.firebase.db.collection('playlists').doc(playlistId);
+    //     deleteRef.delete()
+    //     .then(()=>{
+    //         console.log(playlistId + " deleted successfully")
+    //         this.setState({playlists: this.state.playlists.filter((playlist) => (playlist.id != playlistId))})
+    //     })
+    //     .catch((err) => {
+    //     console.log("error deleting song")
+    //     })
+    // }
     genInviteCode = (playlistId) => {
         console.log('generating invite code');
         const code = "http://localhost:3000/login/" + playlistId;
@@ -107,10 +108,11 @@ class CreatorView extends Component{
         //copy text inside text field
         document.execCommand("copy");
     }
-    openModal = (modalType) => {
+    openModal = (modalType, modalCallback) => {
         this.setState({
             modalOpen: true,
-            modalType: modalType
+            modalType: modalType,
+            modalCallback: modalCallback
         })
     }
     closeModal = () => {
@@ -196,9 +198,7 @@ class CreatorView extends Component{
                     <Modal open={this.state.modalOpen}>
                         <Button onClick={this.closeModal}>X</Button>
                         <ModalWindow closeModal={this.closeModal} 
-                                     modalType={this.state.modalType} 
                                      userProps={this.state}
-                                     callback={this.addedPlaylist}
                                      />
                     </Modal>
                 }

@@ -25,7 +25,6 @@ class PlaylistsList extends Component{
             let newItems = [];
             snapshot.forEach((i) => {
                 const item = i.data()
-                // console.log('playlist item', item)
                 const id = i.id;
                 newItems.push({
                 date: item.date,

@@ -64,12 +64,7 @@ class HomeBase extends Component {
     if(!this.state.authUser){
       //send back to signin if creator is not authenicated
       this.props.history.push('/signin');
-    } else {
-      if(!this.state.reduceApiCalls){
-        //retrieve and populate users and playlists for this creator
-        this.getUsers(this.state.activePlaylistId);
-      }
-    }
+    } 
     this.checkForActivePlaylist();
   }
   checkForActivePlaylist = () => {
@@ -119,60 +114,24 @@ class HomeBase extends Component {
     //   });
     // });
   }
-  getUsers = (playlistId) => {
-    console.log('getting users for playlist:' + playlistId);
-    const itemsRef = this.props.firebase.db.collection('temp_users');
-    const query = itemsRef.where('playlistId', '==', playlistId).get().then((snapshot) => {
-      console.log('getUsers snapshot',snapshot)
-      let newUsers = [];
-      snapshot.forEach((i) => {
-        const item = i.data()
-        const id = i.id;
-        newUsers.push({
-          playlistId: item.playlistId,
-          username: item.username,
-          secretname: item.secretname,
-          songId: item.songId,
-          downvotes: item.downvotes,
-          upvotes: item.upvotes,
-          id: id,
-        });
-      });
-      console.log('users',newUsers);
-      this.setState({
-        players: newUsers
-      });
-    });
-  }
+  
   activatePlaylist = (playlistId) => {
     //console.log('activating playlist in home: ' + playlistId);
     console.log('getting playlist: ' + playlistId );
-    //deactivate all playlists in users collection
-    // db.collection("cities").get().then(function(querySnapshot) {
-    //   querySnapshot.forEach(function(doc) {
-    //       var cityRef = db.collection("cities").doc(doc.id);
-  
-    //       return cityRef.update({
-    //           capital: true
-    //       });
-    //   });
-    // });
-    //activate active playlist
-    const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    let query = itemRef.get()
-    .then(snapshot => {
-        if (snapshot.empty) {
-        console.log('No matching documents.');
-        return;
-        }  
-        console.log('active playlist snapshot', snapshot.data())
-        this.setState({
-            activePlaylist: snapshot.data(),
-            activatePlaylistId: playlistId
-        })
-    })
-    .catch(err => {
-        console.log('Error getting documents', err);
+    //deactivate all playlists in users collection and activate selected playlist
+    this.props.firebase.db.collection("playlists").get().then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+          var docRef = this.props.firebase.db.collection("playlists").doc(doc.id);
+          if(doc.id === playlistId){
+            return docRef.update({
+              active: true
+            });
+          } else {
+            return docRef.update({
+              active: false
+            });
+          }
+      });
     });
   }
   toggleViewMode = () => {
