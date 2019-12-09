@@ -48,7 +48,7 @@ class ActivePlaylistBase extends Component {
       } 
   }
   getSongs = () => {
-    console.log('getting songs');
+    // console.log('getting songs');
     const itemsRef = this.props.firebase.db.collection('songs');
     itemsRef.where('playlistId', '==', this.state.playlistId).get().then((snapshot) => {
       //let items = snapshot.val();

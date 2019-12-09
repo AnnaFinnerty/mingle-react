@@ -160,13 +160,13 @@ class CreatorView extends Component{
                         
                     </Grid.Column>
                     <Grid.Column >
-                        <Grid.Row>
+                        {/* <Grid.Row>
                             <Grid columns={3} fluid="true">
                             <Grid.Column><Button onClick={()=>this.openModal("newPlaylist")}>new playlist</Button></Grid.Column>
                             <Grid.Column><Button onClick={()=>this.openModal("editPlaylist")}>edit playlist</Button></Grid.Column>
                             <Grid.Column><Button >delete playlist</Button></Grid.Column>
                             </Grid>
-                        </Grid.Row>
+                        </Grid.Row> */}
                         <Grid.Row>
                         <Grid.Row>
                         {
