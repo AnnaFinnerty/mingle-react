@@ -4,30 +4,29 @@ import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 import { Feed, Input, Button, Label } from 'semantic-ui-react'
 
-const NewSongPage = () => (
+const NewSongPage = (props) => (
   <div>
     <h2>Add New Song</h2>
     <FirebaseContext.Consumer>
-      {firebase => <NewSongForm firebase={firebase} />}
+      {firebase => <NewSongForm {...props} firebase={firebase} />}
     </FirebaseContext.Consumer>
   </div>
 );
 
-const INITIAL_STATE = {
-    title: '',
-    url: '',
-    playlistId: '',
-    userId: '',
-    apiSearch: '',
-    searchResults: [],
-    error: null,
-    manualEnter: false,
-  };
-
 class NewSongForm extends Component {
   constructor(props) {
     super(props);
-    this.state = { ...INITIAL_STATE };
+    console.log('new song form props', props)
+    this.state = { 
+      title: '',
+      url: '',
+      playlistId: props.userProps.playlistId,
+      userId: props.userProps.authUser ? props.userProps.authUser : props.userProps.userId,
+      apiSearch: '',
+      searchResults: [],
+      error: null,
+      manualEnter: false,
+    };
   }
   componentDidMount(){
     this.loadSearchResults();
@@ -62,6 +61,7 @@ class NewSongForm extends Component {
 
   onSubmit = event => {
     event.preventDefault();
+    console.log('submitting new song', this.state);
     const { title, url, playlistId, userId } = this.state;
     //submit form information to firebase DB
     this.props.firebase.db.collection("songs").add({
@@ -97,8 +97,8 @@ class NewSongForm extends Component {
             this.props.firebase.db.collection("songs").add({
                 title: item.snippet.title,
                 url: 'https://www.youtube.com/watch?v='+videoId,
-                playlistId: 1,
-                userId: 1
+                playlistId: this.state.playlistId,
+                userId: this.state.userId
             })
             .then(function(docRef) {
                 console.log("Document written with ID: ", docRef.id);
