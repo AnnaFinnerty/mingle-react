@@ -65,36 +65,33 @@ class HomeBase extends Component {
       //send back to signin if creator is not authenicated
       this.props.history.push('/signin');
     } else {
-      //this.getPlaylists(this.state.authUser);
-      this.getUsers(this.state.activePlaylistId);
       if(!this.state.reduceApiCalls){
         //retrieve and populate users and playlists for this creator
         this.getUsers(this.state.activePlaylistId);
-        // this.getPlaylists(this.state.authUser);
       }
     }
+    this.checkForActivePlaylist();
   }
   checkForActivePlaylist = () => {
     console.log('looking for active playlist for: ' + this.state.authUser);
     const itemsRef = this.props.firebase.db.collection('playlists');
     const query = itemsRef.get().then((snapshot) => {
       console.log('getPlaylists snapshot',snapshot)
-      let newItems = [];
+      let activePlaylistId = null;
       snapshot.forEach((i) => {
         const item = i.data()
+        console.log(item);
         console.log('playlist item', item)
         const id = i.id;
-        newItems.push({
-          date: item.date,
-          userId: item.userId,
-          title: item.title,
-          mood: item.mood,
-          id: id,
-        });
+        if(item.active){
+          console.log('active playlist found: ' + id);
+          activePlaylistId = id;
+        } else {
+          console.log('no active playlist found');
+        }
       });
-      console.log('newItems',newItems)
       this.setState({
-        playlists: newItems
+        activePlaylistId: activePlaylistId
       });
     });
   }
