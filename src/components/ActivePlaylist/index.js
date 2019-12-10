@@ -7,8 +7,11 @@ import firebase from '../Firebase';
 import { FirebaseContext } from '../Firebase';
 // import * as admin from 'firebase-admin';
 
+import EditSong from '../EditSong';
+import NewSong from '../NewSong';
+
 import '../../App.css';
-import { Card, Grid, Button, Label, Icon } from 'semantic-ui-react';
+import { Modal, Grid, Button, Label, Icon } from 'semantic-ui-react';
 
 
 const ActivePlaylistPage = (props) => {
@@ -38,6 +41,8 @@ class ActivePlaylistBase extends Component {
       currentSong: 0,
       user: '',
       showSongInfo: true,
+      modalOpen: false,
+      modalType: 'newPlaylist',
     };
   }
   componentDidMount(){
@@ -257,6 +262,16 @@ class ActivePlaylistBase extends Component {
       currentSong: 0,
     })
   }
+  openModal = (modalType, modalCallback) => {
+    this.setState({
+        modalOpen: true,
+        modalType: modalType,
+        modalCallback: modalCallback
+    })
+  }
+  closeModal = () => {
+    this.setState({modalOpen: false})
+  }
   render(){
     // console.log('songs', this.state.songs)
     const songs = !this.state.songs.length ? 
@@ -330,6 +345,7 @@ class ActivePlaylistBase extends Component {
         )
       })
     return (
+      <React.Fragment>
       <Grid columns={1}>
         <Grid.Row centered>
             {
@@ -372,6 +388,19 @@ class ActivePlaylistBase extends Component {
           </Grid.Row>
         </Grid.Column>
       </Grid>
+      {
+        !this.state.modalOpen ? "" :
+        <Modal open={this.state.modalOpen}>
+            <Button onClick={this.closeModal}>X</Button>
+            {
+              this.state.modalType === "editSong" ?
+              <EditSong userProps={this.state}/> 
+              :
+              <NewSong userProps={this.state}/>
+            }
+        </Modal>
+    }
+    </React.Fragment>
     );
   }
 }
