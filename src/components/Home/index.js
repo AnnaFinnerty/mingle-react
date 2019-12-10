@@ -8,6 +8,7 @@ import CreatorView from '../CreatorView';
 import UserView from '../UserView';
 
 import ModalWindow from '../Modal';
+import AddPlaylist from '../AddPlaylist';
 import Message from '../Message';
 
 // import AuthUserContext from '../Session';
@@ -118,20 +119,33 @@ class HomeBase extends Component {
   activatePlaylist = (playlistId) => {
     //console.log('activating playlist in home: ' + playlistId);
     console.log('getting playlist: ' + playlistId );
-    //deactivate all playlists in users collection and activate selected playlist
-    this.props.firebase.db.collection("playlists").get().then(function(querySnapshot) {
-      querySnapshot.forEach(function(doc) {
-          var docRef = this.props.firebase.db.collection("playlists").doc(doc.id);
-          if(doc.id === playlistId){
-            return docRef.update({
-              active: true
-            });
-          } else {
-            return docRef.update({
-              active: false
-            });
-          }
-      });
+    //deactivate all playlists in users collection
+    // db.collection("cities").get().then(function(querySnapshot) {
+    //   querySnapshot.forEach(function(doc) {
+    //       var cityRef = db.collection("cities").doc(doc.id);
+  
+    //       return cityRef.update({
+    //           capital: true
+    //       });
+    //   });
+    // });
+    //activate active playlist
+    const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+    let query = itemRef.get()
+    .then(snapshot => {
+        if (snapshot.empty) {
+        console.log('No matching documents.');
+        return;
+        }  
+        console.log('active playlist snapshot', snapshot.data())
+        this.setState({
+            activePlaylist: snapshot.data(),
+            activatePlaylistId: playlistId,
+            modalOpen: false,
+        })
+    })
+    .catch(err => {
+        console.log('Error getting documents', err);
     });
   }
   toggleViewMode = () => {
@@ -218,9 +232,7 @@ class HomeBase extends Component {
                     !this.state.modalOpen ? "" :
                     <Modal open={this.state.modalOpen}>
                         <Button onClick={this.closeModal}>X</Button>
-                        <ModalWindow closeModal={this.closeModal} 
-                                    modalType={this.state.modalType} 
-                                    userProps={this.state}/>
+                        <AddPlaylist userProps={this.state} callback={this.activatePlaylist}/>
                     </Modal>
         }
         {

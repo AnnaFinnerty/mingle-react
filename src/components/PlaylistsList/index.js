@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 
+import EditPlaylist from '../EditPlaylist';
+
 import { Modal, Feed, Grid, Icon, Button, Label, TextArea, Tab } from 'semantic-ui-react';
 
 class PlaylistsList extends Component{
@@ -7,7 +9,11 @@ class PlaylistsList extends Component{
         super()
         this.state = {
             playlists: [],
+            playlistToEdit: null,
+            modalOpen: false,
+            modalType: 'newPlaylist',
         }
+        this.updatePlaylist = this.updatePlaylist.bind(this)
     }
     componentDidMount(){
         this.getPlaylists(this.state.authUser);
@@ -62,6 +68,28 @@ class PlaylistsList extends Component{
                 console.log('Error getting documents', err);
             });
     }
+    updatePlaylist = (updatedPlaylist) => {
+        const playlistId = updatedPlaylist.id;
+        console.log("updating playlist:  " + playlistId);
+        console.log('updatedPlaylister', updatedPlaylist);
+        const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+        playlistRef.update({
+              active: updatedPlaylist.active,
+              title: updatedPlaylist.title,
+              mood: updatedPlaylist.mood,
+              userId: updatedPlaylist.userId,
+              date: updatedPlaylist.date
+          })
+          .then(function(docRef) {
+              console.log("document updated");
+          })
+          .catch(function(error) {
+              console.error("Error updating document: ", error);
+          });
+        this.setState({
+            modalOpen: false
+        })
+    }
     deletePlaylist = (playlistId) => {
         console.log('deleting playlist: ' + playlistId);
         const deleteRef = this.props.firebase.db.collection('playlists').doc(playlistId);
@@ -74,6 +102,15 @@ class PlaylistsList extends Component{
         console.log("error deleting song")
         })
     }
+    openModal = (modalType) => {
+        this.setState({
+            modalOpen: true,
+            modalType: modalType
+        })
+    }
+    closeModal = () => {
+        this.setState({modalOpen: false})
+      }
     render(){
         const playlists = !this.state.playlists.length ?
           <Label>no playlists</Label> :
@@ -97,9 +134,19 @@ class PlaylistsList extends Component{
             )
           })
         return(
-            <Feed>
-                {playlists}
-            </Feed>
+            <React.Fragment>
+                <Feed>
+                    {playlists}
+                </Feed>
+                {
+                    !this.state.modalOpen ? "" :
+                    <Modal open={this.state.modalOpen}>
+                        <Button onClick={this.closeModal}>X</Button>
+                        <EditPlaylist userProps={this.state} updatePlaylist={this.updatePlaylist}/>
+                    </Modal>
+                }
+            </React.Fragment>
+            
         )
     }
 } 

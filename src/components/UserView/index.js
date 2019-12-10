@@ -37,10 +37,6 @@ class UserViewBase extends Component{
             reduceApiCalls: props.reduceApiCalls
         }
     }
-    componentDidMount(){
-        //load auth user or user idea from params
-        
-    }
     getPlaylist = (playlistId) => {
         console.log('getting playlist: ' + playlistId );
         const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
