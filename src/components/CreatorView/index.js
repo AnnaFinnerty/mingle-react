@@ -20,6 +20,7 @@ class CreatorView extends Component{
         this.state = {
             playlists: [],
             players: props.players,
+            activePlaylist: props.activePlaylist,
             invites: 0,
             playlistToEdit: '',
             messageOpen: false,
@@ -34,12 +35,6 @@ class CreatorView extends Component{
             showSongInfo: false,
             reduceApiCalls: props.reduceApiCalls,
         }
-    }
-    componentDidMount(){
-        // this.getPlaylists(this.state.authUser);
-        // if(!this.state.reduceApiCalls){
-        //     this.getPlaylists(this.state.authUser);
-        // }
     }
     genInviteCode = (playlistId) => {
         console.log('generating invite code');

@@ -25,6 +25,12 @@ class AddPlaylistBase extends Component {
     this.state = {
       newPlaylistTitle:'',
       newPlaylistMood:'default',
+      speedThrough: true,
+      endSongOnVoteEnd: false,
+      suddenDeath: false,
+      secondChance: true,
+      voteDelay: false,
+      voteDelayLength: 30,
     }
     //TODO change to default moods, let users add one
     this.moods = ['party','chill','dance','default']

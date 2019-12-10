@@ -42,7 +42,7 @@ class HomeBase extends Component {
       authUserSecretName: '',
       players: [],
       activePlaylist: '',
-      activePlaylistId: 'rEZzXFXXfADqn5shewsm',
+      activePlaylistId: '',
       playlists: [],
       creatorMode: true,
       secondChance: true,
@@ -52,7 +52,7 @@ class HomeBase extends Component {
       messageText: '',
       modalOpen: false,
       modalType: 'newTempProfile',
-      reduceApiCalls: true,
+      reduceApiCalls: false,
       settings: {
         speedThrough: true,
         endSongOnVoteEnd: false,
@@ -62,6 +62,7 @@ class HomeBase extends Component {
         voteDelayLength: 30,
       }
     }
+    this.activatePlaylist = this.activatePlaylist.bind(this);
   }
   componentDidMount(){
     console.log('home did mount', this.state);
@@ -74,24 +75,57 @@ class HomeBase extends Component {
   checkForActivePlaylist = () => {
     console.log('looking for active playlist for: ' + this.state.authUser);
     const itemsRef = this.props.firebase.db.collection('playlists');
-    const query = itemsRef.get().then((snapshot) => {
-      console.log('getPlaylists snapshot',snapshot)
+    const query = itemsRef.where('userId', '==', this.state.authUser).get().then((snapshot) => {
+      // console.log('getPlaylists snapshot',snapshot)
       let activePlaylistId = null;
       snapshot.forEach((i) => {
         const item = i.data()
-        console.log(item);
-        console.log('playlist item', item)
-        const id = i.id;
+        // console.log(item);
+        // console.log('playlist item', item)
+        activePlaylistId = i.id;
         if(item.active){
-          console.log('active playlist found: ' + id);
-          activePlaylistId = id;
+          console.log('active playlist found: ' + activePlaylistId);
+          const playlistRef = this.props.firebase.db.doc(`/playlists/${activePlaylistId}`);
+          let query = playlistRef.get()
+          .then(snapshot => {
+              if (snapshot.empty) {
+              console.log('No matching playlist');
+              return;
+              }  
+              console.log('playlist snapshot', snapshot.data())
+              const data = snapshot.data();
+              data['id'] = activePlaylistId;
+              this.setState({
+                  activePlaylistId: activePlaylistId,
+                  activePlaylist: data,
+              })
+          })
+          .catch(err => {
+              console.log('Error getting playlist', err);
+          });
         } else {
           console.log('no active playlist found');
         }
       });
-      this.setState({
-        activePlaylistId: activePlaylistId
-      });
+    });
+  }
+  getPlaylist = (playlistId) => {
+    console.log("getting playlist information in home");
+    const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+    let query = playlistRef.get()
+    .then(snapshot => {
+        if (snapshot.empty) {
+        console.log('No matching playlist');
+        return;
+        }  
+        console.log('playlist snapshot', snapshot.data())
+        const data = snapshot.data();
+        this.setState({
+            activePlaylist: snapshot.data(),
+        })
+    })
+    .catch(err => {
+        console.log('Error getting playlist', err);
     });
   }
   getAuthUser = () => {
@@ -128,32 +162,15 @@ class HomeBase extends Component {
   activatePlaylist = (playlistId) => {
     console.log('activating playlist in home: ' + playlistId);
     //deactivate all playlists in users' collection
-    const listRef = this.props.firebase.db.collection("playlists")
-    listRef.get().then(function(querySnapshot) {
+    const db = this.props.firebase.db;
+    db.collection("playlists").get().then(function(querySnapshot) {
       querySnapshot.forEach(function(doc) {
-          var ref = this.props.firebase.db.collection("playlists").doc(doc.id);
-          return ref.update({
-              activatePlaylistId: false
+          // var ref = this.props.firebase.db.collection("playlists").doc(doc.id);
+          const ref = db.doc(`/playlists/${doc.id}`);
+          ref.update({
+              active: doc.id === playlistId
           });
       });
-    });
-    //activate active playlist
-    const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    let query = itemRef.get()
-    .then(snapshot => {
-        if (snapshot.empty) {
-        console.log('No matching documents.');
-        return;
-        }  
-        console.log('active playlist snapshot', snapshot.data())
-        this.setState({
-            activePlaylist: snapshot.data(),
-            activatePlaylistId: playlistId,
-            modalOpen: false,
-        })
-    })
-    .catch(err => {
-        console.log('Error getting documents', err);
     });
   }
   updateSettings = (newSettings) => {
@@ -192,7 +209,7 @@ class HomeBase extends Component {
       authUser: this.state.authUser,
       userId: this.state.authUser,
       displayName: this.state.authUserDisplayName,
-      secretName: this.state.authUser.authUserSecretName,
+      // secretName: this.state.authUser.authUserSecretName,
     }
     let modal;
     switch(this.state.modalType){
@@ -211,7 +228,8 @@ class HomeBase extends Component {
                 <CreatorView authUser={this.state.authUser}
                              userData={userData}
                              settings={this.state.settings}
-                             playlistId={this.state.activePlaylistId} 
+                             playlistId={this.state.activePlaylistId}
+                             activePlaylist={this.state.activePlaylist} 
                              toggleViewMode={this.toggleViewMode} 
                              addPlaylist={this.addPlaylist}
                              history={this.props.history} match={this.props.match} location={this.props.location}
@@ -225,6 +243,7 @@ class HomeBase extends Component {
                 <UserView authUser={this.state.authUser}
                           userData={userData}
                           playlistId={this.state.activePlaylistId}
+                          playlist={this.state.activePlaylist} 
                           toggleViewMode={this.toggleViewMode}
                           reduceApiCalls={this.state.reduceApiCalls}
                           firebase={this.props.firebase}

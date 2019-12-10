@@ -16,7 +16,6 @@ class PlayersList extends Component {
   componentDidMount(){
     console.log('players list did mount', this.state);
     //retrieve and populate users and playlists for this creator
-    this.getUsers(this.state.activePlaylistId);
     if(!this.state.reduceApiCalls){
         this.getUsers(this.state.activePlaylistId);
     }

@@ -27,7 +27,7 @@ const ActivePlaylistPage = (props) => {
 
 class ActivePlaylistBase extends Component {
   constructor(props) {
-    console.log("active playlist props in constructor:", props)
+    // console.log("active playlist props in constructor:", props)
     super(props);
     this.unsubscribe = null;
     this.state = {
@@ -51,9 +51,8 @@ class ActivePlaylistBase extends Component {
       if(!this.state.activeUser){
         this.getUser();
       } 
-      //this.getSongs();
       if(!this.props.reduceApiCalls){
-        //this.getSongs();
+        this.getSongs();
       }
   }
   getUser = () => {
@@ -84,7 +83,7 @@ class ActivePlaylistBase extends Component {
     console.log("getting playlist information", this.props);
     const playlistId = this.state.playlistId;
     console.log('user id', playlistId);
-    const playlistRef = this.props.firebase.db.doc(`/temp_users/${playlistId}`);
+    const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
     let query = playlistRef.get()
     .then(snapshot => {
         if (snapshot.empty) {
@@ -128,6 +127,13 @@ class ActivePlaylistBase extends Component {
         });
       });
       }
+  }
+  addUserSong = (addedSong) => {
+    console.log('adding user song', addedSong)
+    this.setState({
+      userSong: addedSong,
+      modalOpen: false
+    })
   }
   upvoteSong = (e,songId) => {
     console.log('upvoting song: ' + songId);
@@ -424,15 +430,14 @@ class ActivePlaylistBase extends Component {
           </Grid.Row>
         <Grid.Column>
           {
-                    <Grid.Row>
-                        {
-                            <Button color="red" onClick={()=>this.openModal('newSong')}>
-                                add your song<br></br>
-                                we can't start without you
-                            </Button>
-                        }
-                    </Grid.Row>
-                  }
+              this.state.userSong ? "" :
+              <Grid.Row>
+                  <Button color="red" onClick={()=>this.openModal('newSong')}>
+                    add your song<br></br>
+                    we can't start without you
+                  </Button>
+              </Grid.Row>
+          }
           <Grid.Row>
             {songs}
           </Grid.Row>
@@ -446,7 +451,7 @@ class ActivePlaylistBase extends Component {
               this.state.modalType === "editSong" ?
               <EditSong userProps={this.state}/> 
               :
-              <NewSong userProps={this.state}/>
+              <NewSong userProps={this.state} callback={this.addUserSong}/>
             }
         </Modal>
     }
