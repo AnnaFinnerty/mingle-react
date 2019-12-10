@@ -31,7 +31,7 @@ class ActivePlaylistBase extends Component {
       isAuthUser: props.authUser,
       userId: props.userId,
       playlistId: props.playlistId,
-      usersSong: props.usersSong,
+      userSong: props.userSong,
       isLoading: true,
       songs: [],
       playing: false,
@@ -64,7 +64,7 @@ class ActivePlaylistBase extends Component {
           playlistId: item.playlistId,
           upvotes: item.upvotes,
           downvotes: item.downvotes,
-          votedOn: false,
+          votedOn: 0,
           id: id,
         });
       });
@@ -82,8 +82,8 @@ class ActivePlaylistBase extends Component {
     let currentVotes = 0;
     let query = songRef.get().then(snapshot => {
         if (snapshot.empty) {
-        console.log('No matching documents.');
-        return;
+          console.log('No matching documents.');
+          return;
         }  
         console.log('increment snapshot', snapshot.data())
         const data = snapshot.data();
@@ -92,7 +92,7 @@ class ActivePlaylistBase extends Component {
         songRef.update({ upvotes: currentVotes});
         data['upvotes'] = currentVotes;
         data['id'] = id;
-        data['votedOn'] = true;
+        data['votedOn'] = 1;
         console.log('updated song vals', data)
         const updatedSongArray = this.state.songs.map((song) => {
           if(song.id === id){
@@ -127,7 +127,7 @@ class ActivePlaylistBase extends Component {
         songRef.update({ upvotes: currentVotes});
         data['upvotes'] = currentVotes;
         data['id'] = id;
-        data['votedOn'] = false;
+        data['votedOn'] = 0;
         console.log('updated song vals', data)
         const updatedSongArray = this.state.songs.map((song) => {
           if(song.id === id){
@@ -162,7 +162,7 @@ class ActivePlaylistBase extends Component {
         songRef.update({ downvotes: currentVotes});
         data['downvotes'] = currentVotes;
         data['id'] = id;
-        data['votedOn'] = true;
+        data['votedOn'] = -1;
         console.log('updated song vals', data)
         const updatedSongArray = this.state.songs.map((song) => {
           if(song.id === id){
@@ -263,13 +263,13 @@ class ActivePlaylistBase extends Component {
       <Label>No songs added</Label>
       :
       this.state.songs.map((song,i)=>{
-        console.log(song);
+        // console.log(song);
         const linkFrag = song.url.split('=')[1];
         const playing = i === this.state.currentSong && this.state.playing;
         const selfSong = song.userId === this.state.userId;
-        console.log("this song belongs to user: " + selfSong);
+        // console.log("this song belongs to user: " + selfSong);
          const votedOnByThisUser = song.votedOn;
-        console.log("this song voted on by user: " + song.votedOn)
+        // console.log("this song voted on by user: " + song.votedOn)
         // const borderStyle = i === this.state.currentSong && this.state.playing ? "2px solid aqua" : "2px solid transparent";
         let borderStyle;
         if(i === this.state.currentSong && this.state.playing){
@@ -283,7 +283,7 @@ class ActivePlaylistBase extends Component {
         }
         return(
             <Grid key={song.id} style={{border:borderStyle, margin:"1vh 0"}} columns={2} divided>
-                <Grid.Column width={10}>
+                <Grid.Column width={10} style={{padding:"0"}}>
                   <ReactPlayer
                     url={'https://www.youtube.com/watch?v='+linkFrag}
                     className='react-player'
@@ -293,25 +293,26 @@ class ActivePlaylistBase extends Component {
                 />
                 </Grid.Column>
                 <Grid.Column width={6}>
-                  <Grid columns={3}>
+                  <Grid.Row>
+                  <Grid columns={3} style={{padding:"0"}}>
                     <span style={{width:"40vw", height: "10vh", overflow:"hidden" }}>
                       {song.title}
                     </span>
                     {
                         votedOnByThisUser ? 
-                        <Grid.Column>
+                        <Grid.Column style={{padding:"0"}}>
                           <Button className="song-button upvote-button" onClick={(e)=>this.undoUpvote(e,song.id)}><Icon name="thumbs up" style={{color:"green"}}/>{song.upvotes}</Button>
                         </Grid.Column> :
-                        <Grid.Column>
+                        <Grid.Column style={{padding:"0"}}>
                           <Button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/>{song.upvotes}</Button>
                         </Grid.Column>
                     }
                     {
                       votedOnByThisUser ? 
-                      <Grid.Column>
+                      <Grid.Column style={{padding:"0"}}>
                         <Button className="song-button downvote-button" onClick={(e)=>this.undoDownvote(e,song.id)}><Icon name="thumbs down" style={{color:"red"}}/>{song.downvotes}</Button>
                       </Grid.Column> :
-                      <Grid.Column>
+                      <Grid.Column style={{padding:"0"}}>
                         <Button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/>{song.downvotes}</Button>
                       </Grid.Column>
                     }
@@ -322,6 +323,7 @@ class ActivePlaylistBase extends Component {
                       <Button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></Button>
                     </Grid.Column>
                   </Grid>
+                  </Grid.Row>
                 </Grid.Column>
             </Grid> 
   
@@ -329,14 +331,7 @@ class ActivePlaylistBase extends Component {
       })
     return (
       <Grid columns={1}>
-        <Grid.Column>
-          <Grid.Row columns={2}>
-              <Grid.Column>
-                <h2>{this.state.username}</h2>
-              </Grid.Column>
-              <Grid.Column><h2>{this.state.username}/{this.state.secretname}</h2></Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
+        <Grid.Row centered>
             {
               !this.state.isAuthUser ? "":
               <React.Fragment>
@@ -354,7 +349,24 @@ class ActivePlaylistBase extends Component {
                 </Button>
               </React.Fragment>
             }
+            <Label>
+              {this.props.userData.displayName ? this.props.userData.displaytName : "you need to set a display name"}
+            </Label>
+            <Label>
+              {this.props.userData.secretName ? this.props.userData.secretName : "you need to set a secret name"}
+            </Label>
           </Grid.Row>
+        <Grid.Column>
+          {
+                    <Grid.Row>
+                        {
+                            <Button color="red" onClick={()=>this.openModal('newSong')}>
+                                add your song<br></br>
+                                we can't start without you
+                            </Button>
+                        }
+                    </Grid.Row>
+                  }
           <Grid.Row>
             {songs}
           </Grid.Row>

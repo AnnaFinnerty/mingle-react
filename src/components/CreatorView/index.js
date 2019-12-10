@@ -38,62 +38,6 @@ class CreatorView extends Component{
         //     this.getPlaylists(this.state.authUser);
         // }
     }
-    // getPlaylists = (userId) => {
-    //     // console.log('getting playlists for: ' + userId);
-    //     const itemsRef = this.props.firebase.db.collection('playlists');
-    //     const query = itemsRef.get().then((snapshot) => {
-    //     //   console.log('getPlaylists snapshot',snapshot)
-    //       let newItems = [];
-    //       snapshot.forEach((i) => {
-    //         const item = i.data()
-    //         // console.log('playlist item', item)
-    //         const id = i.id;
-    //         newItems.push({
-    //           date: item.date,
-    //           userId: item.userId,
-    //           title: item.title,
-    //           mood: item.mood,
-    //           id: id,
-    //         });
-    //       });
-    //       this.setState({
-    //         playlists: newItems
-    //       });
-    //     });
-    // }
-    // editPlaylist = (playlistId) => {
-    //     console.log('editing playlist: ' + playlistId );
-    //     const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    //     let query = itemRef.get().then(snapshot => {
-    //             if (snapshot.empty) {
-    //             console.log('No matching documents.');
-    //             return;
-    //             }  
-    //             console.log('get snapshot', snapshot.data())
-    //             const data = snapshot.data();
-    //             data['id'] = snapshot.id;
-    //             this.setState({
-    //                 playlistToEdit: data,
-    //                 modalOpen: true,
-    //                 modalType: 'editPlaylist'
-    //             })
-    //         })
-    //         .catch(err => {
-    //             console.log('Error getting documents', err);
-    //         });
-    // }
-    // deletePlaylist = (playlistId) => {
-    //     console.log('deleting playlist: ' + playlistId);
-    //     const deleteRef = this.props.firebase.db.collection('playlists').doc(playlistId);
-    //     deleteRef.delete()
-    //     .then(()=>{
-    //         console.log(playlistId + " deleted successfully")
-    //         this.setState({playlists: this.state.playlists.filter((playlist) => (playlist.id != playlistId))})
-    //     })
-    //     .catch((err) => {
-    //     console.log("error deleting song")
-    //     })
-    // }
     genInviteCode = (playlistId) => {
         console.log('generating invite code');
         const code = "http://localhost:3000/login/" + playlistId;
@@ -161,7 +105,7 @@ class CreatorView extends Component{
                         </Grid.Row>
                         
                     </Grid.Column>
-                    <Grid.Column >
+                    <Grid.Column width={11}>
                         {/* <Grid.Row>
                             <Grid columns={3} fluid="true">
                             <Grid.Column><Button onClick={()=>this.openModal("newPlaylist")}>new playlist</Button></Grid.Column>
@@ -171,16 +115,8 @@ class CreatorView extends Component{
                         </Grid.Row> */}
                         <Grid.Row>
                         <Grid.Row>
-                        {
-                            this.props.userSong ? "" :
-                            <Button color="red" onClick={()=>this.openModal('newSong')}>
-                                add your song<br></br>
-                                we can't start without you
-                            </Button>
-                        }
-                        </Grid.Row>
-                        <Grid.Row>
-                            <ActivePlaylist userId={this.state.authUser}
+                            <ActivePlaylist userData={this.props.userData}
+                                            userId={this.state.authUser}
                                             authUser={true} 
                                             playlistId={this.state.playlistId}
                                             openModal={this.openModal} 
@@ -210,8 +146,7 @@ class CreatorView extends Component{
                         closeMessage={this.closeMessage}
                     />
                 }   
-            </React.Fragment>
-            
+            </React.Fragment> 
         )
     }
 } 

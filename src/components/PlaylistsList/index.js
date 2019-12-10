@@ -33,11 +33,12 @@ class PlaylistsList extends Component{
                 const item = i.data()
                 const id = i.id;
                 newItems.push({
-                date: item.date,
-                userId: item.userId,
-                title: item.title,
-                mood: item.mood,
-                id: id,
+                    active: item.active,
+                    date: item.date,
+                    userId: item.userId,
+                    title: item.title,
+                    mood: item.mood,
+                    id: id,
                 });
             });
             console.log('newItems',newItems)
@@ -115,11 +116,13 @@ class PlaylistsList extends Component{
         const playlists = !this.state.playlists.length ?
           <Label>no playlists</Label> :
           this.state.playlists.map((playlist)=>{
+            console.log('playlist', playlist);
+            const backgroundColor = playlist.active ?  "aqua":"transparent"
             return(
-            <div className="list-item">
-              <Feed.Event key={playlist.id} >
-                <Grid columns={3}>
-                    <Grid.Column>
+            <div >
+              <Feed.Event key={playlist.id} style={{padding:".5vh", borderBottom:".5px solid dimgray"}}>
+                <Grid columns={4} style={{backgroundColor:backgroundColor}}>
+                    <Grid.Column >
                         {playlist.title}
                     </Grid.Column>
                     <Grid.Column>
@@ -127,6 +130,9 @@ class PlaylistsList extends Component{
                     </Grid.Column>
                     <Grid.Column>
                         <Icon name="edit" onClick={()=>this.editPlaylist(playlist.id)}/>
+                    </Grid.Column>
+                    <Grid.Column>
+                        <Icon name="lightbulb" onClick={()=>this.activatePlaylist(playlist.id)}/>
                     </Grid.Column>
                 </Grid>
               </Feed.Event>

@@ -9,7 +9,7 @@ import { SignUpLink } from '../SignUp';
 const AddTempUserWrapper = (props) => (
   <div>
     <FirebaseContext.Consumer>
-      {firebase => <AddTempUserFormBase firebase={firebase} playlistId={props.playlistId} authUser={props.authUser} history={props.history}/>}
+      {firebase => <AddTempUserFormBase {...props} firebase={firebase} playlistId={props.playlistId} />}
     </FirebaseContext.Consumer>
   </div>
 );
@@ -61,7 +61,11 @@ class AddTempUserFormBase extends Component {
       })
       .then((userRef) => {
           console.log("Document written with ID: ", userRef.id);
-          this.props.history.push('/playlist/'+userRef.id);
+          if(!this.props.authUser){
+            this.props.history.push('/playlist/'+userRef.id);
+          } else {
+            this.props.callback(username,secretname);
+          }
       })
       .catch(function(error) {
           console.error("Error adding document: ", error);

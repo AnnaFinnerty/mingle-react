@@ -9,6 +9,7 @@ import UserView from '../UserView';
 
 import ModalWindow from '../Modal';
 import AddPlaylist from '../AddPlaylist';
+import AddTempUser from '../AddTempUser';
 import Message from '../Message';
 
 // import AuthUserContext from '../Session';
@@ -115,20 +116,26 @@ class HomeBase extends Component {
     //   });
     // });
   }
-  
+  addCreatorNames = (username,secretname) => {
+    console.log("adding names", username, secretname);
+    this.setState({
+      authUserDisplayName: username,
+      authUserSecretName: secretname
+    })
+  }
   activatePlaylist = (playlistId) => {
     //console.log('activating playlist in home: ' + playlistId);
     console.log('getting playlist: ' + playlistId );
-    //deactivate all playlists in users collection
-    // db.collection("cities").get().then(function(querySnapshot) {
-    //   querySnapshot.forEach(function(doc) {
-    //       var cityRef = db.collection("cities").doc(doc.id);
-  
-    //       return cityRef.update({
-    //           capital: true
-    //       });
-    //   });
-    // });
+    //deactivate all playlists in users' collection
+    const listRef = this.props.firebase.db.collection("playlists")
+    listRef.get().then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+          var ref = this.props.firebase.db.collection("playlists").doc(doc.id);
+          return ref.update({
+              activatePlaylistId: false
+          });
+      });
+    });
     //activate active playlist
     const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
     let query = itemRef.get()
@@ -148,11 +155,13 @@ class HomeBase extends Component {
         console.log('Error getting documents', err);
     });
   }
+
   toggleViewMode = () => {
     console.log('toggling view mode');
     this.setState({creatorMode: !this.state.creatorMode})
   }
   openModal = (modalType) => {
+    console.log('open modal: ' + modalType)
     this.setState({
         modalOpen: true,
         modalType: modalType
@@ -175,8 +184,15 @@ class HomeBase extends Component {
   }
   render(){
     console.log('home state', this.state)
+    const userData = {
+      authUser: this.state.authUser,
+      userId: this.state.authUser,
+      displayName: this.state.authUserDisplayName,
+      secretName: this.state.authUser.authUserSecretName,
+    }
     const view = this.state.creatorMode ? 
                 <CreatorView authUser={this.state.authUser}
+                             userData={userData}
                              playlistId={this.state.activePlaylistId} 
                              toggleViewMode={this.toggleViewMode} 
                              addPlaylist={this.addPlaylist}
@@ -189,6 +205,7 @@ class HomeBase extends Component {
                              /> 
                 : 
                 <UserView authUser={this.state.authUser}
+                          userData={userData}
                           playlistId={this.state.activePlaylistId}
                           toggleViewMode={this.toggleViewMode}
                           reduceApiCalls={this.state.reduceApiCalls}
@@ -197,7 +214,7 @@ class HomeBase extends Component {
     return (
       <React.Fragment>
         <Grid columns={1} fluid={'true'} centered style={{textAlign:"centered"}}>
-           <Grid.Row>
+           <Grid.Row style={{paddingBottom:"0"}}>
               <Button onClick={this.toggleViewMode}
                       style={{float:"left"}}
               >
@@ -232,7 +249,12 @@ class HomeBase extends Component {
                     !this.state.modalOpen ? "" :
                     <Modal open={this.state.modalOpen}>
                         <Button onClick={this.closeModal}>X</Button>
-                        <AddPlaylist userProps={this.state} callback={this.activatePlaylist}/>
+                        {
+                          this.state.modalType === "newPlaylist" ?
+                          <AddPlaylist userProps={this.state} callback={this.activatePlaylist}/>
+                          :
+                          <AddTempUser userProps={this.state} callback={this.addCreatorNames} authUser={true}/>
+                        }
                     </Modal>
         }
         {
@@ -242,7 +264,7 @@ class HomeBase extends Component {
                         text={this.state.messageText}
                         closeMessage={this.closeMessage}
                     />
-                } 
+        } 
       </React.Fragment>
     );
   }
