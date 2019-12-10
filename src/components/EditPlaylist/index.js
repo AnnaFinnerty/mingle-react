@@ -12,7 +12,7 @@ const EditPlaylistPage = (props) => {
   return(
     <div>
     <FirebaseContext.Consumer>
-      {firebase => <EditPlaylist firebase={firebase} userProps={props.userProps} />}
+      {firebase => <EditPlaylist {...props} firebase={firebase}/>}
     </FirebaseContext.Consumer>
   </div>
   )
@@ -23,32 +23,15 @@ class EditPlaylistBase extends Component {
     super();
     //!TODO update prop names
     this.state = {
+      userId: props.userProps.playlistToEdit.userId,
       title:props.userProps.playlistToEdit.title,
       mood:props.userProps.playlistToEdit.mood,
       date: props.userProps.playlistToEdit.date,
-      active: props.userProps.playlistToEdit.active
+      active: props.userProps.playlistToEdit.active,
+      id: props.userProps.playlistToEdit.id
     }
     //TODO change to default moods, let users add one
     this.moods = ['party','chill','dance','default']
-  }
-  updatePlaylist = () => {
-    const playlistId = this.props.userProps.playlistToEdit.id;
-    console.log("updating playlist:  " + playlistId);
-    console.log(this.props);
-    const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    playlistRef.update({
-          active: this.state.active,
-          title: this.state.title,
-          mood: this.state.mood,
-          userId: this.props.userProps.authUser,
-          date: this.state.date
-      })
-      .then(function(docRef) {
-          console.log("document updated");
-      })
-      .catch(function(error) {
-          console.error("Error updating document: ", error);
-      });
   }
   handleChange = (e) => {
     this.setState({
@@ -70,7 +53,7 @@ class EditPlaylistBase extends Component {
                 name="mood" 
                 onChange={this.handleChange}
             />
-            <Button onClick={this.updatePlaylist}>start</Button>
+            <Button onClick={()=>this.props.updatePlaylist(this.state)}>update</Button>
             </Form>
         </Container>
         

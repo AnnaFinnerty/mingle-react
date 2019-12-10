@@ -13,6 +13,7 @@ class PlaylistsList extends Component{
             modalOpen: false,
             modalType: 'newPlaylist',
         }
+        this.updatePlaylist = this.updatePlaylist.bind(this)
     }
     componentDidMount(){
         this.getPlaylists(this.state.authUser);
@@ -46,13 +47,7 @@ class PlaylistsList extends Component{
         });
     }
     editPlaylist = (playlistId) => {
-        this.setState({
-            modalOpen: true,
-            playlistToEdit: playlistId
-        })
-    }
-    updatePlaylist = (playlistId) => {
-        console.log('getting playlist: ' + playlistId );
+        console.log('editing playlist: ' + playlistId );
         const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
         let query = itemRef.get().then(snapshot => {
                 if (snapshot.empty) {
@@ -71,6 +66,28 @@ class PlaylistsList extends Component{
             .catch(err => {
                 console.log('Error getting documents', err);
             });
+    }
+    updatePlaylist = (updatedPlaylist) => {
+        const playlistId = updatedPlaylist.id;
+        console.log("updating playlist:  " + playlistId);
+        console.log('updatedPlaylister', updatedPlaylist);
+        const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+        playlistRef.update({
+              active: updatedPlaylist.active,
+              title: updatedPlaylist.title,
+              mood: updatedPlaylist.mood,
+              userId: updatedPlaylist.userId,
+              date: updatedPlaylist.date
+          })
+          .then(function(docRef) {
+              console.log("document updated");
+          })
+          .catch(function(error) {
+              console.error("Error updating document: ", error);
+          });
+        this.setState({
+            modalOpen: false
+        })
     }
     deletePlaylist = (playlistId) => {
         console.log('deleting playlist: ' + playlistId);
@@ -124,7 +141,7 @@ class PlaylistsList extends Component{
                     !this.state.modalOpen ? "" :
                     <Modal open={this.state.modalOpen}>
                         <Button onClick={this.closeModal}>X</Button>
-                        <EditPlaylist />
+                        <EditPlaylist userProps={this.state} updatePlaylist={this.updatePlaylist}/>
                     </Modal>
                 }
             </React.Fragment>

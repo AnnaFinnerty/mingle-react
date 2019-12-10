@@ -8,6 +8,7 @@ import CreatorView from '../CreatorView';
 import UserView from '../UserView';
 
 import ModalWindow from '../Modal';
+import AddPlaylist from '../AddPlaylist';
 import Message from '../Message';
 
 // import AuthUserContext from '../Session';
@@ -171,7 +172,8 @@ class HomeBase extends Component {
         console.log('active playlist snapshot', snapshot.data())
         this.setState({
             activePlaylist: snapshot.data(),
-            activatePlaylistId: playlistId
+            activatePlaylistId: playlistId,
+            modalOpen: false,
         })
     })
     .catch(err => {
@@ -262,9 +264,7 @@ class HomeBase extends Component {
                     !this.state.modalOpen ? "" :
                     <Modal open={this.state.modalOpen}>
                         <Button onClick={this.closeModal}>X</Button>
-                        <ModalWindow closeModal={this.closeModal} 
-                                    modalType={this.state.modalType} 
-                                    userProps={this.state}/>
+                        <AddPlaylist userProps={this.state} callback={this.activatePlaylist}/>
                     </Modal>
         }
         {
