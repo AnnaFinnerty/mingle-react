@@ -25,8 +25,6 @@ class CreatorView extends Component{
             modalType: 'newPlaylist',
             modalCallback: null,
             authUser: props.authUser,
-            displayName: props.displayname,
-            secretName: props.secretName,
             playlistId: props.playlistId,
             inviteCode: this.genInviteCode(props.playlistId),
             userSong: null,

@@ -3,7 +3,7 @@ import { Link, withRouter, useParams } from 'react-router-dom';
 import { FirebaseContext, withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
-import { Label, Button } from 'semantic-ui-react';
+import { Form, Input, Label, Button, Container } from 'semantic-ui-react';
 import { SignUpLink } from '../SignUp';
 
 const AddTempUserWrapper = (props) => (
@@ -96,30 +96,34 @@ class AddTempUserFormBase extends Component {
       username === '' ||
       secretname === '';
     return (
-      <form onSubmit={this.onSubmit}>
+      <Form onSubmit={this.onSubmit}>
+        <Container centered>
           <Label>a secret name to hide your identity</Label>
-          <Button onClick={this.randomNameGen}>just give me a random name</Button>
-          <input
+          <br></br>
+          <Input
             name="secretname"
             value={secretname}
             onChange={this.onChange}
             type="text"
             placeholder="secret name"
           />
+          <Button onClick={this.randomNameGen}>random</Button>
           <Label>a name people will recognize later</Label>
-          <input
+          <Input
             name="username"
             value={username}
             onChange={this.onChange}
             type="text"
             placeholder="username"
           />
-          <button type="submit" disabled={isInvalid} 
+          <br></br>
+          <Button type="submit" disabled={isInvalid} 
                   >
             let's go!
-          </button>
+          </Button>
         {error && <p>{error.message}</p>}
-      </form>
+        </Container>
+      </Form>
     );
   }
 }

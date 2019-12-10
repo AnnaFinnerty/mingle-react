@@ -33,6 +33,7 @@ class ActivePlaylistBase extends Component {
     this.state = {
       isAuthUser: props.authUser,
       userId: props.userId,
+      activeUser: null,
       playlistId: props.playlistId,
       userSong: props.userSong,
       isLoading: true,
@@ -47,36 +48,64 @@ class ActivePlaylistBase extends Component {
   }
   componentDidMount(){
     console.log('activeplaylist did mount', this.props);
-      this.getSongs();
-      if(!this.props.reduceApiCalls){
-        this.getSongs();
+      if(!this.state.activeUser){
+        this.getUser();
       } 
+      //this.getSongs();
+      if(!this.props.reduceApiCalls){
+        //this.getSongs();
+      }
+  }
+  getUser = () => {
+    console.log("getting users information", this.props);
+    const userId = this.props.match.params.userId;
+    console.log('user id', userId);
+    const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
+    let query = userRef.get()
+    .then(snapshot => {
+        if (snapshot.empty) {
+        console.log('No matching user');
+        return;
+        }  
+        console.log('user snapshot', snapshot.data())
+        const data = snapshot.data();
+        this.setState({
+            activeUser: snapshot.data(),
+            playlistId: data.playlistId
+        })
+        this.getSongs();
+    })
+    .catch(err => {
+        console.log('Error getting user', err);
+    });
   }
   getSongs = () => {
-    // console.log('getting songs');
-    const itemsRef = this.props.firebase.db.collection('songs');
-    itemsRef.where('playlistId', '==', this.state.playlistId).get().then((snapshot) => {
-      //let items = snapshot.val();
-      console.log('songs snapshot',snapshot)
-      let newState = [];
-      snapshot.forEach((i) => {
-        const item = i.data()
-        const id = i.id;
-        newState.push({
-          title: item.title,
-          url: item.url,
-          userId: item.userId,
-          playlistId: item.playlistId,
-          upvotes: item.upvotes,
-          downvotes: item.downvotes,
-          votedOn: 0,
-          id: id,
+    console.log('getting songs');
+    if(this.state.playlistId){
+      const itemsRef = this.props.firebase.db.collection('songs');
+      itemsRef.where('playlistId', '==', this.state.playlistId).get().then((snapshot) => {
+        //let items = snapshot.val();
+        console.log('songs snapshot',snapshot)
+        let newState = [];
+        snapshot.forEach((i) => {
+          const item = i.data()
+          const id = i.id;
+          newState.push({
+            title: item.title,
+            url: item.url,
+            userId: item.userId,
+            playlistId: item.playlistId,
+            upvotes: item.upvotes,
+            downvotes: item.downvotes,
+            votedOn: 0,
+            id: id,
+          });
+        });
+        this.setState({
+          songs: newState
         });
       });
-      this.setState({
-        songs: newState
-      });
-    });
+      }
   }
   upvoteSong = (e,songId) => {
     console.log('upvoting song: ' + songId);
@@ -313,6 +342,11 @@ class ActivePlaylistBase extends Component {
                     <span style={{width:"40vw", height: "10vh", overflow:"hidden" }}>
                       {song.title}
                     </span>
+                    <Grid.Row>
+                      <Button className="song-button edit-button" onClick={(e)=>this.editSong(e,song.id)}><Icon name="edit"/></Button>
+                    
+                      <Button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></Button>
+                    </Grid.Row>
                     {
                       votedOnByThisUser === 1 ? 
                         <Grid.Column style={{padding:"0"}}>
@@ -331,12 +365,6 @@ class ActivePlaylistBase extends Component {
                         <Button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/>{song.downvotes}</Button>
                       </Grid.Column>
                     }
-                    <Grid.Column>
-                      <Button className="song-button edit-button" onClick={(e)=>this.editSong(e,song.id)}><Icon name="edit"/></Button>
-                    </Grid.Column>
-                    <Grid.Column>
-                      <Button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></Button>
-                    </Grid.Column>
                   </Grid>
                   </Grid.Row>
                 </Grid.Column>
@@ -366,10 +394,10 @@ class ActivePlaylistBase extends Component {
               </React.Fragment>
             }
             <Label>
-              {this.props.userData.displayName ? this.props.userData.displaytName : "you need to set a display name"}
+              { "you need to set a display name"}
             </Label>
             <Label>
-              {this.props.userData.secretName ? this.props.userData.secretName : "you need to set a secret name"}
+              {"you need to set a secret name"}
             </Label>
           </Grid.Row>
         <Grid.Column>
