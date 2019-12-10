@@ -283,7 +283,7 @@ class ActivePlaylistBase extends Component {
         const playing = i === this.state.currentSong && this.state.playing;
         const selfSong = song.userId === this.state.userId;
         // console.log("this song belongs to user: " + selfSong);
-         const votedOnByThisUser = song.votedOn;
+        const votedOnByThisUser = song.votedOn;
         // console.log("this song voted on by user: " + song.votedOn)
         // const borderStyle = i === this.state.currentSong && this.state.playing ? "2px solid aqua" : "2px solid transparent";
         let borderStyle;
@@ -314,7 +314,7 @@ class ActivePlaylistBase extends Component {
                       {song.title}
                     </span>
                     {
-                        votedOnByThisUser ? 
+                      votedOnByThisUser === 1 ? 
                         <Grid.Column style={{padding:"0"}}>
                           <Button className="song-button upvote-button" onClick={(e)=>this.undoUpvote(e,song.id)}><Icon name="thumbs up" style={{color:"green"}}/>{song.upvotes}</Button>
                         </Grid.Column> :
@@ -323,7 +323,7 @@ class ActivePlaylistBase extends Component {
                         </Grid.Column>
                     }
                     {
-                      votedOnByThisUser ? 
+                      votedOnByThisUser === -1 ? 
                       <Grid.Column style={{padding:"0"}}>
                         <Button className="song-button downvote-button" onClick={(e)=>this.undoDownvote(e,song.id)}><Icon name="thumbs down" style={{color:"red"}}/>{song.downvotes}</Button>
                       </Grid.Column> :
