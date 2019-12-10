@@ -132,7 +132,7 @@ class PlaylistsList extends Component{
                         <Icon name="edit" onClick={()=>this.editPlaylist(playlist.id)}/>
                     </Grid.Column>
                     <Grid.Column>
-                        <Icon name="lightbulb" onClick={()=>this.activatePlaylist(playlist.id)}/>
+                        <Icon name="lightbulb" onClick={()=>this.props.activatePlaylist(playlist.id)}/>
                     </Grid.Column>
                 </Grid>
               </Feed.Event>

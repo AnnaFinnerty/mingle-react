@@ -41,7 +41,6 @@ class PlayersList extends Component {
           id: id,
         });
       });
-      console.log('users',newUsers);
       this.setState({
         players: newUsers
       });
@@ -64,8 +63,8 @@ class PlayersList extends Component {
     <Label>no users</Label> :
     this.state.players.map((user)=>{
         return(
-        <div className="list-item">
-          <Feed.Event key={user.id} className="list-item">
+        <div key={user.id} className="list-item">
+          <Feed.Event className="list-item">
             <Feed.Label>
               {user.secretname}
               <Icon name="delete" className="delete-hover" onClick={()=>this.deleteUser(user.id)}></Icon>

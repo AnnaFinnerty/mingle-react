@@ -73,10 +73,32 @@ class ActivePlaylistBase extends Component {
             activeUser: snapshot.data(),
             playlistId: data.playlistId
         })
+        this.getPlaylist();
         this.getSongs();
     })
     .catch(err => {
         console.log('Error getting user', err);
+    });
+  }
+  getPlaylist = () => {
+    console.log("getting playlist information", this.props);
+    const playlistId = this.state.playlistId;
+    console.log('user id', playlistId);
+    const playlistRef = this.props.firebase.db.doc(`/temp_users/${playlistId}`);
+    let query = playlistRef.get()
+    .then(snapshot => {
+        if (snapshot.empty) {
+        console.log('No matching playlist');
+        return;
+        }  
+        console.log('playlist snapshot', snapshot.data())
+        const data = snapshot.data();
+        this.setState({
+            playlist: snapshot.data(),
+        })
+    })
+    .catch(err => {
+        console.log('Error getting playlist', err);
     });
   }
   getSongs = () => {

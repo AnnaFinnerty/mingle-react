@@ -8,6 +8,7 @@ import CreatorView from '../CreatorView';
 import UserView from '../UserView';
 
 import ModalWindow from '../Modal';
+import Options from '../Options';
 import AddPlaylist from '../AddPlaylist';
 import AddTempUser from '../AddTempUser';
 import Message from '../Message';
@@ -31,13 +32,6 @@ const HomePage = (props) => {
   </div>
 )};
 
-//POTENTIAL GAME SETTINGS
-//give eliminated users a change to replay: Second chance
-//sudden death
-//end song immediately on vote completion or play through
-//speed through? Or should this be default?
-//do not allow vote until song play for X seconds
-
 class HomeBase extends Component {
   constructor(props) {
     super(props);
@@ -59,6 +53,14 @@ class HomeBase extends Component {
       modalOpen: false,
       modalType: 'newTempProfile',
       reduceApiCalls: true,
+      settings: {
+        speedThrough: true,
+        endSongOnVoteEnd: false,
+        suddenDeath: false,
+        secondChance: true,
+        voteDelay: false,
+        voteDelayLength: 30,
+      }
     }
   }
   componentDidMount(){
@@ -124,8 +126,7 @@ class HomeBase extends Component {
     })
   }
   activatePlaylist = (playlistId) => {
-    //console.log('activating playlist in home: ' + playlistId);
-    console.log('getting playlist: ' + playlistId );
+    console.log('activating playlist in home: ' + playlistId);
     //deactivate all playlists in users' collection
     const listRef = this.props.firebase.db.collection("playlists")
     listRef.get().then(function(querySnapshot) {
@@ -155,7 +156,10 @@ class HomeBase extends Component {
         console.log('Error getting documents', err);
     });
   }
-
+  updateSettings = (newSettings) => {
+    console.log('updating settings')
+    console.log(newSettings);
+  }
   toggleViewMode = () => {
     console.log('toggling view mode');
     this.setState({creatorMode: !this.state.creatorMode})
@@ -190,9 +194,23 @@ class HomeBase extends Component {
       displayName: this.state.authUserDisplayName,
       secretName: this.state.authUser.authUserSecretName,
     }
+    let modal;
+    switch(this.state.modalType){
+      case "newTempProfile":
+        modal = <AddTempUser userProps={this.state} callback={this.addCreatorNames} authUser={true}/>
+        break
+
+      case "newPlaylist":
+        modal = <AddPlaylist userProps={this.state} callback={this.activatePlaylist}/>
+        break
+
+      default: 
+      modal =  <Options settings={this.state.settings} updateSettings={this.updateSettings}/>
+    }
     const view = this.state.creatorMode ? 
                 <CreatorView authUser={this.state.authUser}
                              userData={userData}
+                             settings={this.state.settings}
                              playlistId={this.state.activePlaylistId} 
                              toggleViewMode={this.toggleViewMode} 
                              addPlaylist={this.addPlaylist}
@@ -239,31 +257,26 @@ class HomeBase extends Component {
                     <h3>{this.state.authUserSecretName}</h3>
                  </React.Fragment>
               }
-              
+              <Button onClick={()=>this.openModal('options')}>game options</Button>
            </Grid.Row>
            <Grid.Row>
               {view}
             </Grid.Row>
         </Grid>
         {
-                    !this.state.modalOpen ? "" :
-                    <Modal open={this.state.modalOpen}>
-                        <Button onClick={this.closeModal}>X</Button>
-                        {
-                          this.state.modalType === "newPlaylist" ?
-                          <AddPlaylist userProps={this.state} callback={this.activatePlaylist}/>
-                          :
-                          <AddTempUser userProps={this.state} callback={this.addCreatorNames} authUser={true}/>
-                        }
-                    </Modal>
+          !this.state.modalOpen ? "" :
+          <Modal open={this.state.modalOpen}>
+            <Button onClick={this.closeModal}>X</Button>
+              {modal}
+          </Modal>
         }
         {
-                    !this.state.messageOpen ? "" :
-                    <Message 
-                        open={this.state.messageOpen}
-                        text={this.state.messageText}
-                        closeMessage={this.closeMessage}
-                    />
+          !this.state.messageOpen ? "" :
+          <Message 
+            open={this.state.messageOpen}
+            text={this.state.messageText}
+            closeMessage={this.closeMessage}
+          />
         } 
       </React.Fragment>
     );

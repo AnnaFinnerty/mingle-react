@@ -9,6 +9,9 @@ import Message from '../Message';
 
 import { Modal, Feed, Grid, Icon, Button, Label, TextArea, Tab } from 'semantic-ui-react';
 
+//POTENTIAL GAME SETTINGS
+//do not allow vote until song play for X seconds
+
 class CreatorView extends Component{
    
     constructor(props){
@@ -29,7 +32,7 @@ class CreatorView extends Component{
             inviteCode: this.genInviteCode(props.playlistId),
             userSong: null,
             showSongInfo: false,
-            reduceApiCalls: props.reduceApiCalls
+            reduceApiCalls: props.reduceApiCalls,
         }
     }
     componentDidMount(){
@@ -51,6 +54,11 @@ class CreatorView extends Component{
 
         //copy text inside text field
         document.execCommand("copy");
+    }
+    addedPlaylist = (playlistId) => {
+        console.log('activating playlist in creator view:  ' + playlistId);
+        this.closeModal();
+        this.props.activatePlaylist(playlistId);
     }
     openModal = (modalType, modalCallback) => {
         this.setState({
@@ -74,16 +82,11 @@ class CreatorView extends Component{
             messageText: ''
         })
     }
-    addedPlaylist = (playlistId) => {
-        console.log('activating playlist in creator view:  ' + playlistId);
-        this.closeModal();
-        this.props.activatePlaylist(playlistId);
-    }
     render(){
         // console.log('creatorView props', this.props);
         const panes = [
             { menuItem: 'Users', render: () => <Tab.Pane><PlayersList playlistId={this.state.playlistId} openModal={this.openModal} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls}/></Tab.Pane> },
-            { menuItem: 'Playlists', render: () => <Tab.Pane><PlaylistsList playlistId={this.state.playlistId} userId={this.state.authUser} openModal={this.openModal} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls}/></Tab.Pane> },
+            { menuItem: 'Playlists', render: () => <Tab.Pane><PlaylistsList playlistId={this.state.playlistId} userId={this.state.authUser} openModal={this.openModal} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls} activatePlaylist={this.props.activatePlaylist}/></Tab.Pane> },
         ]
         return(
             <React.Fragment>
