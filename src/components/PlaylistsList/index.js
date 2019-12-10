@@ -23,28 +23,29 @@ class PlaylistsList extends Component{
     }
     getPlaylists = () => {
         console.log('getting playlists for: ' + this.props.userId);
-        const itemsRef = this.props.firebase.db.collection('playlists');
-        console.log('playlists item ref', itemsRef)
-        const query = itemsRef.get().then((snapshot) => {
-          console.log('getPlaylists snapshot',snapshot)
-          let newItems = [];
-          snapshot.forEach((i) => {
-            const item = i.data()
-            // console.log('playlist item', item)
-            const id = i.id;
-            newItems.push({
-              date: item.date,
-              userId: item.userId,
-              title: item.title,
-              mood: item.mood,
-              id: id,
+        if(this.props.userId){
+            const itemsRef = this.props.firebase.db.collection('playlists');
+            console.log('playlists item ref', itemsRef)
+            const query = itemsRef.where('userId', '==', this.props.userId).get().then((snapshot) => {
+            console.log('getPlaylists snapshot',snapshot)
+            let newItems = [];
+            snapshot.forEach((i) => {
+                const item = i.data()
+                const id = i.id;
+                newItems.push({
+                date: item.date,
+                userId: item.userId,
+                title: item.title,
+                mood: item.mood,
+                id: id,
+                });
             });
-          });
-          console.log('newItems',newItems)
-          this.setState({
-            playlists: newItems
-          });
-        });
+            console.log('newItems',newItems)
+            this.setState({
+                playlists: newItems
+            });
+            });
+        }
     }
     editPlaylist = (playlistId) => {
         console.log('editing playlist: ' + playlistId );

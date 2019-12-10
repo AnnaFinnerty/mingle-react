@@ -65,37 +65,29 @@ class HomeBase extends Component {
     if(!this.state.authUser){
       //send back to signin if creator is not authenicated
       this.props.history.push('/signin');
-    } else {
-      //this.getPlaylists(this.state.authUser);
-      this.getUsers(this.state.activePlaylistId);
-      if(!this.state.reduceApiCalls){
-        //retrieve and populate users and playlists for this creator
-        this.getUsers(this.state.activePlaylistId);
-        // this.getPlaylists(this.state.authUser);
-      }
-    }
+    } 
+    this.checkForActivePlaylist();
   }
   checkForActivePlaylist = () => {
     console.log('looking for active playlist for: ' + this.state.authUser);
     const itemsRef = this.props.firebase.db.collection('playlists');
     const query = itemsRef.get().then((snapshot) => {
       console.log('getPlaylists snapshot',snapshot)
-      let newItems = [];
+      let activePlaylistId = null;
       snapshot.forEach((i) => {
         const item = i.data()
+        console.log(item);
         console.log('playlist item', item)
         const id = i.id;
-        newItems.push({
-          date: item.date,
-          userId: item.userId,
-          title: item.title,
-          mood: item.mood,
-          id: id,
-        });
+        if(item.active){
+          console.log('active playlist found: ' + id);
+          activePlaylistId = id;
+        } else {
+          console.log('no active playlist found');
+        }
       });
-      console.log('newItems',newItems)
       this.setState({
-        playlists: newItems
+        activePlaylistId: activePlaylistId
       });
     });
   }
@@ -123,31 +115,7 @@ class HomeBase extends Component {
     //   });
     // });
   }
-  getUsers = (playlistId) => {
-    console.log('getting users for playlist:' + playlistId);
-    const itemsRef = this.props.firebase.db.collection('temp_users');
-    const query = itemsRef.where('playlistId', '==', playlistId).get().then((snapshot) => {
-      console.log('getUsers snapshot',snapshot)
-      let newUsers = [];
-      snapshot.forEach((i) => {
-        const item = i.data()
-        const id = i.id;
-        newUsers.push({
-          playlistId: item.playlistId,
-          username: item.username,
-          secretname: item.secretname,
-          songId: item.songId,
-          downvotes: item.downvotes,
-          upvotes: item.upvotes,
-          id: id,
-        });
-      });
-      console.log('users',newUsers);
-      this.setState({
-        players: newUsers
-      });
-    });
-  }
+  
   activatePlaylist = (playlistId) => {
     //console.log('activating playlist in home: ' + playlistId);
     console.log('getting playlist: ' + playlistId );

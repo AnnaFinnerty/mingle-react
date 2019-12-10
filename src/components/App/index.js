@@ -11,7 +11,7 @@ import SignInTempPage from '../SignInTemp';
 import PasswordForgetPage from '../PasswordForget';
 import HomePage from '../Home';
 import AccountPage from '../Account';
-import AdminPage from '../Admin';
+import UserProfile from '../UserProfile';
 import NewSongPage from '../NewSong';
 import Playlist from '../AddPlaylist';
 import ActivePlaylist from '../ActivePlaylist';
@@ -58,8 +58,8 @@ class App extends Component{
             <Route exact path={ROUTES.HOME} render={
               (props) => <HomePage {...props} authUser={this.state.authUser} someProp={'test'}/>
             }/>
-            {/* <Route path={ROUTES.ACCOUNT} component={AccountPage} />
-            <Route path={ROUTES.ADMIN} component={AdminPage} /> */}
+            <Route path={ROUTES.ACCOUNT} component={UserProfile} />
+            {/* <Route path={ROUTES.ADMIN} component={AdminPage} /> */}
             {/* <Route path={ROUTES.NEWSONG} component={NewSongPage} /> */}
             {/* <Route path={ROUTES.PLAYLIST} component={Playlist} /> */}
             <Route exact path={ROUTES.SIGN_IN_TEMP} children={SignInTempPage}/>
