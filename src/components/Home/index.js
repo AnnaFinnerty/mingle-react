@@ -40,6 +40,7 @@ class HomeBase extends Component {
       authUser: props.authUser,
       authUserDisplayName: '',
       authUserSecretName: '',
+      authUserTempId: null,
       players: [],
       activePlaylist: '',
       activePlaylistId: '',
@@ -152,17 +153,19 @@ class HomeBase extends Component {
     //   });
     // });
   }
-  addCreatorNames = (username,secretname) => {
-    console.log("adding names", username, secretname);
+  addCreatorNames = (username,secretname, tempId) => {
+    console.log("adding names", username, secretname, tempId);
     this.setState({
       authUserDisplayName: username,
-      authUserSecretName: secretname
+      authUserSecretName: secretname,
+      authUserTempId: tempId
     })
   }
-  activatePlaylist = (playlistId) => {
+  activatePlaylist = (playlistId, tempUserId, displayName, secretName) => {
     console.log('activating playlist in home: ' + playlistId);
     //deactivate all playlists in users' collection
     const db = this.props.firebase.db;
+    const self = this;
     db.collection("playlists").get().then(function(querySnapshot) {
       querySnapshot.forEach(function(doc) {
           // var ref = this.props.firebase.db.collection("playlists").doc(doc.id);
@@ -170,12 +173,23 @@ class HomeBase extends Component {
           ref.update({
               active: doc.id === playlistId
           });
+          self.setState({
+            activePlaylistId: doc.id,
+            authUserDisplayName: displayName,
+            authUserSecretName: secretName,
+            authUserTempId: tempUserId,
+            modalOpen: false
+          })
       });
     });
   }
   updateSettings = (newSettings) => {
     console.log('updating settings')
     console.log(newSettings);
+    this.setState({
+      settings: newSettings,
+      modalOpen: false,
+    })
   }
   toggleViewMode = () => {
     console.log('toggling view mode');
@@ -208,6 +222,7 @@ class HomeBase extends Component {
     const userData = {
       authUser: this.state.authUser,
       userId: this.state.authUser,
+      tempId: this.state.authUserTempId,
       displayName: this.state.authUserDisplayName,
       // secretName: this.state.authUser.authUserSecretName,
     }

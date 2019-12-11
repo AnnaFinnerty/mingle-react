@@ -7,7 +7,7 @@ import ActivePlaylist from '../ActivePlaylist';
 import ModalWindow from '../Modal';
 import Message from '../Message';
 
-import { Modal, Feed, Grid, Icon, Button, Label, TextArea, Tab } from 'semantic-ui-react';
+import { Modal, Container, Grid, Icon, Button, Label, TextArea, Tab } from 'semantic-ui-react';
 
 //POTENTIAL GAME SETTINGS
 //do not allow vote until song play for X seconds
@@ -32,6 +32,8 @@ class CreatorView extends Component{
             playlistId: props.playlistId,
             inviteCode: this.genInviteCode(props.playlistId),
             userSong: null,
+            gameMessage: 'Welcome to the playlist',
+            gameMode: 'submit',
             showSongInfo: false,
             reduceApiCalls: props.reduceApiCalls,
         }
@@ -85,6 +87,9 @@ class CreatorView extends Component{
         ]
         return(
             <React.Fragment>
+                <Container fluid>
+                    Game Controls
+                </Container>
                 <Grid columns={2} divided fluid="true">
                     <Grid.Column width={5} style={{backgroundColor:"gray", height: '80vh'}}>
                         <Grid.Row>

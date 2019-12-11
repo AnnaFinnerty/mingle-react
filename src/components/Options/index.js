@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import { Grid, Radio, Label } from 'semantic-ui-react';
+import { Grid, Radio, Label, Button } from 'semantic-ui-react';
 
 class Options extends Component{
     constructor(){
@@ -14,55 +14,59 @@ class Options extends Component{
             voteDelayLength: 30,
         }
     }
-    onChange = (e) => {
-        console.log(e.target.name);
-        console.log(e.target.value);
+    onChange = (e, data) => {
+        console.log(e);
+        console.log(data)
         this.setState({
-            [e.target.name] : e.target.value
+            [data.name] : data.checked
         })
     }
     render(){
+        console.log('options state', this.state);
         return(
             <Grid columns={3} centered divided>
                 <Grid.Column></Grid.Column>
                 <Grid.Column>
                     <Grid.Row>
                         <Label>Speed Through Mode</Label>
-                        <Radio toggle checked={this.state.speedThrough} name="speedThrough" onChange={(e) => this.onChange(e)}/>
-
-                        {/* {
+                        {
                             this.state.speedThrough ? 
-                            <Radio toggle checked value={this.state.speedThrough} name="speedThrough" onChange={(e) => this.onChange(e)}/>
+                            <Radio toggle checked name="speedThrough" onChange={this.onChange}/>
                             :
-                            <Radio toggle name="speedThrough" value={this.state.speedThrough} onChange={(e) => this.onChange(e)}/>
-                        } */}
+                            <Radio toggle name="speedThrough" onChange={this.onChange}/>
+                        }
                     </Grid.Row>
                     <Grid.Row>
                         <Label>Remove Sownvoted Songs</Label>
                         {
                             this.state.endSongOnVoteEnd ? 
-                            <Radio toggle checked value={this.state.endSongOnVoteEnd} name="endSongOnVoteEnd" onChange={(e) => this.onChange(e)}/>
+                            <Radio toggle checked name="endSongOnVoteEnd" onChange={this.onChange}/>
                             :
-                            <Radio toggle value={this.state.endSongOnVoteEnd} name="endSongOnVoteEnd" onChange={(e) => this.onChange(e)}/>
+                            <Radio toggle name="endSongOnVoteEnd" onChange={this.onChange}/>
                         }
                     </Grid.Row>
                     <Grid.Row>
                         <Label>Sudden Death</Label>
                         {
                             this.state.suddenDeath ? 
-                            <Radio toggle checked value={this.state.suddenDeath} name="suddenDeath" onChange={(e) => this.onChange(e)}/>
+                            <Radio toggle checked name="suddenDeath" onChange={this.onChange}/>
                             :
-                            <Radio toggle value={this.state.suddenDeath} name="suddenDeath" onChange={(e) => this.onChange(e)}/>                        
+                            <Radio toggle name="suddenDeath" onChange={this.onChange}/>                        
                         }
                     </Grid.Row>
                     <Grid.Row>
                         <Label>Second Chance</Label>
                         {
                             this.state.secondChance ? 
-                            <Radio toggle checked value={this.state.secondChance} name="secondChance" onChange={(e) => this.onChange(e)}/>
+                            <Radio toggle checked name="secondChance" onChange={this.onChange}/>
                             :
-                            <Radio toggle value={this.state.secondChance} name="secondChance" onChange={(e) => this.onChange(e)}/>                        
+                            <Radio toggle name="secondChance" onChange={this.onChange}/>                        
                         }
+                    </Grid.Row>
+                    <Grid.Row>
+                        <Button onClick={()=>this.props.updateSettings(this.state)}>
+                            update
+                        </Button>
                     </Grid.Row>
                 </Grid.Column>
                 <Grid.Column></Grid.Column>

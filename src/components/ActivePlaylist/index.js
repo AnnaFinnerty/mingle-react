@@ -31,7 +31,7 @@ class ActivePlaylistBase extends Component {
     super(props);
     this.unsubscribe = null;
     this.state = {
-      isAuthUser: props.authUser,
+      authUser: props.authUser,
       userId: props.userId,
       activeUser: null,
       playlistId: props.playlistId,
@@ -57,7 +57,7 @@ class ActivePlaylistBase extends Component {
   }
   getUser = () => {
     console.log("getting users information", this.props);
-    const userId = this.props.match.params.userId;
+    const userId = this.state.authUser ? this.state.userId : this.props.match.params.userId;
     console.log('user id', userId);
     const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
     let query = userRef.get()
