@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 import { Feed, Input, Button, Label } from 'semantic-ui-react'
+import { isFor } from '@babel/types';
 
 const NewSongPage = (props) => (
   <div>
-    <h2>Add New Song</h2>
+    <h2>{props.edit ? "Edit Song" : "Add Song"}</h2>
     <FirebaseContext.Consumer>
       {firebase => <NewSongForm {...props} firebase={firebase} />}
     </FirebaseContext.Consumer>
@@ -21,7 +22,7 @@ class NewSongForm extends Component {
       title: '',
       url: '',
       playlistId: props.userProps.playlistId,
-      userId: props.userProps.authUser ? props.userProps.authUser : props.userProps.userId,
+      userId: props.userProps.authUserId ? props.userProps.authUserId : props.userProps.userId,
       apiSearch: '',
       searchResults: [],
       error: null,
@@ -58,82 +59,89 @@ class NewSongForm extends Component {
         console.log('no search term entered');
     }
   }
-
   onSubmit = event => {
     event.preventDefault();
     console.log('submitting new song', this.state);
     const { title, url, playlistId, userId } = this.state;
     //submit form information to firebase DB
-    this.props.firebase.db.collection("songs").add({
+    const newSong = {
         title: title,
         url: url,
         playlistId: playlistId,
         userId: userId,
         upvotes: 0,
         downvotes: 0
-    })
+    }
+    this.props.firebase.db.collection("songs").add(newSong)
     .then(function(docRef) {
         console.log("Document written with ID: ", docRef.id);
+        if(this.props.edit){
+          console.log('replacing song: ' + this.props.songToEdit);
+          console.log(newSong);
+          this.props.callback(newSong, this.props.songToEdit);
+        }
     })
     .catch(function(error) {
         console.error("Error adding document: ", error);
     });
   };
   onSelect = async (event,videoId) => {
-      console.log("selecting video: " + videoId);
-      const addedSongCallback = this.props.callback;
-      const searchResponse = await fetch("https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+videoId+"&key=AIzaSyDKZC4z0p_HotveLN_NpwTwZzHb_Vcn10c" , {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            credentials: 'include'
+    console.log("selecting video: " + videoId);
+    const addedSongCallback = this.props.callback;
+    const editSong = this.props.songToEdit;
+    const searchResponse = await fetch("https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+videoId+"&key=AIzaSyDKZC4z0p_HotveLN_NpwTwZzHb_Vcn10c" , {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+      const parsedResponse = await searchResponse.json();
+      console.log('getVideoDetails res:' ,parsedResponse);
+      const item = parsedResponse.items[0];
+      console.log('item', item);
+      if(item){
+          const song = {
+              title: item.snippet.title,
+              url: 'https://www.youtube.com/watch?v='+videoId,
+              playlistId: this.state.playlistId,
+              userId: this.state.userId,
+              upvotes: 0,
+              downvotes: 0
+          }
+          this.props.firebase.db.collection("songs").add(song)
+          .then(function(docRef) {
+              console.log("Document written with ID: ", docRef.id);
+              addedSongCallback(song,editSong);
+          })
+          .catch(function(error) {
+              console.error("Error adding document: ", error);
           });
-        const parsedResponse = await searchResponse.json();
-        console.log('getVideoDetails res:' ,parsedResponse);
-        const item = parsedResponse.items[0];
-        console.log('item', item);
-        if(item){
-            this.props.firebase.db.collection("songs").add({
-                title: item.snippet.title,
-                url: 'https://www.youtube.com/watch?v='+videoId,
-                playlistId: this.state.playlistId,
-                userId: this.state.userId,
-                upvotes: 0,
-                downvotes: 0
-            })
-            .then(function(docRef) {
-                console.log("Document written with ID: ", docRef.id);
-                addedSongCallback(item);
-            })
-            .catch(function(error) {
-                console.error("Error adding document: ", error);
-            });
-        }
+      }
   }
-  addSong = (songToAdd) => {
-    console.log('adding song');
-    console.log(this.props.firebase)
-    const key = this.props.firebase.database.ref('songs').push().key;
-    console.log(key);
-    songToAdd['id'] = key;
-    const newSong={
-        id: key,
-        title: songToAdd.title,
-        url: songToAdd.url,
-        playlistId: songToAdd.playlistId,
-        userId : songToAdd.userId,
-        upvotes: 0,
-        downvotes:0
-    }
-    this.props.firebase.db.collection("songs").push(newSong)
-            .then(function(docRef) {
-                console.log("Document written with ID: ", docRef.id);
-            })
-            .catch(function(error) {
-                console.error("Error adding document: ", error);
-            });
-  }
+  // addSong = (songToAdd) => {
+  //   console.log('adding song');
+  //   console.log(this.props.firebase)
+  //   const key = this.props.firebase.database.ref('songs').push().key;
+  //   console.log(key);
+  //   songToAdd['id'] = key;
+  //   const newSong={
+  //       id: key,
+  //       title: songToAdd.title,
+  //       url: songToAdd.url,
+  //       playlistId: songToAdd.playlistId,
+  //       userId : songToAdd.userId,
+  //       upvotes: 0,
+  //       downvotes:0
+  //   }
+  //   this.props.firebase.db.collection("songs").push(newSong)
+  //           .then(function(docRef) {
+  //               console.log("Document written with ID: ", docRef.id);
+  //           })
+  //           .catch(function(error) {
+  //               console.error("Error adding document: ", error);
+  //           });
+  // }
   onChange = event => {
     console.log("changing text");
     this.setState({ [event.target.name]: event.target.value });
@@ -194,7 +202,7 @@ class NewSongForm extends Component {
                 </Feed>
             </div>
        :
-       <div> 
+       <div style={{minHeight: "60vh"}}> 
         <form onSubmit={this.onSubmit}>
             <Input
               name="title/artist"

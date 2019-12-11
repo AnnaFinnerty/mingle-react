@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { FirebaseContext } from '../Firebase';
-import * as ROUTES from '../../constants/routes';
-import { Feed, Input, Button, Label } from 'semantic-ui-react'
+import { Input, Button, Label } from 'semantic-ui-react'
 
 const UserPage = (props) => (
   <div>
@@ -13,66 +11,64 @@ const UserPage = (props) => (
   </div>
 );
 
-//come up with user profile info
+
 class UserProfile extends Component {
   constructor(props) {
     super(props);
     console.log('new song form props', props)
     this.state = { 
        email: props.email,
-       password: props.password,
+       password1: '',
+       password2: '',
        defaultSecretName: '',
        defaultRealName: '',
        totalGames: 0,
        edit: false,
     };
   }
-  onSubmit = event => {
+  changePassword = event => {
     event.preventDefault();
-    console.log('submitting new song', this.state);
-    // const { title, url, playlistId, userId } = this.state;
-    // console.log('updating user: ' + userId );
-    //     const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    //     let query = itemRef.get().then(snapshot => {
-    //             if (snapshot.empty) {
-    //             console.log('No matching documents.');
-    //             return;
-    //             }  
-    //             console.log('get snapshot', snapshot.data())
-    //             const data = snapshot.data();
-    //             data['id'] = snapshot.id;
-    //             this.setState({
-    //                 playlistToEdit: data,
-    //                 modalOpen: true,
-    //                 modalType: 'editPlaylist'
-    //             })
-    //         })
-    //         .catch(err => {
-    //             console.log('Error getting documents', err);
-    //         });
+    console.log('updating password', this.state);
+    // const { passwordOne } = this.state;
+      this.props.firebase
+        .doPasswordUpdate(this.state.password1)
+        .then(() => {
+          this.setState({ 
+            email: this.props.email,
+            password1: '',
+            password2: '',
+            defaultSecretName: '',
+            defaultRealName: '',
+            totalGames: 0,
+            edit: false,
+          });
+        })
+        .catch(error => {
+          this.setState({ error });
+        });
+      event.preventDefault();
   };
+  deleteUser = () => {
+    console.log('deleting user');
+    const user = this.props.firebase.auth.currentUser;
+    console.log(user);
+    user.delete().then(function(userId) {
+      console.log('successfully deleted ' + userId)
+    }).catch(function(error) {
+      console.log(console.log('error deleting user'))
+    });
+  }
   onChange = event => {
     console.log("changing text");
     this.setState({ [event.target.name]: event.target.value });
   };
   render() {
-    const {
-        email,
-        password,
-        defaultSecretName,
-        defaultRealName,
-        error,
-      } = this.state;
-      const isInvalid =
-      email === '' ||
-      password === ''   ||
-      defaultSecretName === '' ||
-      defaultRealName === '';
+    const { email, passwordOne, passwordTwo, error } = this.state;
+    const isInvalid =
+      passwordOne !== passwordTwo || passwordOne === '';
     return (
      <div style={{textAlign:'center'}}>
-       <h3>Stats</h3>
-
-        <form onSubmit={this.onSubmit}>
+       <h3>Account</h3>
             <Input
               name="email"
               value={email}
@@ -80,32 +76,34 @@ class UserProfile extends Component {
               type="text"
               placeholder="email"
             />
+            <br></br>
+            <Label>Change Password</Label>
+            <br></br>
             <Input
-              name="password"
-              value={password}
+              name="password1"
+              value={passwordOne}
               onChange={this.onChange}
               type="text"
               placeholder="password"
             />
+            <br></br>
             <Input
-              name="defaultSecretName"
-              value={defaultSecretName}
+              name="password2"
+              value={passwordTwo}
               onChange={this.onChange}
               type="text"
-              placeholder="default secret name"
+              placeholder="password"
             />
-            <Input
-              name="defaultRealName"
-              value={defaultRealName}
-              onChange={this.onChange}
-              type="text"
-              placeholder="default real name"
-            />
-            <Button color="orange" disabled={isInvalid} type="submit">
+            <br></br>
+            <Button color="orange" disabled={isInvalid} onClick={this.changePassword}>
               Update Info
             </Button>
+            <br></br>
+            <Button color="orange" onClick={this.deleteUser}>
+              Delete User
+            </Button>
+            <br></br>
             {error && <p>{error.message}</p>}
-        </form>
       </div>
     );
   }
