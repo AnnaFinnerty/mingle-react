@@ -308,7 +308,7 @@ class ActivePlaylistBase extends Component {
       console.log("error deleting song")
     })
     const removeOldSong = this.state.songs.filter((song) => (song.id != deletedSong));
-    this.setState({songs: [removeOldSong, editedSong]})
+    this.setState({songs: [...removeOldSong, editedSong]})
     
   } 
   deleteSong = (songId) => {
