@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import { FirebaseContext } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 import { Feed, Input, Button, Label } from 'semantic-ui-react'
+import { isFor } from '@babel/types';
 
 const NewSongPage = (props) => (
   <div>
-    <h2>Add New Song</h2>
+    <h2>{props.edit ? "Edit Song" : "Add Song"}</h2>
     <FirebaseContext.Consumer>
       {firebase => <NewSongForm {...props} firebase={firebase} />}
     </FirebaseContext.Consumer>
@@ -58,33 +59,36 @@ class NewSongForm extends Component {
         console.log('no search term entered');
     }
   }
-
   onSubmit = event => {
     event.preventDefault();
     console.log('submitting new song', this.state);
     const { title, url, playlistId, userId } = this.state;
     //submit form information to firebase DB
-    this.props.firebase.db.collection("songs").add({
+    const newSong = {
         title: title,
         url: url,
         playlistId: playlistId,
         userId: userId,
         upvotes: 0,
         downvotes: 0
-    })
+    }
+    this.props.firebase.db.collection("songs").add(newSong)
     .then(function(docRef) {
         console.log("Document written with ID: ", docRef.id);
+        if(this.props.edit){
+          console.log('replacing song: ' + this.props.songToEdit);
+          console.log(newSong);
+          this.props.callback(newSong, this.props.songToEdit);
+        }
     })
     .catch(function(error) {
         console.error("Error adding document: ", error);
     });
   };
-  onSelect = (event,videoId) => {
-      this.selectYoutube(videoId);
-  }
-  selectYoutube = async (videoId) => {
+  onSelect = async (event,videoId) => {
     console.log("selecting video: " + videoId);
     const addedSongCallback = this.props.callback;
+    const editSong = this.props.songToEdit;
     const searchResponse = await fetch("https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+videoId+"&key=AIzaSyDKZC4z0p_HotveLN_NpwTwZzHb_Vcn10c" , {
           method: 'GET',
           headers: {
@@ -108,7 +112,7 @@ class NewSongForm extends Component {
           this.props.firebase.db.collection("songs").add(song)
           .then(function(docRef) {
               console.log("Document written with ID: ", docRef.id);
-              addedSongCallback(item);
+              addedSongCallback(song,editSong);
           })
           .catch(function(error) {
               console.error("Error adding document: ", error);

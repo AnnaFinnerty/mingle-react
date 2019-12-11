@@ -12,7 +12,7 @@ import NewSong from '../NewSong';
 
 import '../../App.css';
 import { Modal, Grid, Button, Label, Icon } from 'semantic-ui-react';
-import { thisExpression } from '@babel/types';
+import { thisExpression, removeTypeDuplicates } from '@babel/types';
 
 
 const ActivePlaylistPage = (props) => {
@@ -139,16 +139,13 @@ class ActivePlaylistBase extends Component {
       }
   }
   addUserSong = (addedSong) => {
-    console.log('adding user song', addedSong)
+    console.log('adding user song in activate playlist', addedSong)
     this.setState({
       userSong: addedSong,
       songs: [...this.state.songs, addedSong],
       modalOpen: false
     })
   }
-  updateUserSong = (editedSong, deletedSong) => {
-    console.log('updating user song');
-  } 
   upvoteSong = (e,songId) => {
     // console.log('upvoting song: ' + songId);
     // const increment = this.props.firebase.db.FieldValue.increment(1);
@@ -290,15 +287,31 @@ class ActivePlaylistBase extends Component {
         console.log('Error getting documents', err);
     });
   }
-  editSong = (e,songIndex) => {
-    console.log('editing song: ' + songIndex);
+  editSong = (e,songId) => {
+    console.log('editing song: ' + songId);
     this.setState({
       modalOpen: true,
       modalType: 'editSong',
-      songToEdit: songIndex,
+      songToEdit: songId,
     })
   }
-  deleteSong = (e,songId) => {
+  updateUserSong = (editedSong, deletedSong) => {
+    console.log('updating user song in activate playlist');
+    console.log('new song', editedSong);
+    console.log('deleted song', deletedSong);
+    const deleteRef = this.props.firebase.db.collection('songs').doc(deletedSong);
+    deleteRef.delete()
+    .then(()=>{
+      console.log(deletedSong + " deleted successfully")
+    })
+    .catch((err) => {
+      console.log("error deleting song")
+    })
+    const removeOldSong = this.state.songs.filter((song) => (song.id != deletedSong));
+    this.setState({songs: [removeOldSong, editedSong]})
+    
+  } 
+  deleteSong = (songId) => {
     console.log('deleting song: ' + songId);
     const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
     deleteRef.delete()
@@ -356,10 +369,10 @@ class ActivePlaylistBase extends Component {
     </Button>
       :
       this.state.songs.map((song,i)=>{
+        console.log(song);
         const linkFrag = song.url.split('=')[1];
         const playing = i === this.state.currentSong && this.state.playing;
         const selfSong = song.userId === this.state.userId;
-        console.log(song);
         console.log(this.state);
         console.log("this song belongs to user: ", song, this.state);
         const votedOnByThisUser = song.votedOn;
@@ -393,9 +406,9 @@ class ActivePlaylistBase extends Component {
                       {song.title}
                     </span>
                     <Grid.Row>
-                      <Button className="song-button edit-button" onClick={(e)=>this.editSong(e,i)}><Icon name="edit"/></Button>
+                      <Button className="song-button edit-button" onClick={(e)=>this.editSong(e,song.id)}><Icon name="edit"/></Button>
                     
-                      <Button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></Button>
+                      <Button className="song-button delete-button" onClick={()=>this.deleteSong(song.id)}><Icon name="delete"/></Button>
                     </Grid.Row>
                     {
                       votedOnByThisUser === 1 ? 
@@ -482,7 +495,7 @@ class ActivePlaylistBase extends Component {
             <Button onClick={this.closeModal}>X</Button>
             {
               this.state.modalType === "editSong" ?
-              <NewSong userProps={this.state} callback={this.updateUserSong} edit={true}/> 
+              <NewSong userProps={this.state} callback={this.updateUserSong} edit={true} songToEdit={this.state.songToEdit}/> 
               :
               <NewSong userProps={this.state} callback={this.addUserSong} edit={false}/>
             }

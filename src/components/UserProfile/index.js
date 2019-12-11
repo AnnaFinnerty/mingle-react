@@ -20,7 +20,8 @@ class UserProfile extends Component {
     console.log('new song form props', props)
     this.state = { 
        email: props.email,
-       password: props.password,
+       password1: '',
+       password2: '',
        defaultSecretName: '',
        defaultRealName: '',
        totalGames: 0,
@@ -30,27 +31,21 @@ class UserProfile extends Component {
   onSubmit = event => {
     event.preventDefault();
     console.log('submitting new song', this.state);
-    // const { title, url, playlistId, userId } = this.state;
-    // console.log('updating user: ' + userId );
-    //     const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    //     let query = itemRef.get().then(snapshot => {
-    //             if (snapshot.empty) {
-    //             console.log('No matching documents.');
-    //             return;
-    //             }  
-    //             console.log('get snapshot', snapshot.data())
-    //             const data = snapshot.data();
-    //             data['id'] = snapshot.id;
-    //             this.setState({
-    //                 playlistToEdit: data,
-    //                 modalOpen: true,
-    //                 modalType: 'editPlaylist'
-    //             })
-    //         })
-    //         .catch(err => {
-    //             console.log('Error getting documents', err);
-    //         });
+    const { passwordOne } = this.state;
+      this.props.firebase
+        .doPasswordUpdate(passwordOne)
+        .then(() => {
+          // this.setState({ ...INITIAL_STATE });
+        })
+        .catch(error => {
+          this.setState({ error });
+        });
+      event.preventDefault();
   };
+  deleteUser = () => {
+    console.log('deleting user');
+    const user = this.props.firebase.auth().currentUser;
+  }
   onChange = event => {
     console.log("changing text");
     this.setState({ [event.target.name]: event.target.value });
@@ -70,9 +65,7 @@ class UserProfile extends Component {
       defaultRealName === '';
     return (
      <div style={{textAlign:'center'}}>
-       <h3>Stats</h3>
-
-        <form onSubmit={this.onSubmit}>
+       <h3>Account</h3>
             <Input
               name="email"
               value={email}
@@ -80,32 +73,25 @@ class UserProfile extends Component {
               type="text"
               placeholder="email"
             />
+            <Label>Change Password</Label>
             <Input
-              name="password"
+              name="password1"
               value={password}
               onChange={this.onChange}
               type="text"
               placeholder="password"
             />
             <Input
-              name="defaultSecretName"
-              value={defaultSecretName}
+              name="password2"
+              value={password}
               onChange={this.onChange}
               type="text"
-              placeholder="default secret name"
-            />
-            <Input
-              name="defaultRealName"
-              value={defaultRealName}
-              onChange={this.onChange}
-              type="text"
-              placeholder="default real name"
+              placeholder="password"
             />
             <Button color="orange" disabled={isInvalid} type="submit">
               Update Info
             </Button>
             {error && <p>{error.message}</p>}
-        </form>
       </div>
     );
   }
