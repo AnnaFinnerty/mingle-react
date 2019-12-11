@@ -96,11 +96,11 @@ class UserProfile extends Component {
             />
             <br></br>
             <Button color="orange" disabled={isInvalid} onClick={this.changePassword}>
-              Update Info
+              change password
             </Button>
             <br></br>
-            <Button color="orange" onClick={this.deleteUser}>
-              Delete User
+            <Button color="red" onClick={this.deleteUser} style={{marginTop:"10vh"}}>
+              delete my account
             </Button>
             <br></br>
             {error && <p>{error.message}</p>}

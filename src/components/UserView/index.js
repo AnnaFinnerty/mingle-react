@@ -98,6 +98,7 @@ class UserViewBase extends Component{
                         </Grid.Row>
                         <Grid.Row>
                             <ActivePlaylist userId={this.state.userId}
+                                            gameMode={this.props.gameMode}
                                             authUser={false}
                                             playlistId={this.state.playlistId}
                                             openModal={this.openModal} 

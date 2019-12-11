@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 
-
 import PlayersList from '../PlayersList';
 import PlaylistsList from '../PlaylistsList';
 import ActivePlaylist from '../ActivePlaylist';
@@ -33,7 +32,7 @@ class CreatorView extends Component{
             inviteCode: this.genInviteCode(props.playlistId),
             userSong: null,
             gameMessage: 'Welcome to the playlist',
-            gameMode: 'submit',
+            gameState: 'submit',
             showSongInfo: false,
             reduceApiCalls: props.reduceApiCalls,
         }
@@ -95,27 +94,34 @@ class CreatorView extends Component{
         const inviteCode = this.genInviteCode();
         return(
             <React.Fragment>
-                <Container fluid>
-                    Game Controls
-                </Container>
-                <Grid columns={2} divided fluid="true">
-                    <Grid.Column width={5} style={{backgroundColor:"gray", height: '80vh'}}>
-                        <Grid.Row>
-                            <Grid columns={3}>
-                                <Grid.Column>
-                                    <Button onClick={this.copyInviteCode}>copy link</Button>
-                                </Grid.Column>
-                                <Grid.Column>
-                                    <Button onClick={this.showQRCode}>show QR</Button>
-                                </Grid.Column>
-                            </Grid>
-                            <TextArea id="invite-code" value={inviteCode}></TextArea>            
-                        </Grid.Row>
-                        <Grid.Row>
-                            <Tab panes={panes} />
-                        </Grid.Row>
-                    </Grid.Column>
-                    <Grid.Column width={11}>
+                {
+                    !this.props.gameMode ? "" :
+                    <Container fluid>
+                        Game Controls
+                    </Container>
+                }
+                
+                <Grid columns={this.props.gameMode ? 2 : 1} divided fluid="true">
+                    {
+                        !this.props.gameMode ? "" : 
+                        <Grid.Column width={5} style={{backgroundColor:"gray", height: '80vh'}}>
+                            <Grid.Row>
+                                <Grid columns={3}>
+                                    <Grid.Column>
+                                        <Button onClick={this.copyInviteCode}>copy link</Button>
+                                    </Grid.Column>
+                                    <Grid.Column>
+                                        <Button onClick={this.showQRCode}>show QR</Button>
+                                    </Grid.Column>
+                                </Grid>
+                                <TextArea id="invite-code" value={inviteCode}></TextArea>            
+                            </Grid.Row>
+                            <Grid.Row>
+                                <Tab panes={panes} />
+                            </Grid.Row>
+                        </Grid.Column>
+                    }
+                    <Grid.Column width={this.props.gameMode ? 11 : 16}>
                         <Grid.Row>
                         <Grid.Row>
                             <ActivePlaylist gameMode={this.props.gameMode}
