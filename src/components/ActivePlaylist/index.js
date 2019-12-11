@@ -7,8 +7,11 @@ import firebase from '../Firebase';
 import { FirebaseContext } from '../Firebase';
 // import * as admin from 'firebase-admin';
 
+import EditSong from '../EditSong';
+import NewSong from '../NewSong';
+
 import '../../App.css';
-import { Card, Grid, Button, Label, Icon } from 'semantic-ui-react';
+import { Modal, Grid, Button, Label, Icon } from 'semantic-ui-react';
 
 
 const ActivePlaylistPage = (props) => {
@@ -28,8 +31,9 @@ class ActivePlaylistBase extends Component {
     super(props);
     this.unsubscribe = null;
     this.state = {
-      isAuthUser: props.authUser,
+      authUser: props.authUser,
       userId: props.userId,
+      activeUser: null,
       playlistId: props.playlistId,
       userSong: props.userSong,
       isLoading: true,
@@ -38,40 +42,105 @@ class ActivePlaylistBase extends Component {
       currentSong: 0,
       user: '',
       showSongInfo: true,
+      modalOpen: false,
+      modalType: 'newPlaylist',
     };
   }
   componentDidMount(){
     console.log('activeplaylist did mount', this.props);
-      this.getSongs();
+      if(!this.state.activeUser){
+        this.getUser();
+      } 
       if(!this.props.reduceApiCalls){
         this.getSongs();
-      } 
+      }
+  }
+  componentWillReceiveProps(nextProps){
+    this.setState({
+      playlistId: nextProps.playlistId
+    })
+    this.getSongs();
+  }
+  getDerivedStateFromProps
+  getUser = () => {
+    // console.log("getting users information", this.props);
+    const userId = this.state.authUser ? this.state.userId : this.props.match.params.userId;
+    // console.log('user id', userId);
+    const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
+    let query = userRef.get()
+    .then(snapshot => {
+        if (snapshot.empty) {
+        console.log('No matching user');
+        return;
+        }  
+        console.log('user snapshot', snapshot.data())
+        const data = snapshot.data();
+        this.setState({
+            activeUser: snapshot.data(),
+            playlistId: data.playlistId
+        })
+        this.getPlaylist();
+        this.getSongs();
+    })
+    .catch(err => {
+        console.log('Error getting user', err);
+    });
+  }
+  getPlaylist = () => {
+    console.log("getting playlist information", this.props);
+    const playlistId = this.state.playlistId;
+    console.log('user id', playlistId);
+    const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+    let query = playlistRef.get()
+    .then(snapshot => {
+        if (snapshot.empty) {
+        console.log('No matching playlist');
+        return;
+        }  
+        console.log('playlist snapshot', snapshot.data())
+        const data = snapshot.data();
+        this.setState({
+            playlist: snapshot.data(),
+        })
+    })
+    .catch(err => {
+        console.log('Error getting playlist', err);
+    });
   }
   getSongs = () => {
-    // console.log('getting songs');
-    const itemsRef = this.props.firebase.db.collection('songs');
-    itemsRef.where('playlistId', '==', this.state.playlistId).get().then((snapshot) => {
-      //let items = snapshot.val();
-      console.log('songs snapshot',snapshot)
-      let newState = [];
-      snapshot.forEach((i) => {
-        const item = i.data()
-        const id = i.id;
-        newState.push({
-          title: item.title,
-          url: item.url,
-          userId: item.userId,
-          playlistId: item.playlistId,
-          upvotes: item.upvotes,
-          downvotes: item.downvotes,
-          votedOn: 0,
-          id: id,
+    console.log('getting songs for playlist:  ' + this.state.playlistId);
+    if(this.state.playlistId){
+      const itemsRef = this.props.firebase.db.collection('songs');
+      itemsRef.where('playlistId', '==', this.state.playlistId).get().then((snapshot) => {
+        //let items = snapshot.val();
+        console.log('songs snapshot',snapshot)
+        let newState = [];
+        snapshot.forEach((i) => {
+          const item = i.data()
+          const id = i.id;
+          newState.push({
+            title: item.title,
+            url: item.url,
+            userId: item.userId,
+            playlistId: item.playlistId,
+            upvotes: item.upvotes,
+            downvotes: item.downvotes,
+            votedOn: 0,
+            id: id,
+          });
+        });
+        this.setState({
+          songs: newState
         });
       });
-      this.setState({
-        songs: newState
-      });
-    });
+      }
+  }
+  addUserSong = (addedSong) => {
+    console.log('adding user song', addedSong)
+    this.setState({
+      userSong: addedSong,
+      modalOpen: false
+    })
   }
   upvoteSong = (e,songId) => {
     console.log('upvoting song: ' + songId);
@@ -257,18 +326,28 @@ class ActivePlaylistBase extends Component {
       currentSong: 0,
     })
   }
+  openModal = (modalType, modalCallback) => {
+    this.setState({
+        modalOpen: true,
+        modalType: modalType,
+        modalCallback: modalCallback
+    })
+  }
+  closeModal = () => {
+    this.setState({modalOpen: false})
+  }
   render(){
     // console.log('songs', this.state.songs)
     const songs = !this.state.songs.length ? 
       <Label>No songs added</Label>
       :
       this.state.songs.map((song,i)=>{
-        // console.log(song);
+        console.log(song);
         const linkFrag = song.url.split('=')[1];
         const playing = i === this.state.currentSong && this.state.playing;
         const selfSong = song.userId === this.state.userId;
         // console.log("this song belongs to user: " + selfSong);
-         const votedOnByThisUser = song.votedOn;
+        const votedOnByThisUser = song.votedOn;
         // console.log("this song voted on by user: " + song.votedOn)
         // const borderStyle = i === this.state.currentSong && this.state.playing ? "2px solid aqua" : "2px solid transparent";
         let borderStyle;
@@ -298,8 +377,13 @@ class ActivePlaylistBase extends Component {
                     <span style={{width:"40vw", height: "10vh", overflow:"hidden" }}>
                       {song.title}
                     </span>
+                    <Grid.Row>
+                      <Button className="song-button edit-button" onClick={(e)=>this.editSong(e,song.id)}><Icon name="edit"/></Button>
+                    
+                      <Button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></Button>
+                    </Grid.Row>
                     {
-                        votedOnByThisUser ? 
+                      votedOnByThisUser === 1 ? 
                         <Grid.Column style={{padding:"0"}}>
                           <Button className="song-button upvote-button" onClick={(e)=>this.undoUpvote(e,song.id)}><Icon name="thumbs up" style={{color:"green"}}/>{song.upvotes}</Button>
                         </Grid.Column> :
@@ -308,7 +392,7 @@ class ActivePlaylistBase extends Component {
                         </Grid.Column>
                     }
                     {
-                      votedOnByThisUser ? 
+                      votedOnByThisUser === -1 ? 
                       <Grid.Column style={{padding:"0"}}>
                         <Button className="song-button downvote-button" onClick={(e)=>this.undoDownvote(e,song.id)}><Icon name="thumbs down" style={{color:"red"}}/>{song.downvotes}</Button>
                       </Grid.Column> :
@@ -316,12 +400,6 @@ class ActivePlaylistBase extends Component {
                         <Button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/>{song.downvotes}</Button>
                       </Grid.Column>
                     }
-                    <Grid.Column>
-                      <Button className="song-button edit-button" onClick={(e)=>this.editSong(e,song.id)}><Icon name="edit"/></Button>
-                    </Grid.Column>
-                    <Grid.Column>
-                      <Button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></Button>
-                    </Grid.Column>
                   </Grid>
                   </Grid.Row>
                 </Grid.Column>
@@ -330,6 +408,7 @@ class ActivePlaylistBase extends Component {
         )
       })
     return (
+      <React.Fragment>
       <Grid columns={1}>
         <Grid.Row centered>
             {
@@ -350,28 +429,40 @@ class ActivePlaylistBase extends Component {
               </React.Fragment>
             }
             <Label>
-              {this.props.userData.displayName ? this.props.userData.displaytName : "you need to set a display name"}
+              { "you need to set a display name"}
             </Label>
             <Label>
-              {this.props.userData.secretName ? this.props.userData.secretName : "you need to set a secret name"}
+              {"you need to set a secret name"}
             </Label>
           </Grid.Row>
         <Grid.Column>
           {
-                    <Grid.Row>
-                        {
-                            <Button color="red" onClick={()=>this.openModal('newSong')}>
-                                add your song<br></br>
-                                we can't start without you
-                            </Button>
-                        }
-                    </Grid.Row>
-                  }
+              this.state.userSong ? "" :
+              <Grid.Row>
+                  <Button color="red" onClick={()=>this.openModal('newSong')}>
+                    add your song<br></br>
+                    we can't start without you
+                  </Button>
+              </Grid.Row>
+          }
           <Grid.Row>
             {songs}
           </Grid.Row>
         </Grid.Column>
       </Grid>
+      {
+        !this.state.modalOpen ? "" :
+        <Modal open={this.state.modalOpen}>
+            <Button onClick={this.closeModal}>X</Button>
+            {
+              this.state.modalType === "editSong" ?
+              <EditSong userProps={this.state}/> 
+              :
+              <NewSong userProps={this.state} callback={this.addUserSong}/>
+            }
+        </Modal>
+    }
+    </React.Fragment>
     );
   }
 }

@@ -25,9 +25,9 @@ class PlaylistsList extends Component{
         console.log('getting playlists for: ' + this.props.userId);
         if(this.props.userId){
             const itemsRef = this.props.firebase.db.collection('playlists');
-            console.log('playlists item ref', itemsRef)
+            // console.log('playlists item ref', itemsRef)
             const query = itemsRef.where('userId', '==', this.props.userId).get().then((snapshot) => {
-            console.log('getPlaylists snapshot',snapshot)
+            // console.log('getPlaylists snapshot',snapshot)
             let newItems = [];
             snapshot.forEach((i) => {
                 const item = i.data()
@@ -132,7 +132,7 @@ class PlaylistsList extends Component{
                         <Icon name="edit" onClick={()=>this.editPlaylist(playlist.id)}/>
                     </Grid.Column>
                     <Grid.Column>
-                        <Icon name="lightbulb" onClick={()=>this.activatePlaylist(playlist.id)}/>
+                        <Icon name="lightbulb" onClick={()=>this.props.activatePlaylist(playlist.id)}/>
                     </Grid.Column>
                 </Grid>
               </Feed.Event>

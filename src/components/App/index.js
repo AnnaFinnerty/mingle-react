@@ -15,6 +15,7 @@ import UserProfile from '../UserProfile';
 import NewSongPage from '../NewSong';
 import Playlist from '../AddPlaylist';
 import ActivePlaylist from '../ActivePlaylist';
+import UserView from '../UserView';
 import * as ROUTES from '../../constants/routes';
 import { withFirebase } from '../Firebase';
 // import { AuthUserContext } from '../Session';
@@ -23,7 +24,7 @@ class App extends Component{
   constructor(props) {
     super(props);
     this.state = {
-      authUser: 'QBREKglF9YNmQQKgEhrvsCxX0w3',
+      authUser: null,
     };
   }
   componentDidMount() {
@@ -64,11 +65,7 @@ class App extends Component{
             {/* <Route path={ROUTES.PLAYLIST} component={Playlist} /> */}
             <Route exact path={ROUTES.SIGN_IN_TEMP} children={SignInTempPage}/>
             <Route exact path={ROUTES.ACTIVEPLAYLIST} children={ActivePlaylist}/>
-            <Route exact path={ROUTES.PLAYLIST} children={ActivePlaylist}/>
-            {/*Does not work! 
-              <Route exact path={ROUTES.ACTIVEPLAYLIST} render={
-              (props) => <ActivePlaylist {...props} />
-            }/> */}
+            <Route exact path={ROUTES.PLAYLIST} children={UserView}/>
           </Switch>
 
         </Router>

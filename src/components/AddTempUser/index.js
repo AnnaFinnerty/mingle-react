@@ -3,7 +3,7 @@ import { Link, withRouter, useParams } from 'react-router-dom';
 import { FirebaseContext, withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
-import { Label, Button } from 'semantic-ui-react';
+import { Grid, Form, Input, Label, Button, Container } from 'semantic-ui-react';
 import { SignUpLink } from '../SignUp';
 
 const AddTempUserWrapper = (props) => (
@@ -64,13 +64,13 @@ class AddTempUserFormBase extends Component {
           if(!this.props.authUser){
             this.props.history.push('/playlist/'+userRef.id);
           } else {
-            this.props.callback(username,secretname);
+            this.props.callback(username,secretname,userRef.id);
           }
       })
       .catch(function(error) {
           console.error("Error adding document: ", error);
       });
-      };
+  };
   onChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
@@ -96,30 +96,48 @@ class AddTempUserFormBase extends Component {
       username === '' ||
       secretname === '';
     return (
-      <form onSubmit={this.onSubmit}>
-          <Label>a secret name to hide your identity</Label>
-          <Button onClick={this.randomNameGen}>just give me a random name</Button>
-          <input
-            name="secretname"
-            value={secretname}
-            onChange={this.onChange}
-            type="text"
-            placeholder="secret name"
-          />
-          <Label>a name people will recognize later</Label>
-          <input
-            name="username"
-            value={username}
-            onChange={this.onChange}
-            type="text"
-            placeholder="username"
-          />
-          <button type="submit" disabled={isInvalid} 
-                  >
-            let's go!
-          </button>
-        {error && <p>{error.message}</p>}
-      </form>
+      <Form onSubmit={this.onSubmit}>
+        <Grid fluid textAlign='center' columns={1} centered>
+          <Grid.Column>
+            <Grid.Row>
+              <Label>a secret name to hide your identity</Label>
+            </Grid.Row>
+            <Grid.Row>
+              <Input
+                name="secretname"
+                value={secretname}
+                onChange={this.onChange}
+                type="text"
+                placeholder="secret name"
+              />
+            </Grid.Row>
+            <Grid.Row>
+              <Button onClick={this.randomNameGen}>random</Button>
+            </Grid.Row>
+            <Grid.Row>
+              <Label>a name people will recognize later</Label>
+            </Grid.Row>
+            <Grid.Row>
+              <Input
+                name="username"
+                value={username}
+                onChange={this.onChange}
+                type="text"
+                placeholder="username"
+              />
+            </Grid.Row>
+            <Grid.Row>
+            <Button type="submit" disabled={isInvalid} 
+                    >
+              let's go!
+            </Button>
+            </Grid.Row>
+            <Grid.Row>
+              {error && <p>{error.message}</p>}
+            </Grid.Row>
+          </Grid.Column>
+        </Grid>
+      </Form>
     );
   }
 }

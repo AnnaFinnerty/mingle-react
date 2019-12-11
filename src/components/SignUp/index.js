@@ -60,9 +60,9 @@ class SignUpFormBase extends Component {
     return (
       <Grid centered>
       <Grid.Row>
-        <Grid.Column width={3}>
+        <Grid.Column width={4}>
         </Grid.Column>
-        <Grid.Column width={10} >
+        <Grid.Column width={8} >
           <form onSubmit={this.onSubmit}>
             <Input
             name="username"
@@ -98,7 +98,7 @@ class SignUpFormBase extends Component {
           {error && <p>{error.message}</p>}
         </form>
         </Grid.Column>
-        <Grid.Column width={3}>
+        <Grid.Column width={4}>
         </Grid.Column>
       </Grid.Row>
   </Grid>

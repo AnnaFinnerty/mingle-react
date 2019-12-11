@@ -7,26 +7,25 @@ import { Feed, Grid, Label, Icon, Loader} from 'semantic-ui-react'
 class PlayersList extends Component {
   constructor(props) {
     super(props);
-    console.log('playerslist Props are:', props)
+    // console.log('playerslist Props are:', props)
     this.state = {
       players: [],
       reduceApiCalls: props.reduceApiCalls,
     }
   }
   componentDidMount(){
-    console.log('players list did mount', this.state);
+    // console.log('players list did mount', this.state);
     //retrieve and populate users and playlists for this creator
-    this.getUsers(this.state.activePlaylistId);
     if(!this.state.reduceApiCalls){
         this.getUsers(this.state.activePlaylistId);
     }
   }
   getUsers = () => {
     const playlistId = this.props.playlistId;
-    console.log('getting users for playlist:' + playlistId);
+    // console.log('getting users for playlist:' + playlistId);
     const itemsRef = this.props.firebase.db.collection('temp_users');
     const query = itemsRef.where('playlistId', '==', playlistId).get().then((snapshot) => {
-      console.log('getUsers snapshot',snapshot)
+      // console.log('getUsers snapshot',snapshot)
       let newUsers = [];
       snapshot.forEach((i) => {
         const item = i.data()
@@ -41,7 +40,6 @@ class PlayersList extends Component {
           id: id,
         });
       });
-      console.log('users',newUsers);
       this.setState({
         players: newUsers
       });
@@ -64,8 +62,8 @@ class PlayersList extends Component {
     <Label>no users</Label> :
     this.state.players.map((user)=>{
         return(
-        <div className="list-item">
-          <Feed.Event key={user.id} className="list-item">
+        <div key={user.id} className="list-item">
+          <Feed.Event className="list-item">
             <Feed.Label>
               {user.secretname}
               <Icon name="delete" className="delete-hover" onClick={()=>this.deleteUser(user.id)}></Icon>

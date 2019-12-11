@@ -78,10 +78,10 @@ class NewSongForm extends Component {
     .catch(function(error) {
         console.error("Error adding document: ", error);
     });
-    
   };
   onSelect = async (event,videoId) => {
       console.log("selecting video: " + videoId);
+      const addedSongCallback = this.props.callback;
       const searchResponse = await fetch("https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+videoId+"&key=AIzaSyDKZC4z0p_HotveLN_NpwTwZzHb_Vcn10c" , {
             method: 'GET',
             headers: {
@@ -101,10 +101,10 @@ class NewSongForm extends Component {
                 userId: this.state.userId,
                 upvotes: 0,
                 downvotes: 0
-
             })
             .then(function(docRef) {
                 console.log("Document written with ID: ", docRef.id);
+                addedSongCallback(item);
             })
             .catch(function(error) {
                 console.error("Error adding document: ", error);

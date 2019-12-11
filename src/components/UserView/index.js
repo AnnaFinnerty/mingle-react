@@ -31,7 +31,9 @@ class UserViewBase extends Component{
             modalOpen: false,
             modalType: 'newSong',
             playlistId: props.playlistId,
+            authUser: props.authUser,
             userId: props.authUser ? props.authUser : null,
+            activeUser: props.userData,
             userSong: props.userSong,
             showSongLabels: false,
             reduceApiCalls: props.reduceApiCalls

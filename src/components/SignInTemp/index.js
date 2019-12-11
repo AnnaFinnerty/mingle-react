@@ -44,11 +44,11 @@ class SignInTempFormBase extends Component {
       playlistId = this.props.match.params.playlistId;
     } catch(e){}
     return (
-      <Grid>
+      <Grid fluid textAlign='center'>
         <Grid.Row>
-          <Grid.Column width={5}>
+          <Grid.Column width={4}>
           </Grid.Column>
-          <Grid.Column width={10}>
+          <Grid.Column width={8}>
           <AddTempUser playlistId={playlistId} authUser={false} history={this.props.history}/>
           <Label color="black" style={{textAlign:"center",color:"white"}}>
             Hey, just so you know, <br></br> 
@@ -59,7 +59,7 @@ class SignInTempFormBase extends Component {
             <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
           </Label>
           </Grid.Column>
-          <Grid.Column width={5}>
+          <Grid.Column width={4}>
           </Grid.Column>
         </Grid.Row>
     </Grid>
