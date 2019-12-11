@@ -7,14 +7,14 @@ import { Feed, Grid, Label, Icon, Loader} from 'semantic-ui-react'
 class PlayersList extends Component {
   constructor(props) {
     super(props);
-    console.log('playerslist Props are:', props)
+    // console.log('playerslist Props are:', props)
     this.state = {
       players: [],
       reduceApiCalls: props.reduceApiCalls,
     }
   }
   componentDidMount(){
-    console.log('players list did mount', this.state);
+    // console.log('players list did mount', this.state);
     //retrieve and populate users and playlists for this creator
     if(!this.state.reduceApiCalls){
         this.getUsers(this.state.activePlaylistId);
@@ -22,10 +22,10 @@ class PlayersList extends Component {
   }
   getUsers = () => {
     const playlistId = this.props.playlistId;
-    console.log('getting users for playlist:' + playlistId);
+    // console.log('getting users for playlist:' + playlistId);
     const itemsRef = this.props.firebase.db.collection('temp_users');
     const query = itemsRef.where('playlistId', '==', playlistId).get().then((snapshot) => {
-      console.log('getUsers snapshot',snapshot)
+      // console.log('getUsers snapshot',snapshot)
       let newUsers = [];
       snapshot.forEach((i) => {
         const item = i.data()

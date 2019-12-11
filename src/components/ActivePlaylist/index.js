@@ -27,7 +27,7 @@ const ActivePlaylistPage = (props) => {
 
 class ActivePlaylistBase extends Component {
   constructor(props) {
-    // console.log("active playlist props in constructor:", props)
+    console.log("active playlist props in constructor:", props)
     super(props);
     this.unsubscribe = null;
     this.state = {
@@ -55,10 +55,17 @@ class ActivePlaylistBase extends Component {
         this.getSongs();
       }
   }
+  componentWillReceiveProps(nextProps){
+    this.setState({
+      playlistId: nextProps.playlistId
+    })
+    this.getSongs();
+  }
+  getDerivedStateFromProps
   getUser = () => {
-    console.log("getting users information", this.props);
+    // console.log("getting users information", this.props);
     const userId = this.state.authUser ? this.state.userId : this.props.match.params.userId;
-    console.log('user id', userId);
+    // console.log('user id', userId);
     const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
     let query = userRef.get()
     .then(snapshot => {
@@ -101,7 +108,7 @@ class ActivePlaylistBase extends Component {
     });
   }
   getSongs = () => {
-    console.log('getting songs');
+    console.log('getting songs for playlist:  ' + this.state.playlistId);
     if(this.state.playlistId){
       const itemsRef = this.props.firebase.db.collection('songs');
       itemsRef.where('playlistId', '==', this.state.playlistId).get().then((snapshot) => {
@@ -335,7 +342,7 @@ class ActivePlaylistBase extends Component {
       <Label>No songs added</Label>
       :
       this.state.songs.map((song,i)=>{
-        // console.log(song);
+        console.log(song);
         const linkFrag = song.url.split('=')[1];
         const playing = i === this.state.currentSong && this.state.playing;
         const selfSong = song.userId === this.state.userId;

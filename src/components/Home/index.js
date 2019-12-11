@@ -35,7 +35,7 @@ const HomePage = (props) => {
 class HomeBase extends Component {
   constructor(props) {
     super(props);
-    console.log('Constructor Props are:', props)
+    // console.log('Constructor Props are:', props)
     this.state = {
       authUser: props.authUser,
       authUserDisplayName: '',
@@ -69,7 +69,7 @@ class HomeBase extends Component {
     console.log('home did mount', this.state);
     if(!this.state.authUser){
       //send back to signin if creator is not authenicated
-      this.props.history.push('/signin');
+      //this.props.history.push('/signin');
     } 
     this.checkForActivePlaylist();
   }

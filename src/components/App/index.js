@@ -24,7 +24,7 @@ class App extends Component{
   constructor(props) {
     super(props);
     this.state = {
-      authUser: 'QBREKglF9YNmQQKgEhrvsCxX0w3',
+      authUser: null,
     };
   }
   componentDidMount() {
