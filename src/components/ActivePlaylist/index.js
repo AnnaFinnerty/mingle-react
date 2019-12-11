@@ -57,24 +57,26 @@ class ActivePlaylistBase extends Component {
   componentWillReceiveProps(nextProps){
     console.log('Active playlist will recieve props');
     console.log(nextProps);
-    this.getPlaylist(nextProps.playlistId);
-    this.getSongs(nextProps.playlistId);
+    if(nextProps.playlistId){
+      this.getPlaylist(nextProps.playlistId);
+      this.getSongs(nextProps.playlistId);
+    }
     this.setState({
       playlistId: nextProps.playlistId
     })
   }
   getUser = () => {
-    console.log("getting users information", this.props);
+    // console.log("getting users information", this.props);
     const userId = this.state.authUser ? this.state.userId : this.props.match.params.userId;
-    console.log('user id', userId);
+    console.log('looking for user: ', userId);
     const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
     let query = userRef.get()
     .then(snapshot => {
         if (snapshot.empty) {
-        console.log('No matching user');
+          console.log('No matching user');
         return;
         }  
-        console.log('user snapshot', snapshot.data())
+        // console.log('user snapshot', snapshot.data())
         const data = snapshot.data();
         this.setState({
             activeUser: snapshot.data(),
@@ -94,10 +96,10 @@ class ActivePlaylistBase extends Component {
     let query = playlistRef.get()
     .then(snapshot => {
         if (snapshot.empty) {
-        console.log('No matching playlist');
+          console.log('No matching playlist');
         return;
         }  
-        console.log('playlist snapshot', snapshot.data())
+        // console.log('playlist snapshot', snapshot.data())
         const data = snapshot.data();
         this.setState({
             playlist: snapshot.data(),
@@ -143,7 +145,7 @@ class ActivePlaylistBase extends Component {
     })
   }
   upvoteSong = (e,songId) => {
-    console.log('upvoting song: ' + songId);
+    // console.log('upvoting song: ' + songId);
     // const increment = this.props.firebase.db.FieldValue.increment(1);
     // songRef.update({ upvotes: admin.FieldValue.increment(1) });
     // dumb workaround while decrement won't work
@@ -151,10 +153,10 @@ class ActivePlaylistBase extends Component {
     let currentVotes = 0;
     let query = songRef.get().then(snapshot => {
         if (snapshot.empty) {
-          console.log('No matching documents.');
+          console.log('No matching song.');
           return;
         }  
-        console.log('increment snapshot', snapshot.data())
+        // console.log('song increment snapshot', snapshot.data())
         const data = snapshot.data();
         const id = snapshot.id;
         currentVotes = data.upvotes + 1;
@@ -162,34 +164,34 @@ class ActivePlaylistBase extends Component {
         data['upvotes'] = currentVotes;
         data['id'] = id;
         data['votedOn'] = 1;
-        console.log('updated song vals', data)
+        // console.log('updated song vals', data)
         const updatedSongArray = this.state.songs.map((song) => {
           if(song.id === id){
               song = data
           }
           return song;
         });
-        console.log('updated songs',updatedSongArray);
+        // console.log('updated songs',updatedSongArray);
         this.setState({
           songs: updatedSongArray
         })
     })
     .catch(err => {
-        console.log('Error getting documents', err);
+        console.log('Error getting song', err);
     });
   }
   undoUpvote = (e,songId) => {
-    console.log('undoing downvote song: ' + songId);
+    // console.log('undoing downvote song: ' + songId);
     // songRef.update({ downvotes: admin.FieldValue.decrement(1) });
     // dumb workaround while decrement won't work
     const songRef = this.props.firebase.db.collection('songs').doc(songId);
     let currentVotes = 0;
     let query = songRef.get().then(snapshot => {
         if (snapshot.empty) {
-        console.log('No matching documents.');
+          console.log('No matching song.');
         return;
         }  
-        console.log('increment snapshot', snapshot.data())
+        // console.log('increment snapshot', snapshot.data())
         const data = snapshot.data();
         const id = snapshot.id;
         currentVotes = data.upvotes - 1;
@@ -197,31 +199,31 @@ class ActivePlaylistBase extends Component {
         data['upvotes'] = currentVotes;
         data['id'] = id;
         data['votedOn'] = 0;
-        console.log('updated song vals', data)
+        // console.log('updated song vals', data)
         const updatedSongArray = this.state.songs.map((song) => {
           if(song.id === id){
               song = data
           }
           return song;
         });
-        console.log('updated songs',updatedSongArray);
+        // console.log('updated songs',updatedSongArray);
         this.setState({
           songs: updatedSongArray
         })
     })
     .catch(err => {
-        console.log('Error getting documents', err);
+        console.log('Error getting song', err);
     });
   }
   downvoteSong = (e,songId) => {
-    console.log('downvoting song: ' + songId);
+    // console.log('downvoting song: ' + songId);
     // songRef.update({ upvotes: admin.FieldValue.decrement(1) });
     // dumb workaround while decrement won't work
     const songRef = this.props.firebase.db.collection('songs').doc(songId);
     let currentVotes = 0;
     let query = songRef.get().then(snapshot => {
         if (snapshot.empty) {
-        console.log('No matching documents.');
+          // console.log('No matching documents.');
         return;
         }  
         console.log('increment snapshot', snapshot.data())
@@ -415,7 +417,7 @@ class ActivePlaylistBase extends Component {
       <Grid columns={1}>
         <Grid.Row centered>
             {
-              !this.state.isAuthUser ? "":
+              !this.state.authUser ? "":
               <React.Fragment>
                 <Button onClick={this.playPlaylist}>
                   <Icon color="green" name="play"/>
@@ -443,7 +445,7 @@ class ActivePlaylistBase extends Component {
             !this.state.playlistId ?
             <Grid.Row>
               <Button color="red" onClick={()=>this.openModal('newSong')}>
-                make a playlist first<br></br>
+                get an active playlist first<br></br>
                 then we'll talk
               </Button>
             </Grid.Row>

@@ -38,6 +38,13 @@ class CreatorView extends Component{
             reduceApiCalls: props.reduceApiCalls,
         }
     }
+    componentWillReceiveProps(nextProps){
+        // console.log('Active playlist will recieve props');
+        // console.log(nextProps);
+        this.setState({
+          activePlaylist: nextProps.playlistId
+        })
+      }
     genInviteCode = (playlistId) => {
         console.log('generating invite code');
         const code = "http://localhost:3000/login/" + playlistId;
@@ -85,6 +92,7 @@ class CreatorView extends Component{
             { menuItem: 'Users', render: () => <Tab.Pane><PlayersList playlistId={this.state.playlistId} openModal={this.openModal} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls}/></Tab.Pane> },
             { menuItem: 'Playlists', render: () => <Tab.Pane><PlaylistsList playlistId={this.state.playlistId} userId={this.state.authUser} openModal={this.openModal} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls} activatePlaylist={this.props.activatePlaylist}/></Tab.Pane> },
         ]
+        const inviteCode = this.genInviteCode();
         return(
             <React.Fragment>
                 <Container fluid>
@@ -93,7 +101,7 @@ class CreatorView extends Component{
                 <Grid columns={2} divided fluid="true">
                     <Grid.Column width={5} style={{backgroundColor:"gray", height: '80vh'}}>
                         <Grid.Row>
-                            <Grid columns={2}>
+                            <Grid columns={3}>
                                 <Grid.Column>
                                     <Button onClick={this.copyInviteCode}>copy link</Button>
                                 </Grid.Column>
@@ -101,12 +109,11 @@ class CreatorView extends Component{
                                     <Button onClick={this.showQRCode}>show QR</Button>
                                 </Grid.Column>
                             </Grid>
-                            <TextArea id="invite-code" value={this.state.inviteCode}></TextArea>            
+                            <TextArea id="invite-code" value={inviteCode}></TextArea>            
                         </Grid.Row>
                         <Grid.Row>
                             <Tab panes={panes} />
                         </Grid.Row>
-                        
                     </Grid.Column>
                     <Grid.Column width={11}>
                         <Grid.Row>

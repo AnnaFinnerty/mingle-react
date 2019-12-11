@@ -8,7 +8,6 @@ import { Grid, Container, Form, Dropdown, Button, Radio, Label, Input } from 'se
 
 
 const AddPlaylistPage = (props) => {
-  console.log('playlist props', props)
   return(
     <div>
     <FirebaseContext.Consumer>
@@ -40,12 +39,9 @@ class AddPlaylistBase extends Component {
     this.randomNamesPart2 = ['Badger', 'Fox', 'Giraffe', 'Aardvark', 'Corgi', 'Bunny']
   }
   createPlaylist = () => {
-    console.log("creating playlist");
-    console.log(this.props);
     const db = this.props.firebase.db;
     const date = new Date();
     const activateCallback = this.props.callback;
-    console.log(activateCallback);
     const title = this.state.newPlaylistTitle;
     const displayName = this.state.displayName;
     const secretName = this.state.secretName;
@@ -63,7 +59,7 @@ class AddPlaylistBase extends Component {
           date: date
       })
       .then(function(playlistRef) {
-          console.log("Document written with ID: ", playlistRef.id);
+          console.log("Playlist created with ID: ", playlistRef.id);
           //create temporary user profile for creator
           db.collection("temp_users").add({
             username: displayName,
@@ -75,16 +71,15 @@ class AddPlaylistBase extends Component {
             authUser: true,
           })
           .then((userRef) => {
-              console.log("Document written with ID: ", userRef.id);
+              console.log("Temporary user created with ID: ", userRef.id);
               activateCallback(playlistRef.id, userRef.id, displayName, secretName);
           })
           .catch(function(error) {
-              console.error("Error adding document: ", error);
+              console.error("Error adding temporary user ", error);
           });
       })
       .catch(function(error) {
-          console.error("Error adding document: ", error);
-          // history.push(ROUTES.HOME)
+          console.error("Error adding playlist ", error);
       });
   }
   randomNameGen = (e) => {
@@ -99,20 +94,16 @@ class AddPlaylistBase extends Component {
     })
   }
   handleChange = (e) => {
-    console.log('handling change')
     this.setState({
       [e.target.name] : e.target.value
     })
   }
   handleDropdownChange = (e, data) => {
-    console.log('dropdown change');
     this.setState({
       [e.target.name]: data.value
     })
   }
   onRadioChange = (e, data) => {
-    console.log(e);
-    console.log(data)
     this.setState({
         [data.name] : data.checked
     })
