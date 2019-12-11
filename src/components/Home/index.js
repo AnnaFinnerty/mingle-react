@@ -86,7 +86,6 @@ class HomeBase extends Component {
         if(x === 0){
           defaultPlaylistId = i.id;
         }
-
         const item = i.data()
         console.log('playlist item', item)
         activePlaylistId = i.id;
@@ -115,6 +114,28 @@ class HomeBase extends Component {
           console.log('activating default playlist: ' + defaultPlaylistId);
           this.activatePlaylist(defaultPlaylistId);
         }
+      });
+    });
+  }
+  activatePlaylist = (playlistId, tempUserId, displayName, secretName) => {
+    console.log('activating playlist in home: ' + playlistId);
+    //deactivate all playlists in users' collection
+    const db = this.props.firebase.db;
+    const self = this;
+    db.collection("playlists").get().then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+          // var ref = this.props.firebase.db.collection("playlists").doc(doc.id);
+          const ref = db.doc(`/playlists/${doc.id}`);
+          ref.update({
+              active: doc.id === playlistId
+          });
+          self.setState({
+            activePlaylistId: doc.id,
+            authUserDisplayName: displayName,
+            authUserSecretName: secretName,
+            authUserTempId: tempUserId,
+            modalOpen: false
+          })
       });
     });
   }
@@ -168,28 +189,6 @@ class HomeBase extends Component {
       authUserSecretName: secretname,
       authUserTempId: tempId
     })
-  }
-  activatePlaylist = (playlistId, tempUserId, displayName, secretName) => {
-    console.log('activating playlist in home: ' + playlistId);
-    //deactivate all playlists in users' collection
-    const db = this.props.firebase.db;
-    const self = this;
-    db.collection("playlists").get().then(function(querySnapshot) {
-      querySnapshot.forEach(function(doc) {
-          // var ref = this.props.firebase.db.collection("playlists").doc(doc.id);
-          const ref = db.doc(`/playlists/${doc.id}`);
-          ref.update({
-              active: doc.id === playlistId
-          });
-          self.setState({
-            activePlaylistId: doc.id,
-            authUserDisplayName: displayName,
-            authUserSecretName: secretName,
-            authUserTempId: tempUserId,
-            modalOpen: false
-          })
-      });
-    });
   }
   updateSettings = (newSettings) => {
     console.log('updating settings')
@@ -295,9 +294,9 @@ class HomeBase extends Component {
               {
                 // add button if there is no active playlist
                  !this.state.activatePlaylistId ? 
-                 <Button onClick={()=>this.openModal('newPlaylist')}>create new playlist to start</Button> : ""
+                 <Button onClick={()=>this.openModal('newPlaylist')}>create playlist</Button> : ""
               }
-              {
+              {/* {
                 // add button if creator has not set their temp_user profile for this round
                  !this.state.authUserDisplayName || !this.state.authUserSecretName ?
                  <Button onClick={()=>this.openModal('newTempProfile')}>create your profile</Button> :
@@ -305,7 +304,7 @@ class HomeBase extends Component {
                     <h3>{this.state.authUserDisplayName}</h3>
                     <h3>{this.state.authUserSecretName}</h3>
                  </React.Fragment>
-              }
+              } */}
               {
                 !this.state.gameMode ? 
                 <Button onClick={this.toggleGameMode}>start game</Button>

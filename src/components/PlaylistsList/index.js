@@ -97,6 +97,14 @@ class PlaylistsList extends Component{
         deleteRef.delete()
         .then(()=>{
             console.log(playlistId + " deleted successfully")
+        // const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
+        // deleteRef.delete()
+        // .then(()=>{
+        //   console.log(songId + " deleted successfully")
+        // })
+        // .catch((err) => {
+        //   console.log("error deleting song")
+        // })
             this.setState({playlists: this.state.playlists.filter((playlist) => (playlist.id != playlistId))})
         })
         .catch((err) => {
@@ -116,6 +124,7 @@ class PlaylistsList extends Component{
         const playlists = !this.state.playlists.length ?
           <Label>no playlists</Label> :
           this.state.playlists.map((playlist)=>{
+            console.log('playlist', playlist);
             const backgroundColor = playlist.active ?  "aqua":"transparent"
             return(
         

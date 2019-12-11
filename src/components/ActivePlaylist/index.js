@@ -363,17 +363,21 @@ class ActivePlaylistBase extends Component {
     console.log('active playlist did render', this.state)
     const songs = !this.state.songs.length ? 
     <Button color="red" onClick={()=>this.openModal('newSong')}>
-      add your song<br></br>
-      we can't start without you
+      {
+        this.props.gameMode ? <span>
+          add your song<br></br>
+          we can't start without you
+        </span> : ""
+      }
     </Button>
       :
       this.state.songs.map((song,i)=>{
-        console.log(song);
+        // console.log(song);
         const linkFrag = song.url.split('=')[1];
         const playing = i === this.state.currentSong && this.state.playing;
         const selfSong = song.userId === this.state.userId;
-        console.log(this.state);
-        console.log("this song belongs to user: ", song, this.state);
+        // console.log(this.state);
+        // console.log("this song belongs to user: ", song, this.state);
         const votedOnByThisUser = song.votedOn;
         // console.log("this song voted on by user: " + song.votedOn)
         // const borderStyle = i === this.state.currentSong && this.state.playing ? "2px solid aqua" : "2px solid transparent";
@@ -404,12 +408,16 @@ class ActivePlaylistBase extends Component {
                     <span style={{width:"40vw", height: "10vh", overflow:"hidden" }}>
                       {song.title}
                     </span>
-                    <Grid.Row>
-                      <Button className="song-button edit-button" onClick={(e)=>this.editSong(e,song.id)}><Icon name="edit"/></Button>
-                    
-                      <Button className="song-button delete-button" onClick={()=>this.deleteSong(song.id)}><Icon name="delete"/></Button>
-                    </Grid.Row>
                     {
+                      selfSong || this.state.authUser ? 
+                      <Grid.Row>
+                        <Button className="song-button edit-button" onClick={(e)=>this.editSong(e,song.id)}><Icon name="edit"/></Button>
+                        <Button className="song-button delete-button" onClick={()=>this.deleteSong(song.id)}><Icon name="delete"/></Button>
+                      </Grid.Row> 
+                      : ""
+                    }
+                    {
+                      !this.props.gameMode ? "" :
                       votedOnByThisUser === 1 ? 
                         <Grid.Column style={{padding:"0"}}>
                           <Button className="song-button upvote-button" onClick={(e)=>this.undoUpvote(e,song.id)}><Icon name="thumbs up" style={{color:"green"}}/>{song.upvotes}</Button>
@@ -419,6 +427,7 @@ class ActivePlaylistBase extends Component {
                         </Grid.Column>
                     }
                     {
+                      !this.props.gameMode ? "" :
                       votedOnByThisUser === -1 ? 
                       <Grid.Column style={{padding:"0"}}>
                         <Button className="song-button downvote-button" onClick={(e)=>this.undoDownvote(e,song.id)}><Icon name="thumbs down" style={{color:"red"}}/>{song.downvotes}</Button>

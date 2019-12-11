@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 
-
 import PlayersList from '../PlayersList';
 import PlaylistsList from '../PlaylistsList';
 import ActivePlaylist from '../ActivePlaylist';
@@ -95,9 +94,13 @@ class CreatorView extends Component{
         const inviteCode = this.genInviteCode();
         return(
             <React.Fragment>
-                <Container fluid>
-                    Game Controls
-                </Container>
+                {
+                    !this.props.gameMode ? "" :
+                    <Container fluid>
+                        Game Controls
+                    </Container>
+                }
+                
                 <Grid columns={this.props.gameMode ? 2 : 1} divided fluid="true">
                     {
                         !this.props.gameMode ? "" : 
@@ -118,7 +121,7 @@ class CreatorView extends Component{
                             </Grid.Row>
                         </Grid.Column>
                     }
-                    <Grid.Column width={11}>
+                    <Grid.Column width={this.props.gameMode ? 11 : 16}>
                         <Grid.Row>
                         <Grid.Row>
                             <ActivePlaylist gameMode={this.props.gameMode}
