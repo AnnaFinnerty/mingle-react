@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { FirebaseContext } from '../Firebase';
-import * as ROUTES from '../../constants/routes';
-import { Feed, Input, Button, Label } from 'semantic-ui-react'
+import { Input, Button, Label } from 'semantic-ui-react'
 
 const UserPage = (props) => (
   <div>
@@ -13,7 +11,7 @@ const UserPage = (props) => (
   </div>
 );
 
-//come up with user profile info
+
 class UserProfile extends Component {
   constructor(props) {
     super(props);
@@ -28,14 +26,22 @@ class UserProfile extends Component {
        edit: false,
     };
   }
-  onSubmit = event => {
+  changePassword = event => {
     event.preventDefault();
-    console.log('submitting new song', this.state);
-    const { passwordOne } = this.state;
+    console.log('updating password', this.state);
+    // const { passwordOne } = this.state;
       this.props.firebase
-        .doPasswordUpdate(passwordOne)
+        .doPasswordUpdate(this.state.password1)
         .then(() => {
-          // this.setState({ ...INITIAL_STATE });
+          this.setState({ 
+            email: this.props.email,
+            password1: '',
+            password2: '',
+            defaultSecretName: '',
+            defaultRealName: '',
+            totalGames: 0,
+            edit: false,
+          });
         })
         .catch(error => {
           this.setState({ error });
@@ -44,25 +50,22 @@ class UserProfile extends Component {
   };
   deleteUser = () => {
     console.log('deleting user');
-    const user = this.props.firebase.auth().currentUser;
+    const user = this.props.firebase.auth.currentUser;
+    console.log(user);
+    user.delete().then(function(userId) {
+      console.log('successfully deleted ' + userId)
+    }).catch(function(error) {
+      console.log(console.log('error deleting user'))
+    });
   }
   onChange = event => {
     console.log("changing text");
     this.setState({ [event.target.name]: event.target.value });
   };
   render() {
-    const {
-        email,
-        password,
-        defaultSecretName,
-        defaultRealName,
-        error,
-      } = this.state;
-      const isInvalid =
-      email === '' ||
-      password === ''   ||
-      defaultSecretName === '' ||
-      defaultRealName === '';
+    const { email, passwordOne, passwordTwo, error } = this.state;
+    const isInvalid =
+      passwordOne !== passwordTwo || passwordOne === '';
     return (
      <div style={{textAlign:'center'}}>
        <h3>Account</h3>
@@ -73,24 +76,33 @@ class UserProfile extends Component {
               type="text"
               placeholder="email"
             />
+            <br></br>
             <Label>Change Password</Label>
+            <br></br>
             <Input
               name="password1"
-              value={password}
+              value={passwordOne}
               onChange={this.onChange}
               type="text"
               placeholder="password"
             />
+            <br></br>
             <Input
               name="password2"
-              value={password}
+              value={passwordTwo}
               onChange={this.onChange}
               type="text"
               placeholder="password"
             />
-            <Button color="orange" disabled={isInvalid} type="submit">
+            <br></br>
+            <Button color="orange" disabled={isInvalid} onClick={this.changePassword}>
               Update Info
             </Button>
+            <br></br>
+            <Button color="orange" onClick={this.deleteUser}>
+              Delete User
+            </Button>
+            <br></br>
             {error && <p>{error.message}</p>}
       </div>
     );
