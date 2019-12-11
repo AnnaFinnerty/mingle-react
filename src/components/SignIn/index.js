@@ -32,6 +32,7 @@ class SignInFormBase extends Component {
   }
   onSubmit = event => {
     event.preventDefault();
+    console.log("submitting user");
     const { email, password } = this.state;
     this.props.firebase
       .doSignInWithEmailAndPassword(email, password)
@@ -71,7 +72,7 @@ class SignInFormBase extends Component {
             type="password"
             placeholder="Password"
           />
-          <button color="orange" disabled={isInvalid} type="submit">
+          <button disabled={isInvalid} type="submit">
             Sign In
           </button>
           {error && <p>{error.message}</p>}
@@ -85,7 +86,6 @@ class SignInFormBase extends Component {
     );
   }
 }
-
 const SignInForm = withRouter(SignInFormBase);
 export default SignInPage;
 export { SignInForm };

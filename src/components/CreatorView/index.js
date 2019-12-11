@@ -29,7 +29,7 @@ class CreatorView extends Component{
             modalType: 'newPlaylist',
             modalCallback: null,
             authUser: props.authUser,
-            playlistId: props.playlistId,
+            playlistId: props.activePlaylist,
             inviteCode: this.genInviteCode(props.playlistId),
             userSong: null,
             gameMessage: 'Welcome to the playlist',
@@ -109,19 +109,12 @@ class CreatorView extends Component{
                         
                     </Grid.Column>
                     <Grid.Column width={11}>
-                        {/* <Grid.Row>
-                            <Grid columns={3} fluid="true">
-                            <Grid.Column><Button onClick={()=>this.openModal("newPlaylist")}>new playlist</Button></Grid.Column>
-                            <Grid.Column><Button onClick={()=>this.openModal("editPlaylist")}>edit playlist</Button></Grid.Column>
-                            <Grid.Column><Button >delete playlist</Button></Grid.Column>
-                            </Grid>
-                        </Grid.Row> */}
                         <Grid.Row>
                         <Grid.Row>
                             <ActivePlaylist userData={this.props.userData}
                                             userId={this.state.authUser}
                                             authUser={true} 
-                                            playlistId={this.state.playlistId}
+                                            playlistId={this.props.playlistId}
                                             openModal={this.openModal} 
                                             history={this.props.history} 
                                             match={this.props.match} 

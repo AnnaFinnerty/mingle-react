@@ -76,13 +76,18 @@ class HomeBase extends Component {
   checkForActivePlaylist = () => {
     console.log('looking for active playlist for: ' + this.state.authUser);
     const itemsRef = this.props.firebase.db.collection('playlists');
+    let defaultPlaylistId;
     const query = itemsRef.where('userId', '==', this.state.authUser).get().then((snapshot) => {
-      // console.log('getPlaylists snapshot',snapshot)
+      console.log('getPlaylists snapshot',snapshot)
       let activePlaylistId = null;
-      snapshot.forEach((i) => {
+      snapshot.forEach((i,x) => {
+        //capture the id of the default playlist, in case we don't find an active one
+        if(x === 0){
+          defaultPlaylistId = i.id;
+        }
+
         const item = i.data()
-        // console.log(item);
-        // console.log('playlist item', item)
+        console.log('playlist item', item)
         activePlaylistId = i.id;
         if(item.active){
           console.log('active playlist found: ' + activePlaylistId);
@@ -105,7 +110,9 @@ class HomeBase extends Component {
               console.log('Error getting playlist', err);
           });
         } else {
-          console.log('no active playlist found');
+          console.log('no active playlists found');
+          console.log('activating default playlist: ' + defaultPlaylistId);
+          this.activatePlaylist(defaultPlaylistId);
         }
       });
     });

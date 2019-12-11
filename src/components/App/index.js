@@ -15,6 +15,7 @@ import UserProfile from '../UserProfile';
 import NewSongPage from '../NewSong';
 import Playlist from '../AddPlaylist';
 import ActivePlaylist from '../ActivePlaylist';
+import Loading from '../Loading';
 import * as ROUTES from '../../constants/routes';
 import { withFirebase } from '../Firebase';
 // import { AuthUserContext } from '../Session';

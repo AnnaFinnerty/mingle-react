@@ -12,6 +12,7 @@ import NewSong from '../NewSong';
 
 import '../../App.css';
 import { Modal, Grid, Button, Label, Icon } from 'semantic-ui-react';
+import { thisExpression } from '@babel/types';
 
 
 const ActivePlaylistPage = (props) => {
@@ -33,7 +34,7 @@ class ActivePlaylistBase extends Component {
     this.state = {
       authUser: props.authUser,
       userId: props.userId,
-      activeUser: null,
+      activeUser: props.userData ? props.userData : null,
       playlistId: props.playlistId,
       userSong: props.userSong,
       isLoading: true,
@@ -47,23 +48,25 @@ class ActivePlaylistBase extends Component {
     };
   }
   componentDidMount(){
-    console.log('activeplaylist did mount', this.props);
+    console.log('activeplaylist did mount', this.state);
+      //retrieve the active user based on id
       if(!this.state.activeUser){
         this.getUser();
       } 
-      if(!this.props.reduceApiCalls){
-        this.getSongs();
-      }
   }
   componentWillReceiveProps(nextProps){
+    console.log('Active playlist will recieve props');
+    console.log(nextProps);
+    this.getPlaylist(nextProps.playlistId);
+    this.getSongs(nextProps.playlistId);
     this.setState({
       playlistId: nextProps.playlistId
     })
   }
   getUser = () => {
-    // console.log("getting users information", this.props);
+    console.log("getting users information", this.props);
     const userId = this.state.authUser ? this.state.userId : this.props.match.params.userId;
-    // console.log('user id', userId);
+    console.log('user id', userId);
     const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
     let query = userRef.get()
     .then(snapshot => {
@@ -77,16 +80,15 @@ class ActivePlaylistBase extends Component {
             activeUser: snapshot.data(),
             playlistId: data.playlistId
         })
-        this.getPlaylist();
-        this.getSongs();
+        this.getPlaylist(data.playlistId);
+        this.getSongs(data.playlistId);
     })
     .catch(err => {
         console.log('Error getting user', err);
     });
   }
-  getPlaylist = () => {
+  getPlaylist = (playlistId) => {
     console.log("getting playlist information", this.props);
-    const playlistId = this.state.playlistId;
     console.log('playlist id', playlistId);
     const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
     let query = playlistRef.get()
@@ -105,11 +107,11 @@ class ActivePlaylistBase extends Component {
         console.log('Error getting playlist', err);
     });
   }
-  getSongs = () => {
-    console.log('getting songs for playlist:  ' + this.state.playlistId);
-    if(this.state.playlistId){
+  getSongs = (playlistId) => {
+    console.log('getting songs for playlist:  ' + playlistId);
+    if(playlistId){
       const itemsRef = this.props.firebase.db.collection('songs');
-      itemsRef.where('playlistId', '==', this.state.playlistId).get().then((snapshot) => {
+      itemsRef.where('playlistId', '==', playlistId).get().then((snapshot) => {
         //let items = snapshot.val();
         console.log('songs snapshot',snapshot)
         let newState = [];
@@ -337,7 +339,10 @@ class ActivePlaylistBase extends Component {
   render(){
     console.log('active playlist did render', this.state)
     const songs = !this.state.songs.length ? 
-      <Label>No songs added</Label>
+    <Button color="red" onClick={()=>this.openModal('newSong')}>
+      add your song<br></br>
+      we can't start without you
+    </Button>
       :
       this.state.songs.map((song,i)=>{
         console.log(song);
@@ -435,17 +440,18 @@ class ActivePlaylistBase extends Component {
           </Grid.Row>
         <Grid.Column>
           {
-              this.state.userSong ? "" :
-              <Grid.Row>
-                  <Button color="red" onClick={()=>this.openModal('newSong')}>
-                    add your song<br></br>
-                    we can't start without you
-                  </Button>
-              </Grid.Row>
-          }
-          <Grid.Row>
+            !this.state.playlistId ?
+            <Grid.Row>
+              <Button color="red" onClick={()=>this.openModal('newSong')}>
+                make a playlist first<br></br>
+                then we'll talk
+              </Button>
+            </Grid.Row>
+            :
+            <Grid.Row>
             {songs}
-          </Grid.Row>
+           </Grid.Row>
+          }
         </Grid.Column>
       </Grid>
       {
