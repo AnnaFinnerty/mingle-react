@@ -106,9 +106,9 @@ class SignUpFormBase extends Component {
   }
 }
 const SignUpLink = () => (
-  <p>
+  <Button color="aqua">
     Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
-  </p>
+  </Button>
 );
 
 const SignUpForm = withRouter(SignUpFormBase);

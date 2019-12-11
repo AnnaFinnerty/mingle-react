@@ -7,7 +7,7 @@ import ActivePlaylist from '../ActivePlaylist';
 import ModalWindow from '../Modal';
 import Message from '../Message';
 
-import { Modal, Container, Grid, Icon, Button, Label, TextArea, Tab } from 'semantic-ui-react';
+import { Modal, Container, Grid, Button, TextArea, Tab } from 'semantic-ui-react';
 
 //POTENTIAL GAME SETTINGS
 //do not allow vote until song play for X seconds
@@ -29,7 +29,7 @@ class CreatorView extends Component{
             modalType: 'newPlaylist',
             modalCallback: null,
             authUser: props.authUser,
-            playlistId: props.playlistId,
+            playlistId: props.activePlaylist,
             inviteCode: this.genInviteCode(props.playlistId),
             userSong: null,
             gameMessage: 'Welcome to the playlist',
@@ -80,7 +80,7 @@ class CreatorView extends Component{
         })
     }
     render(){
-        // console.log('creatorView props', this.props);
+        console.log('creatorView props', this.props);
         const panes = [
             { menuItem: 'Users', render: () => <Tab.Pane><PlayersList playlistId={this.state.playlistId} openModal={this.openModal} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls}/></Tab.Pane> },
             { menuItem: 'Playlists', render: () => <Tab.Pane><PlaylistsList playlistId={this.state.playlistId} userId={this.state.authUser} openModal={this.openModal} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls} activatePlaylist={this.props.activatePlaylist}/></Tab.Pane> },
@@ -109,19 +109,12 @@ class CreatorView extends Component{
                         
                     </Grid.Column>
                     <Grid.Column width={11}>
-                        {/* <Grid.Row>
-                            <Grid columns={3} fluid="true">
-                            <Grid.Column><Button onClick={()=>this.openModal("newPlaylist")}>new playlist</Button></Grid.Column>
-                            <Grid.Column><Button onClick={()=>this.openModal("editPlaylist")}>edit playlist</Button></Grid.Column>
-                            <Grid.Column><Button >delete playlist</Button></Grid.Column>
-                            </Grid>
-                        </Grid.Row> */}
                         <Grid.Row>
                         <Grid.Row>
                             <ActivePlaylist userData={this.props.userData}
                                             userId={this.state.authUser}
                                             authUser={true} 
-                                            playlistId={this.state.playlistId}
+                                            playlistId={this.props.playlistId}
                                             openModal={this.openModal} 
                                             history={this.props.history} 
                                             match={this.props.match} 
