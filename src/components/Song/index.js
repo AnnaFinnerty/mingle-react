@@ -6,7 +6,6 @@ import firebase from '../Firebase';
 import { FirebaseContext } from '../Firebase';
 // import * as admin from 'firebase-admin';
 
-import EditSong from '../EditSong';
 import NewSong from '../NewSong';
 
 import '../../App.css';

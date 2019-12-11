@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 
 import NewSong from '../NewSong';
-import EditSong from '../EditSong';
 import AddPlaylist from '../AddPlaylist';
 import EditPlaylist from '../EditPlaylist';
 import SignInTemp from '../SignInTemp';
@@ -22,9 +21,6 @@ class ModalWindow extends Component{
 
             case 'newSong':
                 return <NewSong userProps={this.props.userProps}/>
-
-            case 'editSong':
-                return <EditSong userProps={this.props.userProps}/>
 
             default:
                 return <div>MODAL DID NOT LOAD</div> 
