@@ -105,12 +105,12 @@ class SignUpFormBase extends Component {
     );
   }
 }
-const SignUpLink = () => (
-  <p>
-    Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
-  </p>
+const SignInLink = () => (
+  <Button color="aqua">
+    Already have an account? <Link to={ROUTES.SIGN_IN}>Sign In</Link>
+  </Button>
 );
 
 const SignUpForm = withRouter(SignUpFormBase);
 export default SignUpPage;
-export { SignUpForm, SignUpLink };
+export { SignUpForm, SignInLink };

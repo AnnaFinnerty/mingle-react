@@ -59,9 +59,7 @@ class ActivePlaylistBase extends Component {
     this.setState({
       playlistId: nextProps.playlistId
     })
-    this.getSongs();
   }
-  getDerivedStateFromProps
   getUser = () => {
     // console.log("getting users information", this.props);
     const userId = this.state.authUser ? this.state.userId : this.props.match.params.userId;
@@ -89,7 +87,7 @@ class ActivePlaylistBase extends Component {
   getPlaylist = () => {
     console.log("getting playlist information", this.props);
     const playlistId = this.state.playlistId;
-    console.log('user id', playlistId);
+    console.log('playlist id', playlistId);
     const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
     let query = playlistRef.get()
     .then(snapshot => {
@@ -337,7 +335,7 @@ class ActivePlaylistBase extends Component {
     this.setState({modalOpen: false})
   }
   render(){
-    // console.log('songs', this.state.songs)
+    console.log('active playlist did render', this.state)
     const songs = !this.state.songs.length ? 
       <Label>No songs added</Label>
       :

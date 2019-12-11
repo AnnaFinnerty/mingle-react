@@ -71,7 +71,7 @@ class SignInFormBase extends Component {
             type="password"
             placeholder="Password"
           />
-          <button disabled={isInvalid} type="submit">
+          <button color="orange" disabled={isInvalid} type="submit">
             Sign In
           </button>
           {error && <p>{error.message}</p>}
@@ -85,6 +85,7 @@ class SignInFormBase extends Component {
     );
   }
 }
+
 const SignInForm = withRouter(SignInFormBase);
 export default SignInPage;
 export { SignInForm };

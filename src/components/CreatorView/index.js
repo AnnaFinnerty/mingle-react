@@ -7,7 +7,7 @@ import ActivePlaylist from '../ActivePlaylist';
 import ModalWindow from '../Modal';
 import Message from '../Message';
 
-import { Modal, Container, Grid, Icon, Button, Label, TextArea, Tab } from 'semantic-ui-react';
+import { Modal, Container, Grid, Button, TextArea, Tab } from 'semantic-ui-react';
 
 //POTENTIAL GAME SETTINGS
 //do not allow vote until song play for X seconds
@@ -80,7 +80,7 @@ class CreatorView extends Component{
         })
     }
     render(){
-        // console.log('creatorView props', this.props);
+        console.log('creatorView props', this.props);
         const panes = [
             { menuItem: 'Users', render: () => <Tab.Pane><PlayersList playlistId={this.state.playlistId} openModal={this.openModal} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls}/></Tab.Pane> },
             { menuItem: 'Playlists', render: () => <Tab.Pane><PlaylistsList playlistId={this.state.playlistId} userId={this.state.authUser} openModal={this.openModal} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls} activatePlaylist={this.props.activatePlaylist}/></Tab.Pane> },

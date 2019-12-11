@@ -68,8 +68,8 @@ class HomeBase extends Component {
   componentDidMount(){
     console.log('home did mount', this.state);
     if(!this.state.authUser){
-      //send back to signin if creator is not authenicated
-      //this.props.history.push('/signin');
+      // send back to signin if creator is not authenicated
+      this.props.history.push('/signin');
     } 
     this.checkForActivePlaylist();
   }
