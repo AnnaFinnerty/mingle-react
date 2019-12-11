@@ -1,6 +1,5 @@
 import React, { Component, useState, useEffect } from 'react';
 import { withRouter, useParams } from 'react-router-dom';
-import * as ROUTES from '../../constants/routes';
 import ReactPlayer from 'react-player';
 
 import firebase from '../Firebase';
@@ -12,21 +11,8 @@ import NewSong from '../NewSong';
 
 import '../../App.css';
 import { Modal, Grid, Button, Label, Icon } from 'semantic-ui-react';
-import { thisExpression } from '@babel/types';
 
-
-const ActivePlaylistPage = (props) => {
-  //console.log('active playlist wrapper props', props);
-  return(
-    <div>
-    <FirebaseContext.Consumer>
-      {(firebase) => <ActivePlaylistBase {...props} firebase={firebase} />}
-    </FirebaseContext.Consumer>
-  </div>
-  )
-};
-
-class ActivePlaylistBase extends Component {
+class Song extends Component {
   constructor(props) {
     console.log("active playlist props in constructor:", props)
     super(props);
@@ -43,7 +29,6 @@ class ActivePlaylistBase extends Component {
       currentSong: 0,
       user: '',
       showSongInfo: true,
-      songToEdit: null,
       modalOpen: false,
       modalType: 'newPlaylist',
     };
@@ -142,13 +127,9 @@ class ActivePlaylistBase extends Component {
     console.log('adding user song', addedSong)
     this.setState({
       userSong: addedSong,
-      songs: [...this.state.songs, addedSong],
       modalOpen: false
     })
   }
-  updateUserSong = (editedSong, deletedSong) => {
-    console.log('updating user song');
-  } 
   upvoteSong = (e,songId) => {
     // console.log('upvoting song: ' + songId);
     // const increment = this.props.firebase.db.FieldValue.increment(1);
@@ -290,13 +271,9 @@ class ActivePlaylistBase extends Component {
         console.log('Error getting documents', err);
     });
   }
-  editSong = (e,songIndex) => {
-    console.log('editing song: ' + songIndex);
-    this.setState({
-      modalOpen: true,
-      modalType: 'editSong',
-      songToEdit: songIndex,
-    })
+  editSong = (songId) => {
+    console.log('deleting song: ' + songId);
+    //need callback to open modal
   }
   deleteSong = (e,songId) => {
     console.log('deleting song: ' + songId);
@@ -310,63 +287,19 @@ class ActivePlaylistBase extends Component {
     })
     this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
   }
-  playPlaylist = () => {
-    console.log("playing playlist");
-    this.setState({
-      playing: true,
-    })
-  }
-  advancePlaylist = () => {
-    console.log("advancing playlist");
-    const nextSong = this.state.currentSong >= this.state.songs.length - -1 ? 0 : this.state.currentSong + 1;
-    this.setState({
-      playing: true,
-      currentSong: nextSong,
-    })
-  }
-  pausePlaylist = () => {
-    console.log("pausing playlist");
-    this.setState({
-      playing: false,
-    })
-  }
-  stopPlaylist = () => {
-    console.log("stopping playlist");
-    this.setState({
-      playing: false,
-      currentSong: 0,
-    })
-  }
-  openModal = (modalType, modalCallback) => {
-    this.setState({
-        modalOpen: true,
-        modalType: modalType,
-        modalCallback: modalCallback
-    })
-  }
-  closeModal = () => {
-    this.setState({modalOpen: false})
-  }
   render(){
-    console.log('active playlist did render', this.state)
-    const songs = !this.state.songs.length ? 
-    <Button color="red" onClick={()=>this.openModal('newSong')}>
-      add your song<br></br>
-      we can't start without you
-    </Button>
-      :
-      this.state.songs.map((song,i)=>{
-        const linkFrag = song.url.split('=')[1];
-        const playing = i === this.state.currentSong && this.state.playing;
-        const selfSong = song.userId === this.state.userId;
-        console.log(song);
+    console.log('song did render', this.state)
+    const linkFrag = this.props.song.url.split('=')[1];
+        const playing = this.props.i === this.state.currentSong && this.state.playing;
+        const selfSong = this.props.selfSong;
+        console.log(this.props.song);
         console.log(this.state);
-        console.log("this song belongs to user: ", song, this.state);
-        const votedOnByThisUser = song.votedOn;
+        // console.log("this song belongs to user: ", song, this.state);
+        const votedOnByThisUser = this.props.song.votedOn;
         // console.log("this song voted on by user: " + song.votedOn)
         // const borderStyle = i === this.state.currentSong && this.state.playing ? "2px solid aqua" : "2px solid transparent";
         let borderStyle;
-        if(i === this.state.currentSong && this.state.playing){
+        if(this.props.i === this.state.currentSong && this.state.playing){
           borderStyle = "2px solid aqua";
         } else if (!selfSong && !votedOnByThisUser){
           borderStyle = "2px solid red";
@@ -375,124 +308,53 @@ class ActivePlaylistBase extends Component {
         } else {
           borderStyle = "2px solid transparent"
         }
-        return(
-            <Grid key={song.id} style={{border:borderStyle, margin:"1vh 0"}} columns={2} divided>
-                <Grid.Column width={10} style={{padding:"0"}}>
-                  <ReactPlayer
-                    url={'https://www.youtube.com/watch?v='+linkFrag}
-                    className='react-player'
-                    playing={playing}
-                    width='100%'
-                    height='100%'
-                />
-                </Grid.Column>
-                <Grid.Column width={6}>
-                  <Grid.Row>
-                  <Grid columns={3} style={{padding:"0"}}>
-                    <span style={{width:"40vw", height: "10vh", overflow:"hidden" }}>
-                      {song.title}
-                    </span>
-                    <Grid.Row>
-                      <Button className="song-button edit-button" onClick={(e)=>this.editSong(e,i)}><Icon name="edit"/></Button>
-                    
-                      <Button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></Button>
-                    </Grid.Row>
-                    {
-                      votedOnByThisUser === 1 ? 
-                        <Grid.Column style={{padding:"0"}}>
-                          <Button className="song-button upvote-button" onClick={(e)=>this.undoUpvote(e,song.id)}><Icon name="thumbs up" style={{color:"green"}}/>{song.upvotes}</Button>
-                        </Grid.Column> :
-                        <Grid.Column style={{padding:"0"}}>
-                          <Button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/>{song.upvotes}</Button>
-                        </Grid.Column>
-                    }
-                    {
-                      votedOnByThisUser === -1 ? 
-                      <Grid.Column style={{padding:"0"}}>
-                        <Button className="song-button downvote-button" onClick={(e)=>this.undoDownvote(e,song.id)}><Icon name="thumbs down" style={{color:"red"}}/>{song.downvotes}</Button>
-                      </Grid.Column> :
-                      <Grid.Column style={{padding:"0"}}>
-                        <Button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/>{song.downvotes}</Button>
-                      </Grid.Column>
-                    }
-                  </Grid>
-                  </Grid.Row>
-                </Grid.Column>
-            </Grid> 
-  
-        )
-      })
     return (
-      <React.Fragment>
-      <Grid columns={1}>
-        <Grid.Row centered>
-            {
-              !this.state.authUser ? "":
-              <React.Fragment>
-                <Button onClick={this.playPlaylist}>
-                  <Icon color="green" name="play"/>
-                </Button>
-                <Button onClick={this.advancePlaylist}>
-                  <Icon color="grey" name="forward"/>
-                </Button>
-                <Button onClick={this.pausePlaylist}>
-                  <Icon color="grey" name="pause"/>
-                </Button>
-                <Button onClick={this.stopPlaylist}>
-                  <Icon color="red" name="stop"/>
-                </Button>
-              </React.Fragment>
-            }
-            {
-              this.props.gameMode ? 
-              <React.Fragment>
-              <Label>
-                {this.state.activeUser ? "secretname:" + this.state.activeUser.secretname : ""}
-              </Label>
-              <Label>
-                {this.state.activeUser ? "displayname:" + this.state.activeUser.username : ""}
-              </Label>
-              </React.Fragment>
-              :
-              <Button color="red" onClick={()=>this.openModal('newSong')}>
-                add song
-              </Button>
-            }
-            
-          </Grid.Row>
-        <Grid.Column>
-          {
-            !this.state.playlistId ?
-            <Grid.Row>
-              <Button color="red" onClick={()=>this.openModal('newSong')}>
-                get an active playlist first<br></br>
-                then we'll talk
-              </Button>
-            </Grid.Row>
-            :
-            <Grid.Row>
-            {songs}
-           </Grid.Row>
-          }
+        <Grid key={this.props.song.id} style={{border:borderStyle, margin:"1vh 0"}} columns={2} divided>
+        <Grid.Column width={10} style={{padding:"0"}}>
+          <ReactPlayer
+            url={'https://www.youtube.com/watch?v='+linkFrag}
+            className='react-player'
+            playing={playing}
+            width='100%'
+            height='100%'
+        />
         </Grid.Column>
-      </Grid>
-      {
-        !this.state.modalOpen ? "" :
-        <Modal open={this.state.modalOpen}>
-            <Button onClick={this.closeModal}>X</Button>
+        <Grid.Column width={6}>
+          <Grid.Row>
+          <Grid columns={3} style={{padding:"0"}}>
+            <span style={{width:"40vw", height: "10vh", overflow:"hidden" }}>
+              {this.props.song.title}
+            </span>
+            <Grid.Row>
+              <Button className="song-button edit-button" onClick={(e)=>this.editSong(e,song.id)}><Icon name="edit"/></Button>
+            
+              <Button className="song-button delete-button" onClick={(e)=>this.deleteSong(e,song.id)}><Icon name="delete"/></Button>
+            </Grid.Row>
             {
-              this.state.modalType === "editSong" ?
-              <NewSong userProps={this.state} callback={this.updateUserSong} edit={true}/> 
-              :
-              <NewSong userProps={this.state} callback={this.addUserSong} edit={false}/>
+              votedOnByThisUser === 1 ? 
+                <Grid.Column style={{padding:"0"}}>
+                  <Button className="song-button upvote-button" onClick={(e)=>this.undoUpvote(e,song.id)}><Icon name="thumbs up" style={{color:"green"}}/>{song.upvotes}</Button>
+                </Grid.Column> :
+                <Grid.Column style={{padding:"0"}}>
+                  <Button className="song-button upvote-button" onClick={(e)=>this.upvoteSong(e,song.id)}><Icon name="thumbs up"/>{song.upvotes}</Button>
+                </Grid.Column>
             }
-        </Modal>
-    }
-    </React.Fragment>
+            {
+              votedOnByThisUser === -1 ? 
+              <Grid.Column style={{padding:"0"}}>
+                <Button className="song-button downvote-button" onClick={(e)=>this.undoDownvote(e,song.id)}><Icon name="thumbs down" style={{color:"red"}}/>{song.downvotes}</Button>
+              </Grid.Column> :
+              <Grid.Column style={{padding:"0"}}>
+                <Button className="song-button downvote-button" onClick={(e)=>this.downvoteSong(e,song.id)}><Icon name="thumbs down"/>{song.downvotes}</Button>
+              </Grid.Column>
+            }
+          </Grid>
+          </Grid.Row>
+        </Grid.Column>
+    </Grid> 
     );
   }
 }
 
-const ActivePlaylist = withRouter(ActivePlaylistBase)
-export default ActivePlaylistPage;
-export {ActivePlaylist};
+
+export default Song;

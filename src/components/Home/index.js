@@ -44,14 +44,12 @@ class HomeBase extends Component {
       activePlaylistId: '',
       playlists: [],
       creatorMode: true,
-      secondChance: true,
-      playThrough: false,
-      suddenDeath: false,
       messageOpen: false,
       messageText: '',
       modalOpen: false,
       modalType: 'newTempProfile',
       reduceApiCalls: false,
+      gameMode: false,
       settings: {
         speedThrough: true,
         endSongOnVoteEnd: false,
@@ -170,7 +168,7 @@ class HomeBase extends Component {
     //deactivate all playlists in users' collection
     const db = this.props.firebase.db;
     const self = this;
-    db.collection("playlists").where('playlistId', '==', playlistId).get().then(function(querySnapshot) {
+    db.collection("playlists").where('userId', '==', this.state.authUser).get().then(function(querySnapshot) {
       querySnapshot.forEach(function(doc) {
           // var ref = this.props.firebase.db.collection("playlists").doc(doc.id);
           const ref = db.doc(`/playlists/${doc.id}`);
@@ -242,7 +240,8 @@ class HomeBase extends Component {
       modal =  <Options settings={this.state.settings} updateSettings={this.updateSettings}/>
     }
     const view = this.state.creatorMode ? 
-                <CreatorView authUser={this.state.authUser}
+                <CreatorView gameMode={this.state.gameMode}
+                             authUser={this.state.authUser}
                              userData={userData}
                              settings={this.state.settings}
                              playlistId={this.state.activePlaylistId}
@@ -257,7 +256,8 @@ class HomeBase extends Component {
                              firebase={this.props.firebase}
                              /> 
                 : 
-                <UserView authUser={this.state.authUser}
+                <UserView gameMode={this.state.gameMode}
+                          authUser={this.state.authUser}
                           userData={userData}
                           playlistId={this.state.activePlaylistId}
                           playlist={this.state.activePlaylist} 

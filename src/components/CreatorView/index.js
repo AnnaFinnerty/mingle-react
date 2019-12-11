@@ -118,7 +118,8 @@ class CreatorView extends Component{
                     <Grid.Column width={11}>
                         <Grid.Row>
                         <Grid.Row>
-                            <ActivePlaylist userData={this.props.userData}
+                            <ActivePlaylist gameMode={this.props.gameMode}
+                                            userData={this.props.userData}
                                             userId={this.state.authUser}
                                             authUser={true} 
                                             playlistId={this.props.playlistId}
