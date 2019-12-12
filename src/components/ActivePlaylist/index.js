@@ -120,6 +120,7 @@ class ActivePlaylistBase extends Component {
         snapshot.forEach((i) => {
           const item = i.data()
           const id = i.id;
+          console.log('song id: '+ id)
           newState.push({
             title: item.title,
             url: item.url,
@@ -307,7 +308,10 @@ class ActivePlaylistBase extends Component {
       console.log("error deleting song")
     })
     const removeOldSong = this.state.songs.filter((song) => (song.id != deletedSong));
-    this.setState({songs: [...removeOldSong, editedSong]})
+    this.setState({
+      songs: [editedSong,...removeOldSong],
+      modalOpen: false
+    })
     
   } 
   deleteSong = (songId) => {

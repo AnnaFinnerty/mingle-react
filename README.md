@@ -1,5 +1,5 @@
-# Song Mingle App
-[React Native Repo](https://github.com/AnnaFinnerty/mingle-native)
+# Song Mingle Live
+[Heroku](https://song-battle.herokuapp.com/)
 
 ## Scope of Work
 

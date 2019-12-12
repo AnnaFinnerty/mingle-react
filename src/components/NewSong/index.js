@@ -112,6 +112,7 @@ class NewSongForm extends Component {
           this.props.firebase.db.collection("songs").add(song)
           .then(function(docRef) {
               console.log("Document written with ID: ", docRef.id);
+              song["id"] = docRef.id;
               addedSongCallback(song,editSong);
           })
           .catch(function(error) {

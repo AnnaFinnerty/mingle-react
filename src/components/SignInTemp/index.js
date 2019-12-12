@@ -5,7 +5,7 @@ import * as ROUTES from '../../constants/routes';
 
 import AddTempUser from '../AddTempUser';
 
-import { Grid,Label } from 'semantic-ui-react';
+import { Grid, Button, Label } from 'semantic-ui-react';
 import { SignUpLink } from '../SignUp';
 
 const SignInTempPage = () => (
@@ -51,13 +51,14 @@ class SignInTempFormBase extends Component {
           <Grid.Column width={8}>
           <AddTempUser playlistId={playlistId} authUser={false} history={this.props.history}/>
           <Label color="black" style={{textAlign:"center",color:"white"}}>
-           <Link to={ROUTES.SIGN_UP} style={{color:"white"}}>
             Hey, just so you know, <br></br> 
             you're logging in as a guest user, <br></br>
             so we won't be keeping track of your progress. <br></br>
             To start your own game <br></br> 
             sign up for a real account, stranger <br></br>
-            Sign Up</Link>
+            <Button color="orange" style={{margin:"20px"}}>
+              <Link to={ROUTES.SIGN_UP} style={{color:"white"}}>Sign Up</Link>
+            </Button>
           </Label>
           </Grid.Column>
           <Grid.Column width={4}>

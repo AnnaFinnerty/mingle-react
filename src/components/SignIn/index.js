@@ -77,7 +77,7 @@ class SignInFormBase extends Component {
           </Button>
           {error && <p>{error.message}</p>}
         </form>
-        <Grid.Row centered>
+        <Grid.Row style={{textAlign:"center", marginTop:"5vh"}}>
           <SignUpLink/>
         </Grid.Row>
         
