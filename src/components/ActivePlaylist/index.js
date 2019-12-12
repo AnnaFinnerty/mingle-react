@@ -10,8 +10,9 @@ import { FirebaseContext } from '../Firebase';
 import NewSong from '../NewSong';
 
 import '../../App.css';
-import { Modal, Grid, Button, Label, Icon } from 'semantic-ui-react';
+import { Modal, Feed, Grid, Button, Label, Icon } from 'semantic-ui-react';
 import { thisExpression, removeTypeDuplicates } from '@babel/types';
+import { promised } from 'q';
 
 
 const ActivePlaylistPage = (props) => {
@@ -33,6 +34,7 @@ class ActivePlaylistBase extends Component {
     this.state = {
       authUser: props.authUser,
       userId: props.userId,
+      gameMode: props.gameMode ? props.gameMode : true,
       activeUser: props.userData ? props.userData : null,
       playlistId: props.playlistId,
       userSong: props.userSong,
@@ -398,7 +400,8 @@ class ActivePlaylistBase extends Component {
           borderStyle = "2px solid transparent"
         }
         return(
-            <Grid key={song.id} style={{border:borderStyle, margin:"1vh 0"}} columns={2} divided>
+          <Feed.Event>
+            <Grid key={song.id} classname="song" style={{border:borderStyle, margin:"1vh 0", backgroundColor:"rgba(0,0,0,.3)"}}  columns={2} divided>
                 <Grid.Column width={10} style={{padding:"0"}}>
                   <ReactPlayer
                     url={'https://www.youtube.com/watch?v='+linkFrag}
@@ -411,19 +414,19 @@ class ActivePlaylistBase extends Component {
                 <Grid.Column width={6}>
                   <Grid.Row>
                   <Grid columns={3} style={{padding:"0"}}>
-                    <span style={{width:"40vw", height: "10vh", overflow:"hidden" }}>
+                    <span style={{color: "white", width:"40vw", height: "10vh", overflow:"hidden" }}>
                       {song.title}
                     </span>
                     {
                       selfSong || this.state.authUser ? 
-                      <Grid.Row>
+                      <Grid.Row style={{textAlign:"center"}}>
                         <Button className="song-button edit-button" onClick={(e)=>this.editSong(e,song.id)}><Icon name="edit"/></Button>
                         <Button className="song-button delete-button" onClick={()=>this.deleteSong(song.id)}><Icon name="delete"/></Button>
                       </Grid.Row> 
                       : ""
                     }
                     {
-                      !this.props.gameMode ? "" :
+                      !this.state.gameMode ? "" :
                       votedOnByThisUser === 1 ? 
                         <Grid.Column style={{padding:"0"}}>
                           <Button className="song-button upvote-button" onClick={(e)=>this.undoUpvote(e,song.id)}><Icon name="thumbs up" style={{color:"green"}}/>{song.upvotes}</Button>
@@ -433,7 +436,7 @@ class ActivePlaylistBase extends Component {
                         </Grid.Column>
                     }
                     {
-                      !this.props.gameMode ? "" :
+                      !this.state.gameMode ? "" :
                       votedOnByThisUser === -1 ? 
                       <Grid.Column style={{padding:"0"}}>
                         <Button className="song-button downvote-button" onClick={(e)=>this.undoDownvote(e,song.id)}><Icon name="thumbs down" style={{color:"red"}}/>{song.downvotes}</Button>
@@ -446,11 +449,11 @@ class ActivePlaylistBase extends Component {
                   </Grid.Row>
                 </Grid.Column>
             </Grid> 
-  
+          </Feed.Event>
         )
       })
       let content = "";
-      if(!songs && this.props.gameMode){
+      if(!songs && this.state.gameMode){
           if(!this.state.playlistId){
             content = <Button color="red" onClick={()=>this.openModal('newSong')}>
                         add your song<br></br>
@@ -485,7 +488,7 @@ class ActivePlaylistBase extends Component {
               </React.Fragment>
             }
             {
-              this.props.gameMode ? 
+              this.state.gameMode ? 
               <React.Fragment>
                 <Label>
                   {this.state.activeUser ? "secretname:" + this.state.activeUser.secretname : ""}
@@ -512,7 +515,9 @@ class ActivePlaylistBase extends Component {
             </Grid.Row>
             :
             <Grid.Row>
-            {songs}
+              <Feed>
+                {songs}
+              </Feed>
            </Grid.Row>
           }
         </Grid.Column>
