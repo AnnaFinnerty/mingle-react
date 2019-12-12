@@ -67,11 +67,19 @@ class ActivePlaylistBase extends Component {
   }
   getUser = () => {
     // console.log("getting users information", this.props);
-    const userId = this.state.authUser ? this.state.userId : this.props.match.params.userId;
-    console.log('looking for user: ', userId);
-    const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
-    let query = userRef.get()
-    .then(snapshot => {
+    let userId;
+    try{
+      userId = this.state.authUser ? this.state.userId : this.props.match.params.userId;
+    }catch(e){
+      console.log('no user to load');
+      userId = null;
+    }
+    
+    if(userId){
+      console.log('looking for user: ', userId);
+      const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
+      let query = userRef.get()
+      .then(snapshot => {
         if (snapshot.empty) {
           console.log('No matching user');
         return;
@@ -88,6 +96,7 @@ class ActivePlaylistBase extends Component {
     .catch(err => {
         console.log('Error getting user', err);
     });
+    }
   }
   getPlaylist = (playlistId) => {
     console.log("getting playlist information", this.props);
