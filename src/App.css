@@ -1,12 +1,18 @@
 body{
-  background: rgb(58, 57, 57);
-  box-shadow: 0 0 10px  black inset ;
+  background: black;
   width: 100vw;
   height: auto;
   overflow-x: hidden;
   overflow-y: scroll;
   margin: 0;
   padding: 0;
+}
+
+#root{
+  background-color: #282c34;
+  box-shadow: 0 0 10px  black inset ;
+  background-color: #282c34;
+  min-height: 100vh;
 }
 
 h1{
@@ -78,7 +84,7 @@ button{
 }
 
 .App-header {
-  background-color: #282c34;
+  
   min-height: 100vh;
   display: flex;
   flex-direction: column;

@@ -12,6 +12,7 @@ import NewSong from '../NewSong';
 import '../../App.css';
 import { Modal, Feed, Grid, Button, Label, Icon } from 'semantic-ui-react';
 import { thisExpression, removeTypeDuplicates } from '@babel/types';
+import { promised } from 'q';
 
 
 const ActivePlaylistPage = (props) => {
@@ -33,6 +34,7 @@ class ActivePlaylistBase extends Component {
     this.state = {
       authUser: props.authUser,
       userId: props.userId,
+      gameMode: props.gameMode ? props.gameMode : true,
       activeUser: props.userData ? props.userData : null,
       playlistId: props.playlistId,
       userSong: props.userSong,
@@ -424,7 +426,7 @@ class ActivePlaylistBase extends Component {
                       : ""
                     }
                     {
-                      !this.props.gameMode ? "" :
+                      !this.state.gameMode ? "" :
                       votedOnByThisUser === 1 ? 
                         <Grid.Column style={{padding:"0"}}>
                           <Button className="song-button upvote-button" onClick={(e)=>this.undoUpvote(e,song.id)}><Icon name="thumbs up" style={{color:"green"}}/>{song.upvotes}</Button>
@@ -434,7 +436,7 @@ class ActivePlaylistBase extends Component {
                         </Grid.Column>
                     }
                     {
-                      !this.props.gameMode ? "" :
+                      !this.state.gameMode ? "" :
                       votedOnByThisUser === -1 ? 
                       <Grid.Column style={{padding:"0"}}>
                         <Button className="song-button downvote-button" onClick={(e)=>this.undoDownvote(e,song.id)}><Icon name="thumbs down" style={{color:"red"}}/>{song.downvotes}</Button>
@@ -451,7 +453,7 @@ class ActivePlaylistBase extends Component {
         )
       })
       let content = "";
-      if(!songs && this.props.gameMode){
+      if(!songs && this.state.gameMode){
           if(!this.state.playlistId){
             content = <Button color="red" onClick={()=>this.openModal('newSong')}>
                         add your song<br></br>
@@ -486,7 +488,7 @@ class ActivePlaylistBase extends Component {
               </React.Fragment>
             }
             {
-              this.props.gameMode ? 
+              this.state.gameMode ? 
               <React.Fragment>
                 <Label>
                   {this.state.activeUser ? "secretname:" + this.state.activeUser.secretname : ""}
