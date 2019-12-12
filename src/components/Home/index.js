@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import * as ROUTES from '../../constants/routes';
+
 import { withRouter, useParams } from 'react-router-dom';
 
 import { FirebaseContext } from '../Firebase';
@@ -7,7 +7,6 @@ import { FirebaseContext } from '../Firebase';
 import CreatorView from '../CreatorView';
 import UserView from '../UserView';
 
-import ModalWindow from '../Modal';
 import Options from '../Options';
 import AddPlaylist from '../AddPlaylist';
 import AddTempUser from '../AddTempUser';
@@ -132,14 +131,14 @@ class HomeBase extends Component {
   }
   getPlaylist = (playlistId) => {
     const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    let query = playlistRef.get()
+    playlistRef.get()
     .then(snapshot => {
         if (snapshot.empty) {
           console.log('No matching playlist');
         return;
         }  
           console.log('playlist snapshot', snapshot.data())
-        const data = snapshot.data();
+        snapshot.data();
         this.setState({
             activePlaylist: snapshot.data(),
         })
@@ -147,30 +146,6 @@ class HomeBase extends Component {
     .catch(err => {
         console.log('Error getting playlist', err);
     });
-  }
-  getAuthUser = () => {
-    console.log('getting authorized user info:' + this.state.authUser);
-    // const itemsRef = this.props.firebase.db.collection('temp_users');
-    // const query = await itemsRef.where('playlistId', '==', playlistId).get().then((snapshot) => {
-    //   console.log('getUsers snapshot',snapshot)
-    //   let newUsers = [];
-    //   snapshot.forEach((i) => {
-    //     const item = i.data()
-    //     const id = i.id;
-    //     newUsers.push({
-    //       username: item.username,
-    //       secretname: item.secretname,
-    //       songId: item.songId,
-    //       downvotes: item.downvotes,
-    //       upvotes: item.upvotes,
-    //       id: id,
-    //     });
-    //   });
-    //   console.log('users',newUsers);
-    //   this.setState({
-    //     players: newUsers
-    //   });
-    // });
   }
   addCreatorNames = (username,secretname, tempId) => {
     console.log("adding names", username, secretname, tempId);
@@ -234,7 +209,7 @@ class HomeBase extends Component {
         break
 
       case "newPlaylist":
-        modal = <AddPlaylist userProps={this.state} callback={this.activatePlaylist} gameMode={this.props.game}/>
+        modal = <AddPlaylist userProps={this.state} callback={this.activatePlaylist} gameMode={this.state.game}/>
         break
 
       default: 

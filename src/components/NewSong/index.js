@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { FirebaseContext } from '../Firebase';
-import * as ROUTES from '../../constants/routes';
-import { Feed, Input, Button, Label } from 'semantic-ui-react'
-import { isFor } from '@babel/types';
+import { Feed, Input, Button } from 'semantic-ui-react'
 
 const NewSongPage = (props) => (
   <div>
@@ -45,10 +42,8 @@ class NewSongForm extends Component {
                 credentials: 'include'
               });
             const parsedResponse = await searchResponse.json();
-            console.log('getSearches res:' ,parsedResponse);
             const searchResults = [];
             parsedResponse.items.forEach(element => {
-                console.log(element)
                 searchResults.push(element);
             });
             this.setState({searchResults: searchResults})

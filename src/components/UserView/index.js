@@ -1,16 +1,14 @@
 import React, {Component} from 'react';
 import { withRouter, useParams } from 'react-router-dom';
-import firebase from '../Firebase';
 import { FirebaseContext } from '../Firebase';
 
 import ActivePlaylist from '../ActivePlaylist';
 import ModalWindow from '../Modal';
 import Message from '../Message';
 
-import { Modal, Grid, Button, Label, Input } from 'semantic-ui-react';
+import { Modal, Grid, Button } from 'semantic-ui-react';
 
 const UserViewPage = (props) => {
-    //console.log('active playlist wrapper props', props);
     return(
       <div>
       <FirebaseContext.Consumer>
@@ -40,16 +38,15 @@ class UserViewBase extends Component{
         }
     }
     getPlaylist = (playlistId) => {
-        console.log('getting playlist: ' + playlistId );
+       
         const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-        const self = this;
-        let query = itemRef.get()
+        itemRef.get()
         .then(snapshot => {
             if (snapshot.empty) {
-            console.log('No matching documents.');
+                console.log('No matching documents.');
             return;
             }  
-            console.log('get snapshot', snapshot.data())
+            
             this.setState({
                 activePlaylist: snapshot.data(),
             })

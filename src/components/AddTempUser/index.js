@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Link, withRouter, useParams } from 'react-router-dom';
-import { FirebaseContext, withFirebase } from '../Firebase';
-import * as ROUTES from '../../constants/routes';
+import { withRouter, useParams } from 'react-router-dom';
+import { FirebaseContext } from '../Firebase';
 
-import { Grid, Form, Input, Label, Button, Container } from 'semantic-ui-react';
+
+import { Grid, Form, Input, Label, Button } from 'semantic-ui-react';
 import { SignUpLink } from '../SignUp';
 
 const AddTempUserWrapper = (props) => (

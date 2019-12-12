@@ -33,7 +33,7 @@ class ActivePlaylistBase extends Component {
     this.state = {
       authUser: props.authUser,
       userId: props.userId,
-      gameMode: props.gameMode ? props.gameMode : true,
+      gameMode: props.gameMode ? props.gameMode : false,
       activeUser: props.userData ? props.userData : null,
       playlistId: props.playlistId,
       userSong: props.userSong,
@@ -56,12 +56,13 @@ class ActivePlaylistBase extends Component {
   }
   componentWillReceiveProps(nextProps){
     //reset playlist on update
-    if(nextProps.playlistId){
+    if(nextProps.playlistId !== this.state.playlistId || nextProps.gameMode !== this.state.gameMode){
       this.getPlaylist(nextProps.playlistId);
       this.getSongs(nextProps.playlistId);
     }
     this.setState({
-      playlistId: nextProps.playlistId
+      playlistId: nextProps.playlistId,
+      gameMode: nextProps.gameMode
     })
   }
   getUser = () => {
@@ -76,7 +77,7 @@ class ActivePlaylistBase extends Component {
     //if user id is found, load user from db
     if(userId){
       const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
-      let query = userRef.get()
+      userRef.get()
       .then(snapshot => {
         if (snapshot.empty) {
           console.log('No matching user');
@@ -98,21 +99,23 @@ class ActivePlaylistBase extends Component {
   }
   getPlaylist = (playlistId) => {
     //retrieve playlist from db
-    const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    let query = playlistRef.get()
-    .then(snapshot => {
-        if (snapshot.empty) {
-          console.log('No matching playlist');
-        return;
-        }  
-        const data = snapshot.data();
-        this.setState({
-            playlist: snapshot.data(),
-        })
-    })
-    .catch(err => {
-        console.log('Error getting playlist', err);
-    });
+    if(playlistId){
+      const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+      playlistRef.get()
+      .then(snapshot => {
+          if (snapshot.empty) {
+            console.log('No matching playlist');
+          return;
+          }  
+          const data = snapshot.data();
+          this.setState({
+              playlist: snapshot.data(),
+          })
+      })
+      .catch(err => {
+          console.log('Error getting playlist', err);
+      });
+    }
   }
   getSongs = (playlistId) => {
     //retrieve songs for selected playlist
@@ -155,7 +158,7 @@ class ActivePlaylistBase extends Component {
     // dumb workaround while decrement won't work
     const songRef = this.props.firebase.db.collection('songs').doc(songId);
     let currentVotes = 0;
-    let query = songRef.get().then(snapshot => {
+    songRef.get().then(snapshot => {
         if (snapshot.empty) {
           console.log('No matching song.');
           return;
@@ -189,7 +192,7 @@ class ActivePlaylistBase extends Component {
     
     const songRef = this.props.firebase.db.collection('songs').doc(songId);
     let currentVotes = 0;
-    let query = songRef.get().then(snapshot => {
+    songRef.get().then(snapshot => {
         if (snapshot.empty) {
           console.log('No matching song.');
         return;
@@ -225,7 +228,7 @@ class ActivePlaylistBase extends Component {
     
     const songRef = this.props.firebase.db.collection('songs').doc(songId);
     let currentVotes = 0;
-    let query = songRef.get().then(snapshot => {
+    songRef.get().then(snapshot => {
         if (snapshot.empty) {
           // console.log('No matching documents.');
         return;
@@ -238,7 +241,6 @@ class ActivePlaylistBase extends Component {
         data['downvotes'] = currentVotes;
         data['id'] = id;
         data['votedOn'] = -1;
-        console.log('updated song vals', data)
         const updatedSongArray = this.state.songs.map((song) => {
           if(song.id === id){
               song = data
@@ -261,7 +263,7 @@ class ActivePlaylistBase extends Component {
     
     const songRef = this.props.firebase.db.collection('songs').doc(songId);
     let currentVotes = 0;
-    let query = songRef.get().then(snapshot => {
+    songRef.get().then(snapshot => {
         if (snapshot.empty) {
         console.log('No matching documents.');
         return;
@@ -494,10 +496,18 @@ class ActivePlaylistBase extends Component {
                 </Label>
               </React.Fragment>
               :
+              ""
+            }
+            {
+              !this.state.gameMode && this.state.playlistId ? 
               <Button color="red" onClick={()=>this.openModal('newSong')}>
                 add song
               </Button>
+              :
+              ""
             }
+
+
             
           </Grid.Row>
         <Grid.Column>
@@ -512,7 +522,7 @@ class ActivePlaylistBase extends Component {
             :
             <Grid.Row>
               <Feed>
-                {songs}
+                {content}
               </Feed>
            </Grid.Row>
           }
