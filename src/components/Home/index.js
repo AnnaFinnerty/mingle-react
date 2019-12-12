@@ -21,21 +21,17 @@ import { Modal, Grid,Button} from 'semantic-ui-react'
 
 
 const HomePage = (props) => {
-  // console.log('home wrapper props', props)
   return (
   <div>
-    {/* <AuthUserContext.Consumer> */}
       <FirebaseContext.Consumer>
         {firebase => <Home firebase={firebase} authUser={props.authUser} />}
       </FirebaseContext.Consumer>
-    {/* </AuthUserContext.Consumer> */}
   </div>
 )};
 
 class HomeBase extends Component {
   constructor(props) {
     super(props);
-    // console.log('Constructor Props are:', props)
     this.state = {
       authUser: props.authUser,
       authUserDisplayName: '',
@@ -67,19 +63,17 @@ class HomeBase extends Component {
     this.activatePlaylist = this.activatePlaylist.bind(this);
   }
   componentDidMount(){
-    console.log('home did mount', this.state);
     if(!this.state.authUser){
-      // send back to signin if creator is not authenicated
+      // send back to signin if creator is not authenticated
       this.props.history.push('/signin');
     } 
     this.checkForActivePlaylist();
   }
   checkForActivePlaylist = () => {
-    console.log('looking for active playlist for: ' + this.state.authUser);
     const itemsRef = this.props.firebase.db.collection('playlists');
     let defaultPlaylistId;
     const query = itemsRef.where('userId', '==', this.state.authUser).get().then((snapshot) => {
-      console.log('getPlaylists snapshot',snapshot)
+      //find all of the creator's playlists
       let activePlaylistId = null;
       snapshot.forEach((i,x) => {
         //capture the id of the default playlist, in case we don't find an active one
@@ -87,18 +81,17 @@ class HomeBase extends Component {
           defaultPlaylistId = i.id;
         }
         const item = i.data()
-        console.log('playlist item', item)
         activePlaylistId = i.id;
         if(item.active){
-          console.log('active playlist found: ' + activePlaylistId);
+          //get information for the first active playlist found
           const playlistRef = this.props.firebase.db.doc(`/playlists/${activePlaylistId}`);
           let query = playlistRef.get()
           .then(snapshot => {
               if (snapshot.empty) {
-              console.log('No matching playlist');
+                console.log('No matching playlist');
               return;
               }  
-              console.log('playlist snapshot', snapshot.data())
+                console.log('playlist snapshot', snapshot.data())
               const data = snapshot.data();
               data['id'] = activePlaylistId;
               this.setState({
@@ -110,22 +103,20 @@ class HomeBase extends Component {
               console.log('Error getting playlist', err);
           });
         } else {
-          console.log('no active playlists found');
-          console.log('activating default playlist: ' + defaultPlaylistId);
+          //if no active playlist found, activate default playlist
           this.activatePlaylist(defaultPlaylistId);
         }
       });
     });
   }
   activatePlaylist = (playlistId, tempUserId, displayName, secretName) => {
-    console.log('activating playlist in home: ' + playlistId);
-    //deactivate all playlists in users' collection
     const db = this.props.firebase.db;
     const self = this;
     db.collection("playlists").get().then(function(querySnapshot) {
+      //find all playlists in users' collection
       querySnapshot.forEach(function(doc) {
-          // var ref = this.props.firebase.db.collection("playlists").doc(doc.id);
           const ref = db.doc(`/playlists/${doc.id}`);
+          //deactivate all except the one matching playlistId
           ref.update({
               active: doc.id === playlistId
           });
@@ -140,15 +131,14 @@ class HomeBase extends Component {
     });
   }
   getPlaylist = (playlistId) => {
-    console.log("getting playlist information in home");
     const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
     let query = playlistRef.get()
     .then(snapshot => {
         if (snapshot.empty) {
-        console.log('No matching playlist');
+          console.log('No matching playlist');
         return;
         }  
-        console.log('playlist snapshot', snapshot.data())
+          console.log('playlist snapshot', snapshot.data())
         const data = snapshot.data();
         this.setState({
             activePlaylist: snapshot.data(),
@@ -230,7 +220,6 @@ class HomeBase extends Component {
       })
   }
   render(){
-    console.log('home state', this.state)
     const userData = {
       authUser: this.state.authUser,
       userId: this.state.authUser,
@@ -251,6 +240,7 @@ class HomeBase extends Component {
       default: 
       modal =  <Options settings={this.state.settings} updateSettings={this.updateSettings}/>
     }
+    //build view
     const view = this.state.creatorMode ? 
                 <CreatorView authUser={this.state.authUser}
                              gameMode={this.state.gameMode}
@@ -279,7 +269,7 @@ class HomeBase extends Component {
                           />;
     return (
       <React.Fragment>
-        <Grid columns={1} fluid={'true'} centered style={{textAlign:"centered"}}>
+        <Grid columns={1} centered style={{textAlign:"centered"}}>
            <Grid.Row style={{paddingBottom:"0"}}>
               <Button onClick={this.toggleViewMode}
                       style={{float:"left"}}
@@ -296,15 +286,6 @@ class HomeBase extends Component {
                  !this.state.activatePlaylistId ? 
                  <Button onClick={()=>this.openModal('newPlaylist')}>create playlist</Button> : ""
               }
-              {/* {
-                // add button if creator has not set their temp_user profile for this round
-                 !this.state.authUserDisplayName || !this.state.authUserSecretName ?
-                 <Button onClick={()=>this.openModal('newTempProfile')}>create your profile</Button> :
-                 <React.Fragment>
-                    <h3>{this.state.authUserDisplayName}</h3>
-                    <h3>{this.state.authUserSecretName}</h3>
-                 </React.Fragment>
-              } */}
               {
                 !this.state.gameMode ? 
                 <Button onClick={this.toggleGameMode}>start game</Button>

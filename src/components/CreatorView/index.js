@@ -8,14 +8,10 @@ import Message from '../Message';
 
 import { Modal, Container, Grid, Button, TextArea, Tab } from 'semantic-ui-react';
 
-//POTENTIAL GAME SETTINGS
-//do not allow vote until song play for X seconds
-
 class CreatorView extends Component{
    
     constructor(props){
         super()
-        // console.log('cretorView props', props)
         this.state = {
             playlists: [],
             players: props.players,
@@ -38,8 +34,8 @@ class CreatorView extends Component{
         }
     }
     componentWillReceiveProps(nextProps){
-        console.log('Creator view will recieve props');
-        console.log(nextProps);
+        //on component will recieve props, regen invite code and set playlist
+        //can be optimized in future
         const inviteCode = this.genInviteCode(nextProps.playlistId);
         this.setState({
           activePlaylist: nextProps.playlistId,
@@ -47,12 +43,11 @@ class CreatorView extends Component{
         })
       }
     genInviteCode = (playlistId) => {
-        console.log('generating invite code');
         const code = "http://localhost:3000/login/" + playlistId;
-        console.log(code);
         return code
     }
     copyInviteCode = () => {
+        //get input with invite code
         const input = document.getElementById("invite-code");
         //select text field
         input.select();
@@ -62,7 +57,6 @@ class CreatorView extends Component{
         document.execCommand("copy");
     }
     addedPlaylist = (playlistId) => {
-        console.log('activating playlist in creator view:  ' + playlistId);
         this.closeModal();
         this.props.activatePlaylist(playlistId);
     }
@@ -89,12 +83,11 @@ class CreatorView extends Component{
         })
     }
     render(){
-        console.log('creatorView props', this.props);
+        // build tabs
         const panes = [
             { menuItem: 'Playlists', render: () => <Tab.Pane><PlaylistsList playlistId={this.state.playlistId} userId={this.state.authUser} openModal={this.openModal} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls} activatePlaylist={this.props.activatePlaylist}/></Tab.Pane> },
             { menuItem: 'Users', render: () => <Tab.Pane><PlayersList playlistId={this.state.playlistId} openModal={this.openModal} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls}/></Tab.Pane> },
         ]
-        //const inviteCode = this.genInviteCode(this.state.playlistId);
         return(
             <React.Fragment>
                 {

@@ -1,9 +1,9 @@
 import React, { Component, useState, useEffect } from 'react';
 import { withRouter, useParams } from 'react-router-dom';
-import * as ROUTES from '../../constants/routes';
+// import * as ROUTES from '../../constants/routes';
 import ReactPlayer from 'react-player';
 
-import firebase from '../Firebase';
+// import firebase from '../Firebase';
 import { FirebaseContext } from '../Firebase';
 // import * as admin from 'firebase-admin';
 
@@ -11,8 +11,8 @@ import NewSong from '../NewSong';
 
 import '../../App.css';
 import { Modal, Feed, Grid, Button, Label, Icon } from 'semantic-ui-react';
-import { thisExpression, removeTypeDuplicates } from '@babel/types';
-import { promised } from 'q';
+// import { thisExpression, removeTypeDuplicates } from '@babel/types';
+// import { promised } from 'q';
 
 
 const ActivePlaylistPage = (props) => {
@@ -368,7 +368,7 @@ class ActivePlaylistBase extends Component {
       null
       :
       this.state.songs.map((song,i)=>{
-        console.log(song);
+        //remove song id from final part of url
         const linkFrag = song.url.split('=')[1];
         //compare song index number to position of playing song in state
         const playing = i === this.state.currentSong && this.state.playing;
@@ -389,8 +389,8 @@ class ActivePlaylistBase extends Component {
           borderStyle = "2px solid transparent"
         }
         return(
-          <Feed.Event>
-            <Grid key={song.id} classname="song" style={{border:borderStyle, margin:"1vh 0", backgroundColor:"rgba(0,0,0,.3)"}}  columns={2} divided>
+          <Feed.Event key={song.id}>
+            <Grid className="song" style={{border:borderStyle, margin:"1vh 0", backgroundColor:"rgba(0,0,0,.3)"}}  columns={2} divided>
                 <Grid.Column width={10} style={{padding:"0"}}>
                   <ReactPlayer
                     url={'https://www.youtube.com/watch?v='+linkFrag}
@@ -464,7 +464,7 @@ class ActivePlaylistBase extends Component {
       }
     return (
       <React.Fragment>
-      <Grid fluid style={{textAlign: "center"}} columns={1}>
+      <Grid style={{textAlign: "center"}} columns={1}>
         <Grid.Row centered>
             {
               !this.state.authUser ? "":
