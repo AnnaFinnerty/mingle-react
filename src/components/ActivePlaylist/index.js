@@ -10,7 +10,7 @@ import { FirebaseContext } from '../Firebase';
 import NewSong from '../NewSong';
 
 import '../../App.css';
-import { Modal, Grid, Button, Label, Icon } from 'semantic-ui-react';
+import { Modal, Feed, Grid, Button, Label, Icon } from 'semantic-ui-react';
 import { thisExpression, removeTypeDuplicates } from '@babel/types';
 
 
@@ -398,7 +398,8 @@ class ActivePlaylistBase extends Component {
           borderStyle = "2px solid transparent"
         }
         return(
-            <Grid key={song.id} style={{border:borderStyle, margin:"1vh 0"}} columns={2} divided>
+          <Feed.Event>
+            <Grid key={song.id} classname="song" style={{border:borderStyle, margin:"1vh 0", backgroundColor:"rgba(0,0,0,.3)"}}  columns={2} divided>
                 <Grid.Column width={10} style={{padding:"0"}}>
                   <ReactPlayer
                     url={'https://www.youtube.com/watch?v='+linkFrag}
@@ -411,12 +412,12 @@ class ActivePlaylistBase extends Component {
                 <Grid.Column width={6}>
                   <Grid.Row>
                   <Grid columns={3} style={{padding:"0"}}>
-                    <span style={{width:"40vw", height: "10vh", overflow:"hidden" }}>
+                    <span style={{color: "white", width:"40vw", height: "10vh", overflow:"hidden" }}>
                       {song.title}
                     </span>
                     {
                       selfSong || this.state.authUser ? 
-                      <Grid.Row>
+                      <Grid.Row style={{textAlign:"center"}}>
                         <Button className="song-button edit-button" onClick={(e)=>this.editSong(e,song.id)}><Icon name="edit"/></Button>
                         <Button className="song-button delete-button" onClick={()=>this.deleteSong(song.id)}><Icon name="delete"/></Button>
                       </Grid.Row> 
@@ -446,7 +447,7 @@ class ActivePlaylistBase extends Component {
                   </Grid.Row>
                 </Grid.Column>
             </Grid> 
-  
+          </Feed.Event>
         )
       })
       let content = "";
@@ -512,7 +513,9 @@ class ActivePlaylistBase extends Component {
             </Grid.Row>
             :
             <Grid.Row>
-            {songs}
+              <Feed>
+                {songs}
+              </Feed>
            </Grid.Row>
           }
         </Grid.Column>
