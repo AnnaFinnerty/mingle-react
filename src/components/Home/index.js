@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import * as ROUTES from '../../constants/routes';
+
 import { withRouter, useParams } from 'react-router-dom';
 
 import { FirebaseContext } from '../Firebase';
@@ -7,7 +7,6 @@ import { FirebaseContext } from '../Firebase';
 import CreatorView from '../CreatorView';
 import UserView from '../UserView';
 
-import ModalWindow from '../Modal';
 import Options from '../Options';
 import AddPlaylist from '../AddPlaylist';
 import AddTempUser from '../AddTempUser';

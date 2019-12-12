@@ -76,7 +76,7 @@ class ActivePlaylistBase extends Component {
     //if user id is found, load user from db
     if(userId){
       const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
-      let query = userRef.get()
+      userRef.get()
       .then(snapshot => {
         if (snapshot.empty) {
           console.log('No matching user');
@@ -99,7 +99,7 @@ class ActivePlaylistBase extends Component {
   getPlaylist = (playlistId) => {
     //retrieve playlist from db
     const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    let query = playlistRef.get()
+    playlistRef.get()
     .then(snapshot => {
         if (snapshot.empty) {
           console.log('No matching playlist');
@@ -155,7 +155,7 @@ class ActivePlaylistBase extends Component {
     // dumb workaround while decrement won't work
     const songRef = this.props.firebase.db.collection('songs').doc(songId);
     let currentVotes = 0;
-    let query = songRef.get().then(snapshot => {
+    songRef.get().then(snapshot => {
         if (snapshot.empty) {
           console.log('No matching song.');
           return;
@@ -189,7 +189,7 @@ class ActivePlaylistBase extends Component {
     
     const songRef = this.props.firebase.db.collection('songs').doc(songId);
     let currentVotes = 0;
-    let query = songRef.get().then(snapshot => {
+    songRef.get().then(snapshot => {
         if (snapshot.empty) {
           console.log('No matching song.');
         return;
@@ -225,7 +225,7 @@ class ActivePlaylistBase extends Component {
     
     const songRef = this.props.firebase.db.collection('songs').doc(songId);
     let currentVotes = 0;
-    let query = songRef.get().then(snapshot => {
+    songRef.get().then(snapshot => {
         if (snapshot.empty) {
           // console.log('No matching documents.');
         return;
@@ -238,7 +238,6 @@ class ActivePlaylistBase extends Component {
         data['downvotes'] = currentVotes;
         data['id'] = id;
         data['votedOn'] = -1;
-        console.log('updated song vals', data)
         const updatedSongArray = this.state.songs.map((song) => {
           if(song.id === id){
               song = data
@@ -261,7 +260,7 @@ class ActivePlaylistBase extends Component {
     
     const songRef = this.props.firebase.db.collection('songs').doc(songId);
     let currentVotes = 0;
-    let query = songRef.get().then(snapshot => {
+    songRef.get().then(snapshot => {
         if (snapshot.empty) {
         console.log('No matching documents.');
         return;
@@ -363,6 +362,7 @@ class ActivePlaylistBase extends Component {
     this.setState({modalOpen: false})
   }
   render(){
+    console.log('active playlist state', this.state);
     //if there are songs, create songs object
     const songs = !this.state.songs.length ? 
       null

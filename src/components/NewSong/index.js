@@ -45,10 +45,8 @@ class NewSongForm extends Component {
                 credentials: 'include'
               });
             const parsedResponse = await searchResponse.json();
-            console.log('getSearches res:' ,parsedResponse);
             const searchResults = [];
             parsedResponse.items.forEach(element => {
-                console.log(element)
                 searchResults.push(element);
             });
             this.setState({searchResults: searchResults})

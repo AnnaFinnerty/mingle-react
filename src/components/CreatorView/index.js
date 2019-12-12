@@ -83,6 +83,7 @@ class CreatorView extends Component{
         })
     }
     render(){
+        console.log('creator view props', this.props);
         // build tabs
         const panes = [
             { menuItem: 'Playlists', render: () => <Tab.Pane><PlaylistsList playlistId={this.state.playlistId} userId={this.state.authUser} openModal={this.openModal} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls} activatePlaylist={this.props.activatePlaylist}/></Tab.Pane> },
