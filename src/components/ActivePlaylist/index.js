@@ -33,7 +33,7 @@ class ActivePlaylistBase extends Component {
     this.state = {
       authUser: props.authUser,
       userId: props.userId,
-      gameMode: props.gameMode ? props.gameMode : true,
+      gameMode: props.gameMode ? props.gameMode : false,
       activeUser: props.userData ? props.userData : null,
       playlistId: props.playlistId,
       userSong: props.userSong,
@@ -56,12 +56,13 @@ class ActivePlaylistBase extends Component {
   }
   componentWillReceiveProps(nextProps){
     //reset playlist on update
-    if(nextProps.playlistId){
+    if(nextProps.playlistId !== this.state.playlistId || nextProps.gameMode !== this.state.gameMode){
       this.getPlaylist(nextProps.playlistId);
       this.getSongs(nextProps.playlistId);
     }
     this.setState({
-      playlistId: nextProps.playlistId
+      playlistId: nextProps.playlistId,
+      gameMode: nextProps.gameMode
     })
   }
   getUser = () => {
@@ -98,21 +99,23 @@ class ActivePlaylistBase extends Component {
   }
   getPlaylist = (playlistId) => {
     //retrieve playlist from db
-    const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-    playlistRef.get()
-    .then(snapshot => {
-        if (snapshot.empty) {
-          console.log('No matching playlist');
-        return;
-        }  
-        const data = snapshot.data();
-        this.setState({
-            playlist: snapshot.data(),
-        })
-    })
-    .catch(err => {
-        console.log('Error getting playlist', err);
-    });
+    if(playlistId){
+      const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
+      playlistRef.get()
+      .then(snapshot => {
+          if (snapshot.empty) {
+            console.log('No matching playlist');
+          return;
+          }  
+          const data = snapshot.data();
+          this.setState({
+              playlist: snapshot.data(),
+          })
+      })
+      .catch(err => {
+          console.log('Error getting playlist', err);
+      });
+    }
   }
   getSongs = (playlistId) => {
     //retrieve songs for selected playlist
@@ -362,7 +365,6 @@ class ActivePlaylistBase extends Component {
     this.setState({modalOpen: false})
   }
   render(){
-    console.log('active playlist state', this.state);
     //if there are songs, create songs object
     const songs = !this.state.songs.length ? 
       null
