@@ -40,8 +40,7 @@ class UserViewBase extends Component{
     getPlaylist = (playlistId) => {
        
         const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
-        const self = this;
-        let query = itemRef.get()
+        itemRef.get()
         .then(snapshot => {
             if (snapshot.empty) {
                 console.log('No matching documents.');

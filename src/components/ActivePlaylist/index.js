@@ -496,10 +496,18 @@ class ActivePlaylistBase extends Component {
                 </Label>
               </React.Fragment>
               :
+              ""
+            }
+            {
+              !this.state.gameMode && this.state.playlistId ? 
               <Button color="red" onClick={()=>this.openModal('newSong')}>
                 add song
               </Button>
+              :
+              ""
             }
+
+
             
           </Grid.Row>
         <Grid.Column>
@@ -514,7 +522,7 @@ class ActivePlaylistBase extends Component {
             :
             <Grid.Row>
               <Feed>
-                {songs}
+                {content}
               </Feed>
            </Grid.Row>
           }
