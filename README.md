@@ -1,5 +1,24 @@
-# Song Mingle Live
+# Song Battle
+
+# Live
 [Heroku](https://song-battle.herokuapp.com/)
+
+# Elevator Pitch
+Whether they are friends or strangers, groups can have a hard time deciding on what music to listen to. Song Battle is a cooperative playlist that allows users (moderated by a creator) to collectively vote on a playlist of music -- anonymously. Different user options allow users to replace songs, add more than one song, and remove voting entirely, all with the goal of achieving the impossible: the perfect playlist to satisfy everyone's tastes.
+
+## Technologies Used
+
+React/Firebase
+
+## Installation Steps
+
+`git clone https://github.com/AnnaFinnerty/mingle-react.git
+
+cd mingle-react
+
+npm install
+
+npm start`
 
 ## Scope of Work
 
@@ -15,11 +34,12 @@ Users can optionally remain anonymous until voting has completed.
 
 ![ERD](./public/erd.png)
 
-## Milestones
+## Unsolved Problems/Future Features
 
-* Working React app hosted on Heroku
-* Working Native app hosted on App store
 * QR codes
+* Improved mobile styling
+* Live updates
+* Working Native app hosted on App store
 
 ## User Stories/Feasability Study
 [Trello Board](https://trello.com/b/8fL8Ja7h/introvert-mingle)

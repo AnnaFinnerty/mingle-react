@@ -87,7 +87,7 @@ class UserViewBase extends Component{
                     <Grid.Column>
                         <Grid.Row>
                         {
-                            this.props.userSong ? "" :
+                            this.props.userSong && this.props.gameMode ? "" :
                             <Button color="red"
                                     onClick={()=>this.openModal('newSong')}
                             >
