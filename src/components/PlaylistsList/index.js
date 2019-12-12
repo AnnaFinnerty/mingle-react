@@ -22,12 +22,11 @@ class PlaylistsList extends Component{
         }
     }
     getPlaylists = () => {
-        // console.log('getting playlists for: ' + this.props.userId);
+        //if there is an active user
         if(this.props.userId){
+            //find user's playlists in db
             const itemsRef = this.props.firebase.db.collection('playlists');
-            // console.log('playlists item ref', itemsRef)
             const query = itemsRef.where('userId', '==', this.props.userId).get().then((snapshot) => {
-            // console.log('getPlaylists snapshot',snapshot)
             let newItems = [];
             snapshot.forEach((i) => {
                 const item = i.data()
@@ -41,22 +40,19 @@ class PlaylistsList extends Component{
                     id: id,
                 });
             });
-            // console.log('newItems',newItems)
-            this.setState({
-                playlists: newItems
-            });
+                this.setState({
+                    playlists: newItems
+                });
             });
         }
     }
     editPlaylist = (playlistId) => {
-        // console.log('editing playlist: ' + playlistId );
         const itemRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
         let query = itemRef.get().then(snapshot => {
                 if (snapshot.empty) {
-                console.log('No matching documents.');
+                    console.log('No matching documents.');
                 return;
                 }  
-                // console.log('get snapshot', snapshot.data())
                 const data = snapshot.data();
                 data['id'] = snapshot.id;
                 this.setState({
@@ -71,8 +67,6 @@ class PlaylistsList extends Component{
     }
     updatePlaylist = (updatedPlaylist) => {
         const playlistId = updatedPlaylist.id;
-        // console.log("updating playlist:  " + playlistId);
-        // console.log('updatedPlaylister', updatedPlaylist);
         const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
         playlistRef.update({
               active: updatedPlaylist.active,
@@ -92,19 +86,10 @@ class PlaylistsList extends Component{
         })
     }
     deletePlaylist = (playlistId) => {
-        // console.log('deleting playlist: ' + playlistId);
         const deleteRef = this.props.firebase.db.collection('playlists').doc(playlistId);
         deleteRef.delete()
         .then(()=>{
             console.log(playlistId + " deleted successfully")
-        // const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
-        // deleteRef.delete()
-        // .then(()=>{
-        //   console.log(songId + " deleted successfully")
-        // })
-        // .catch((err) => {
-        //   console.log("error deleting song")
-        // })
             this.setState({playlists: this.state.playlists.filter((playlist) => (playlist.id != playlistId))})
         })
         .catch((err) => {
@@ -124,7 +109,6 @@ class PlaylistsList extends Component{
         const playlists = !this.state.playlists.length ?
           <Label>no playlists</Label> :
           this.state.playlists.map((playlist)=>{
-            console.log('playlist', playlist);
             const backgroundColor = playlist.active ?  "aqua":"transparent"
             return(
         

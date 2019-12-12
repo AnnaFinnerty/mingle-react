@@ -41,9 +41,7 @@ class App extends Component{
     this.listener();
   }
   render(){
-    console.log('app mounted. auth user:' + this.state.authUser)
     return(
-      // <AuthUserContext.Provider value={this.state.authUser}>
         <Router>
           <Navigation authUser={this.state.authUser}/>
           <hr />
