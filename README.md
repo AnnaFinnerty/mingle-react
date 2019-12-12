@@ -28,7 +28,7 @@ Users can optionally remain anonymous until voting has completed.
 
 ## Wireframes
 
-![Wireframe](./public/wireframe.png)
+![Wireframe](./public/mingle.png)
 
 ## Model Relationship
 
