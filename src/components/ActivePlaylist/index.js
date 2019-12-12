@@ -28,7 +28,6 @@ const ActivePlaylistPage = (props) => {
 
 class ActivePlaylistBase extends Component {
   constructor(props) {
-    console.log("active playlist props in constructor:", props)
     super(props);
     this.unsubscribe = null;
     this.state = {
@@ -50,15 +49,13 @@ class ActivePlaylistBase extends Component {
     };
   }
   componentDidMount(){
-    console.log('activeplaylist did mount', this.state);
-      //retrieve the active user based on id
+      //retrieve active user based on id
       if(!this.state.activeUser){
         this.getUser();
       } 
   }
   componentWillReceiveProps(nextProps){
-    console.log('Active playlist will recieve props');
-    console.log(nextProps);
+    //reset playlist on update
     if(nextProps.playlistId){
       this.getPlaylist(nextProps.playlistId);
       this.getSongs(nextProps.playlistId);
@@ -68,7 +65,7 @@ class ActivePlaylistBase extends Component {
     })
   }
   getUser = () => {
-    // console.log("getting users information", this.props);
+    // set variable to determine if user is coming through state (a creator) or params (a user)
     let userId;
     try{
       userId = this.state.authUser ? this.state.userId : this.props.match.params.userId;
@@ -76,9 +73,8 @@ class ActivePlaylistBase extends Component {
       console.log('no user to load');
       userId = null;
     }
-    
+    //if user id is found, load user from db
     if(userId){
-      console.log('looking for user: ', userId);
       const userRef = this.props.firebase.db.doc(`/temp_users/${userId}`);
       let query = userRef.get()
       .then(snapshot => {
@@ -86,12 +82,12 @@ class ActivePlaylistBase extends Component {
           console.log('No matching user');
         return;
         }  
-        // console.log('user snapshot', snapshot.data())
         const data = snapshot.data();
         this.setState({
             activeUser: snapshot.data(),
             playlistId: data.playlistId
         })
+        //using the playlist store in user, load playlist info and songs
         this.getPlaylist(data.playlistId);
         this.getSongs(data.playlistId);
     })
@@ -101,8 +97,7 @@ class ActivePlaylistBase extends Component {
     }
   }
   getPlaylist = (playlistId) => {
-    console.log("getting playlist information", this.props);
-    console.log('playlist id', playlistId);
+    //retrieve playlist from db
     const playlistRef = this.props.firebase.db.doc(`/playlists/${playlistId}`);
     let query = playlistRef.get()
     .then(snapshot => {
@@ -110,7 +105,6 @@ class ActivePlaylistBase extends Component {
           console.log('No matching playlist');
         return;
         }  
-        // console.log('playlist snapshot', snapshot.data())
         const data = snapshot.data();
         this.setState({
             playlist: snapshot.data(),
@@ -121,17 +115,14 @@ class ActivePlaylistBase extends Component {
     });
   }
   getSongs = (playlistId) => {
-    console.log('getting songs for playlist:  ' + playlistId);
+    //retrieve songs for selected playlist
     if(playlistId){
       const itemsRef = this.props.firebase.db.collection('songs');
       itemsRef.where('playlistId', '==', playlistId).get().then((snapshot) => {
-        //let items = snapshot.val();
-        console.log('songs snapshot',snapshot)
         let newState = [];
         snapshot.forEach((i) => {
           const item = i.data()
           const id = i.id;
-          console.log('song id: '+ id)
           newState.push({
             title: item.title,
             url: item.url,
@@ -150,7 +141,7 @@ class ActivePlaylistBase extends Component {
       }
   }
   addUserSong = (addedSong) => {
-    console.log('adding user song in activate playlist', addedSong)
+    //add the users chosen song into state
     this.setState({
       userSong: addedSong,
       songs: [...this.state.songs, addedSong],
@@ -158,7 +149,7 @@ class ActivePlaylistBase extends Component {
     })
   }
   upvoteSong = (e,songId) => {
-    // console.log('upvoting song: ' + songId);
+    // code that's supposed to work
     // const increment = this.props.firebase.db.FieldValue.increment(1);
     // songRef.update({ upvotes: admin.FieldValue.increment(1) });
     // dumb workaround while decrement won't work
@@ -177,14 +168,12 @@ class ActivePlaylistBase extends Component {
         data['upvotes'] = currentVotes;
         data['id'] = id;
         data['votedOn'] = 1;
-        // console.log('updated song vals', data)
         const updatedSongArray = this.state.songs.map((song) => {
           if(song.id === id){
               song = data
           }
           return song;
         });
-        // console.log('updated songs',updatedSongArray);
         this.setState({
           songs: updatedSongArray
         })
@@ -194,9 +183,10 @@ class ActivePlaylistBase extends Component {
     });
   }
   undoUpvote = (e,songId) => {
-    // console.log('undoing downvote song: ' + songId);
-    // songRef.update({ downvotes: admin.FieldValue.decrement(1) });
     // dumb workaround while decrement won't work
+    // code that's supposed to work
+    // songRef.update({ downvotes: admin.FieldValue.decrement(1) });
+    
     const songRef = this.props.firebase.db.collection('songs').doc(songId);
     let currentVotes = 0;
     let query = songRef.get().then(snapshot => {
@@ -229,9 +219,10 @@ class ActivePlaylistBase extends Component {
     });
   }
   downvoteSong = (e,songId) => {
-    // console.log('downvoting song: ' + songId);
+     // dumb workaround while decrement won't work
+     //code that's supposed to work
     // songRef.update({ upvotes: admin.FieldValue.decrement(1) });
-    // dumb workaround while decrement won't work
+    
     const songRef = this.props.firebase.db.collection('songs').doc(songId);
     let currentVotes = 0;
     let query = songRef.get().then(snapshot => {
@@ -264,9 +255,10 @@ class ActivePlaylistBase extends Component {
     });
   }
   undoDownvote = (e,songId) => {
-    console.log('undoing downvote song: ' + songId);
-    // songRef.update({ downvotes: admin.FieldValue.decrement(1) });
     // dumb workaround while decrement won't work
+    // code that's supposed to work
+    // songRef.update({ downvotes: admin.FieldValue.decrement(1) });
+    
     const songRef = this.props.firebase.db.collection('songs').doc(songId);
     let currentVotes = 0;
     let query = songRef.get().then(snapshot => {
@@ -299,7 +291,7 @@ class ActivePlaylistBase extends Component {
     });
   }
   editSong = (e,songId) => {
-    console.log('editing song: ' + songId);
+    //open edit song modal after setting id of song to edit in state
     this.setState({
       modalOpen: true,
       modalType: 'editSong',
@@ -307,9 +299,7 @@ class ActivePlaylistBase extends Component {
     })
   }
   updateUserSong = (editedSong, deletedSong) => {
-    console.log('updating user song in activate playlist');
-    console.log('new song', editedSong);
-    console.log('deleted song', deletedSong);
+    //delete song user is replacing
     const deleteRef = this.props.firebase.db.collection('songs').doc(deletedSong);
     deleteRef.delete()
     .then(()=>{
@@ -318,7 +308,9 @@ class ActivePlaylistBase extends Component {
     .catch((err) => {
       console.log("error deleting song")
     })
-    const removeOldSong = this.state.songs.filter((song) => (song.id != deletedSong));
+    //create array of previous songs, minus deleted song
+    const removeOldSong = this.state.songs.filter((song) => (song.id !== deletedSong));
+    //add edited song to state
     this.setState({
       songs: [editedSong,...removeOldSong],
       modalOpen: false
@@ -326,7 +318,7 @@ class ActivePlaylistBase extends Component {
     
   } 
   deleteSong = (songId) => {
-    console.log('deleting song: ' + songId);
+    //delete song from db
     const deleteRef = this.props.firebase.db.collection('songs').doc(songId);
     deleteRef.delete()
     .then(()=>{
@@ -338,13 +330,11 @@ class ActivePlaylistBase extends Component {
     this.setState({songs: this.state.songs.filter((song) => (song.id != songId))})
   }
   playPlaylist = () => {
-    console.log("playing playlist");
     this.setState({
       playing: true,
     })
   }
   advancePlaylist = () => {
-    console.log("advancing playlist");
     const nextSong = this.state.currentSong >= this.state.songs.length - -1 ? 0 : this.state.currentSong + 1;
     this.setState({
       playing: true,
@@ -352,13 +342,11 @@ class ActivePlaylistBase extends Component {
     })
   }
   pausePlaylist = () => {
-    console.log("pausing playlist");
     this.setState({
       playing: false,
     })
   }
   stopPlaylist = () => {
-    console.log("stopping playlist");
     this.setState({
       playing: false,
       currentSong: 0,
@@ -375,20 +363,21 @@ class ActivePlaylistBase extends Component {
     this.setState({modalOpen: false})
   }
   render(){
-    console.log('active playlist did render', this.state)
+    //if there are songs, create songs object
     const songs = !this.state.songs.length ? 
       null
       :
       this.state.songs.map((song,i)=>{
         console.log(song);
         const linkFrag = song.url.split('=')[1];
+        //compare song index number to position of playing song in state
         const playing = i === this.state.currentSong && this.state.playing;
+        //compare id of song to id of playlist user
         const selfSong = song.userId === this.state.userId;
-        // console.log(this.state);
-        // console.log("this song belongs to user: ", song, this.state);
+        //temp fix
+        //see if user has voted on this song by comparing with temporary field in satte
         const votedOnByThisUser = song.votedOn;
-        // console.log("this song voted on by user: " + song.votedOn)
-        // const borderStyle = i === this.state.currentSong && this.state.playing ? "2px solid aqua" : "2px solid transparent";
+        //find style of border
         let borderStyle;
         if(i === this.state.currentSong && this.state.playing){
           borderStyle = "2px solid aqua";
@@ -418,6 +407,7 @@ class ActivePlaylistBase extends Component {
                       {song.title}
                     </span>
                     {
+                      //show edit and delete buttons if this song belongs to the user
                       selfSong || this.state.authUser ? 
                       <Grid.Row style={{textAlign:"center"}}>
                         <Button className="song-button edit-button" onClick={(e)=>this.editSong(e,song.id)}><Icon name="edit"/></Button>
@@ -426,7 +416,9 @@ class ActivePlaylistBase extends Component {
                       : ""
                     }
                     {
+                      //outside of game mode, show nothing
                       !this.state.gameMode ? "" :
+                      //in game mode, show upvote buttons
                       votedOnByThisUser === 1 ? 
                         <Grid.Column style={{padding:"0"}}>
                           <Button className="song-button upvote-button" onClick={(e)=>this.undoUpvote(e,song.id)}><Icon name="thumbs up" style={{color:"green"}}/>{song.upvotes}</Button>
@@ -436,7 +428,9 @@ class ActivePlaylistBase extends Component {
                         </Grid.Column>
                     }
                     {
+                      //outside of game mode, show nothing
                       !this.state.gameMode ? "" :
+                      //in game mode, show downvote buttons
                       votedOnByThisUser === -1 ? 
                       <Grid.Column style={{padding:"0"}}>
                         <Button className="song-button downvote-button" onClick={(e)=>this.undoDownvote(e,song.id)}><Icon name="thumbs down" style={{color:"red"}}/>{song.downvotes}</Button>
@@ -452,7 +446,9 @@ class ActivePlaylistBase extends Component {
           </Feed.Event>
         )
       })
+      //create empty content object
       let content = "";
+      //if there are no songs and we are in game mode, add prompt
       if(!songs && this.state.gameMode){
           if(!this.state.playlistId){
             content = <Button color="red" onClick={()=>this.openModal('newSong')}>
