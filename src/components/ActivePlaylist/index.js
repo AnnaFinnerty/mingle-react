@@ -522,7 +522,7 @@ class ActivePlaylistBase extends Component {
             :
             <Grid.Row>
               <Feed>
-                {content}
+                {songs}
               </Feed>
            </Grid.Row>
           }
