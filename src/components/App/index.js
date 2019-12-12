@@ -52,14 +52,17 @@ class App extends Component{
             <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
             {/* <Route path={ROUTES.SIGN_IN} component={SignInPage} /> */}
             <Route exact path={ROUTES.SIGN_IN} render={
-              (props) => <SignInPage {...props} authUser={this.state.authUser} someProp={'test'}/>
+              (props) => <SignInPage {...props} authUser={this.state.authUser}/>
             }/>
             <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
             {/* <Route exact path={ROUTES.HOME} component={HomePage}/> */}
             <Route exact path={ROUTES.HOME} render={
-              (props) => <HomePage {...props} authUser={this.state.authUser} someProp={'test'}/>
+              (props) => <HomePage {...props} authUser={this.state.authUser}/>
             }/>
-            <Route path={ROUTES.ACCOUNT} component={UserProfile} />
+            <Route exact path={ROUTES.ACCOUNT} render={
+              (props) => <UserProfile {...props} authUser={this.state.authUser}/>
+            }/>
+            {/* <Route path={ROUTES.ACCOUNT} component={UserProfile} /> */}
             {/* <Route path={ROUTES.ADMIN} component={AdminPage} /> */}
             {/* <Route path={ROUTES.NEWSONG} component={NewSongPage} /> */}
             {/* <Route path={ROUTES.PLAYLIST} component={Playlist} /> */}

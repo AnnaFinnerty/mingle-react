@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FirebaseContext } from '../Firebase';
-import { Input, Button, Label } from 'semantic-ui-react'
+import { Grid, Input, Button, Label } from 'semantic-ui-react'
 
 const UserPage = (props) => (
   <div>
@@ -63,12 +63,14 @@ class UserProfile extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
   render() {
+    console.log('userProfile props', this.props)
     const { email, passwordOne, passwordTwo, error } = this.state;
     const isInvalid =
       passwordOne !== passwordTwo || passwordOne === '';
     return (
-     <div style={{textAlign:'center'}}>
-       <h3>Account</h3>
+     <Grid fluid style={{textAlign:'center'}} columns={3}>
+       <Grid.Column></Grid.Column>
+       <Grid.Column>
             <Input
               name="email"
               value={email}
@@ -104,7 +106,9 @@ class UserProfile extends Component {
             </Button>
             <br></br>
             {error && <p>{error.message}</p>}
-      </div>
+            </Grid.Column>
+          <Grid.Column></Grid.Column>
+      </Grid>
     );
   }
 }

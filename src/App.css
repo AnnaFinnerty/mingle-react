@@ -13,10 +13,12 @@ h1{
   width: 100%;
   text-align: center;
   color: white;
+  padding-top: 3vh;
 }
 
 h2{
   color:grey;
+  margin-left: 5vw;
 }
 
 form{
@@ -30,6 +32,10 @@ input{
 
 button{
   max-width: 20vw;
+}
+
+.creator-pane {
+  
 }
 
 .song-button{

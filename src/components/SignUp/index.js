@@ -33,6 +33,7 @@ class SignUpFormBase extends Component {
     this.props.firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
+        console.log('user created successfully');
         this.setState({ ...INITIAL_STATE });
         this.props.history.push(ROUTES.HOME);
       })
@@ -58,7 +59,7 @@ class SignUpFormBase extends Component {
       email === '' ||
       username === '';
     return (
-      <Grid centered>
+      <Grid centered fluid textAlign='center'>
       <Grid.Row>
         <Grid.Column width={4}>
         </Grid.Column>
@@ -92,7 +93,7 @@ class SignUpFormBase extends Component {
             type="password"
             placeholder="confirm password"
           />
-          <Button disabled={isInvalid} type="submit">
+          <Button color="orange" style={{margin: "0 auto"}} disabled={isInvalid} type="submit">
             Sign Up
           </Button>
           {error && <p>{error.message}</p>}
@@ -106,7 +107,7 @@ class SignUpFormBase extends Component {
   }
 }
 const SignUpLink = () => (
-  <Button color="aqua">
+  <Button style={{margin: "0 auto"}} color="aqua">
     Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
   </Button>
 );

@@ -362,17 +362,10 @@ class ActivePlaylistBase extends Component {
   render(){
     console.log('active playlist did render', this.state)
     const songs = !this.state.songs.length ? 
-    <Button color="red" onClick={()=>this.openModal('newSong')}>
-      {
-        this.props.gameMode ? <span>
-          add your song<br></br>
-          we can't start without you
-        </span> : ""
-      }
-    </Button>
+      null
       :
       this.state.songs.map((song,i)=>{
-        // console.log(song);
+        console.log(song);
         const linkFrag = song.url.split('=')[1];
         const playing = i === this.state.currentSong && this.state.playing;
         const selfSong = song.userId === this.state.userId;
@@ -443,9 +436,23 @@ class ActivePlaylistBase extends Component {
   
         )
       })
+      let content = "";
+      if(!songs && this.props.gameMode){
+          if(!this.state.playlistId){
+            content = <Button color="red" onClick={()=>this.openModal('newSong')}>
+                        add your song<br></br>
+                        we can't start without you
+                     </Button>
+          } else {
+            content = <Label color="orange" style={{padding: "5vw"}}>
+                        make a playlist first.<br></br>
+                        then we'll talk
+                      </Label>
+          }
+      }
     return (
       <React.Fragment>
-      <Grid columns={1}>
+      <Grid fluid style={{textAlign: "center"}} columns={1}>
         <Grid.Row centered>
             {
               !this.state.authUser ? "":
@@ -467,12 +474,12 @@ class ActivePlaylistBase extends Component {
             {
               this.props.gameMode ? 
               <React.Fragment>
-              <Label>
-                {this.state.activeUser ? "secretname:" + this.state.activeUser.secretname : ""}
-              </Label>
-              <Label>
-                {this.state.activeUser ? "displayname:" + this.state.activeUser.username : ""}
-              </Label>
+                <Label>
+                  {this.state.activeUser ? "secretname:" + this.state.activeUser.secretname : ""}
+                </Label>
+                <Label>
+                  {this.state.activeUser ? "displayname:" + this.state.activeUser.username : ""}
+                </Label>
               </React.Fragment>
               :
               <Button color="red" onClick={()=>this.openModal('newSong')}>
@@ -485,10 +492,10 @@ class ActivePlaylistBase extends Component {
           {
             !this.state.playlistId ?
             <Grid.Row>
-              <Button color="red" onClick={()=>this.openModal('newSong')}>
-                get an active playlist first<br></br>
+              <Label color="orange" style={{padding: "5vw"}}>
+                make a playlist first.<br></br>
                 then we'll talk
-              </Button>
+              </Label>
             </Grid.Row>
             :
             <Grid.Row>

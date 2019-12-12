@@ -38,15 +38,18 @@ class CreatorView extends Component{
         }
     }
     componentWillReceiveProps(nextProps){
-        // console.log('Active playlist will recieve props');
-        // console.log(nextProps);
+        console.log('Creator view will recieve props');
+        console.log(nextProps);
+        const inviteCode = this.genInviteCode(nextProps.playlistId);
         this.setState({
-          activePlaylist: nextProps.playlistId
+          activePlaylist: nextProps.playlistId,
+          inviteCode: inviteCode
         })
       }
     genInviteCode = (playlistId) => {
         console.log('generating invite code');
         const code = "http://localhost:3000/login/" + playlistId;
+        console.log(code);
         return code
     }
     copyInviteCode = () => {
@@ -88,10 +91,10 @@ class CreatorView extends Component{
     render(){
         console.log('creatorView props', this.props);
         const panes = [
-            { menuItem: 'Users', render: () => <Tab.Pane><PlayersList playlistId={this.state.playlistId} openModal={this.openModal} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls}/></Tab.Pane> },
             { menuItem: 'Playlists', render: () => <Tab.Pane><PlaylistsList playlistId={this.state.playlistId} userId={this.state.authUser} openModal={this.openModal} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls} activatePlaylist={this.props.activatePlaylist}/></Tab.Pane> },
+            { menuItem: 'Users', render: () => <Tab.Pane><PlayersList playlistId={this.state.playlistId} openModal={this.openModal} firebase={this.props.firebase} reduceApiCalls={this.props.reduceApiCalls}/></Tab.Pane> },
         ]
-        const inviteCode = this.genInviteCode();
+        //const inviteCode = this.genInviteCode(this.state.playlistId);
         return(
             <React.Fragment>
                 {
@@ -100,11 +103,10 @@ class CreatorView extends Component{
                         Game Controls
                     </Container>
                 }
-                
                 <Grid columns={this.props.gameMode ? 2 : 1} divided fluid="true">
-                    {
+                        <Grid.Column width={5} className="creator-pane">
+                        {
                         !this.props.gameMode ? "" : 
-                        <Grid.Column width={5} style={{backgroundColor:"gray", height: '80vh'}}>
                             <Grid.Row>
                                 <Grid columns={3}>
                                     <Grid.Column>
@@ -114,14 +116,15 @@ class CreatorView extends Component{
                                         <Button onClick={this.showQRCode}>show QR</Button>
                                     </Grid.Column>
                                 </Grid>
-                                <TextArea id="invite-code" value={inviteCode}></TextArea>            
+                                <TextArea id="invite-code" value={this.state.inviteCode}></TextArea>            
                             </Grid.Row>
+                            }
                             <Grid.Row>
                                 <Tab panes={panes} />
                             </Grid.Row>
                         </Grid.Column>
-                    }
-                    <Grid.Column width={this.props.gameMode ? 11 : 16}>
+                    
+                    <Grid.Column width={this.props.gameMode ? 11 : 10}>
                         <Grid.Row>
                         <Grid.Row>
                             <ActivePlaylist gameMode={this.props.gameMode}

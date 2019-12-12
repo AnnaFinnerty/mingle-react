@@ -80,7 +80,7 @@ class UserViewBase extends Component{
         })
     }
     render(){
-        console.log('user view props', this.props);
+        console.log('user view state', this.state);
         return(
             <React.Fragment>
                 <Grid columns={1} divided>

@@ -98,11 +98,10 @@ class AddTempUserFormBase extends Component {
     return (
       <Form onSubmit={this.onSubmit}>
         <Grid fluid textAlign='center' columns={1} centered>
-          <Grid.Column>
-            <Grid.Row>
-              <Label>a secret name to hide your identity</Label>
+            <Grid.Row style={{padding:"0"}}>
+              <Label style={{margin:"0 auto"}}>a secret name to hide your identity</Label>
             </Grid.Row>
-            <Grid.Row>
+            <Grid.Row style={{padding:"0"}}>
               <Input
                 name="secretname"
                 value={secretname}
@@ -111,13 +110,13 @@ class AddTempUserFormBase extends Component {
                 placeholder="secret name"
               />
             </Grid.Row>
-            <Grid.Row>
-              <Button onClick={this.randomNameGen}>random</Button>
+            <Grid.Row style={{padding:"0"}}>
+              <Button onClick={this.randomNameGen}>just give me a random name</Button>
             </Grid.Row>
-            <Grid.Row>
+            <Grid.Row style={{paddingBottom:"0"}}>
               <Label>a name people will recognize later</Label>
             </Grid.Row>
-            <Grid.Row>
+            <Grid.Row style={{padding:"0"}}>
               <Input
                 name="username"
                 value={username}
@@ -126,8 +125,8 @@ class AddTempUserFormBase extends Component {
                 placeholder="username"
               />
             </Grid.Row>
-            <Grid.Row>
-            <Button type="submit" disabled={isInvalid} 
+            <Grid.Row style={{padding:"0"}}>
+            <Button color="orange" type="submit" disabled={isInvalid} 
                     >
               let's go!
             </Button>
@@ -135,7 +134,7 @@ class AddTempUserFormBase extends Component {
             <Grid.Row>
               {error && <p>{error.message}</p>}
             </Grid.Row>
-          </Grid.Column>
+          
         </Grid>
       </Form>
     );

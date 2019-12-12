@@ -245,7 +245,7 @@ class HomeBase extends Component {
         break
 
       case "newPlaylist":
-        modal = <AddPlaylist userProps={this.state} callback={this.activatePlaylist}/>
+        modal = <AddPlaylist userProps={this.state} callback={this.activatePlaylist} gameMode={this.props.game}/>
         break
 
       default: 
@@ -268,7 +268,7 @@ class HomeBase extends Component {
                              firebase={this.props.firebase}
                              /> 
                 : 
-                <UserView authUser={this.state.authUser}
+                <UserView authUser={true}
                           gameMode={this.state.gameMode}
                           userData={userData}
                           playlistId={this.state.activePlaylistId}

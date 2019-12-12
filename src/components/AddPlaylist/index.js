@@ -136,8 +136,10 @@ class AddPlaylistBase extends Component {
                   options={moodOptions}
                   onChange={this.handleDropdownChange}
               />
-              <Label>game options</Label>
+              {
+                !this.props.gameMode ? "":
               <Grid columns={2} centered divided>
+                <Label>game options</Label>
                 <Grid.Column>
                     <Grid.Row>
                         <Label>Speed Through Mode</Label>
@@ -179,6 +181,10 @@ class AddPlaylistBase extends Component {
                       </Grid.Row>
                 </Grid.Column>
               </Grid>
+              }
+              {
+                !this.props.gameMode ? "" :
+              <React.Fragment>
               <Label>a secret name to hide your identity</Label>
               <Input
                   name="secretName"
@@ -196,6 +202,8 @@ class AddPlaylistBase extends Component {
                   type="text"
                   placeholder="display name"
               />
+              </React.Fragment>
+              }
               <Button color="orange" onClick={this.createPlaylist}>create playlist</Button>
             </Form>
         </Container>
